@@ -1,0 +1,81 @@
+import 'dart:convert';
+
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
+
+enum Purpose { success, fail }
+
+final Map<Purpose, Color> messagePurpose = {
+  Purpose.success: const Color.fromARGB(255, 0, 131, 4),
+  Purpose.fail: const Color.fromARGB(255, 163, 11, 0)
+};
+
+class AppController {
+  //--------------------- colors -----------------------
+  static final lightBlue = Colors.lightBlue;
+  static final headColor = const Color.fromARGB(255, 182, 0, 152);
+  static final darkGreen = const Color.fromARGB(255, 4, 124, 0);
+  //-------------------- For an API --------------------
+  static final String baseUrl = 'https://senthil.ijessi.com';
+  static final String baseApiUrl = '$baseUrl/api';
+
+  static Future<dynamic> fetch(String endPoint) async {
+    final url = Uri.parse('$baseApiUrl/$endPoint');
+    final res = await http.get(url);
+    if (res.statusCode == 200) {
+      return res.body;
+    } else {
+      return null;
+    }
+  }
+
+  static Future<dynamic> send(String endPoint, Object object) async {
+    final url = Uri.parse('$baseApiUrl/$endPoint');
+    final res = await http.post(url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(object));
+    if (res.statusCode == 200) {
+      return res.body;
+    } else {
+      return null;
+    }
+  }
+
+  //---------------------- Additionals --------------------------
+  static void toastMessage(String title, String message,
+      {Purpose purpose = Purpose.success}) {
+    Get.snackbar(
+      title,
+      message,
+      backgroundColor: Colors.white,
+      colorText: Colors.black,
+      borderRadius: 5,
+      duration: Duration(seconds: 3),
+      icon: Icon(
+        purpose == Purpose.success ? Icons.check_circle : Icons.cancel_outlined,
+        color: messagePurpose[purpose],
+      ),
+      borderColor: messagePurpose[purpose],
+      borderWidth: 1.0,
+      mainButton: TextButton(
+          onPressed: () {
+            Get.closeCurrentSnackbar();
+          },
+          child: Icon(Icons.close)),
+      margin: EdgeInsets.all(10),
+      leftBarIndicatorColor: messagePurpose[purpose],
+    );
+  }
+
+  static String convertToCurrency(String amount) {
+    final formatter = NumberFormat.currency(
+      locale: 'en_IN',
+      symbol: '₹ ',
+      name: 'INR',
+      decimalDigits: 0,
+    );
+    return formatter.format(amount);
+  }
+}
