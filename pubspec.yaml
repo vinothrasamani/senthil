@@ -35,7 +35,6 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
   flutter_riverpod: ^2.6.1
-  another_flutter_splash_screen: ^1.2.1
   flutter_tabler_icons: ^1.43.0
   shimmer: ^3.0.0
   transparent_image: ^2.0.1
@@ -44,6 +43,7 @@ dependencies:
   http: ^1.4.0
   shared_preferences: ^2.5.3
   intl: ^0.20.2
+  permission_handler: ^12.0.0+1
 
 dev_dependencies:
   flutter_test:

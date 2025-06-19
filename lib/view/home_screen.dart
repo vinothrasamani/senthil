@@ -29,6 +29,69 @@ class HomeScreen extends ConsumerWidget {
       'Balance'
     ];
 
+    List<Widget> cardList(schools) => [
+          for (var item in schools.data)
+            Card(
+              color: Theme.of(context).scaffoldBackgroundColor,
+              child: ExpansionTile(
+                showTrailingIcon: false,
+                title: Column(
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(child: Text(item.name)),
+                        SizedBox(width: 8),
+                        Icon(Icons.arrow_drop_down)
+                      ],
+                    ),
+                    SizedBox(height: 10),
+                  ],
+                ),
+                subtitle: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        amounttitles[0],
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    SizedBox(width: 10),
+                    Text(
+                      AppController.convertToCurrency('345745435'),
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+                children: [
+                  for (var i = 1; i < amounttitles.length; i++)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 6, horizontal: 20),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              amounttitles[i],
+                              style: TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                          SizedBox(width: 10),
+                          Text(
+                            AppController.convertToCurrency('${i * 345}'),
+                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                    ),
+                ],
+              ),
+            ),
+        ];
+
     return Scaffold(
       appBar: AppBar(title: Text('Dashboard')),
       body: SafeArea(
@@ -46,7 +109,7 @@ class HomeScreen extends ConsumerWidget {
                       style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
-                          color: baseColor),
+                          color: isDark ? AppController.lightBlue : baseColor),
                     ),
                     const SizedBox(height: 8),
                     Text(snap.data.noticetext),
@@ -108,44 +171,53 @@ class HomeScreen extends ConsumerWidget {
             listenBanner.when(
                 data: (schools) {
                   return Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        SizedBox(height: 10),
-                        ListTile(
-                          leading: CircleAvatar(
-                            child: Icon(Icons.attach_money,
-                                color: Colors.green, size: 25),
-                          ),
-                          title: Text(
-                            'Collection Details',
-                            style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                                color: baseColor),
-                          ),
-                        ),
-                        for (var item in schools.data)
-                          ExpansionTile(
-                            title: Text(item.name),
-                            subtitle: Row(
-                              children: [
-                                Text(
-                                  amounttitles[0],
-                                  style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                              ],
+                    padding: const EdgeInsets.all(5.0),
+                    child: Card(
+                      color: isDark ? Colors.grey.withAlpha(50) : null,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          SizedBox(height: 10),
+                          ListTile(
+                            leading: CircleAvatar(
+                              backgroundColor:
+                                  const Color.fromARGB(255, 216, 194, 0),
+                              child: Icon(Icons.attach_money,
+                                  color: Colors.white, size: 25),
+                            ),
+                            title: Text(
+                              'Collection Details',
+                              style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: isDark
+                                      ? AppController.lightBlue
+                                      : baseColor),
                             ),
                           ),
-                      ],
+                          if (size.width < 800)
+                            ...cardList(schools)
+                          else
+                            LayoutBuilder(builder: (context, cons) {
+                              return Wrap(
+                                spacing: 5,
+                                children: cardList(schools)
+                                    .map((card) => SizedBox(
+                                          width: (cons.maxWidth / 2) - 15,
+                                          child: card,
+                                        ))
+                                    .toList(),
+                              );
+                            }),
+                          SizedBox(height: 10),
+                        ],
+                      ),
                     ),
                   );
                 },
                 error: (error, _) => SizedBox.shrink(),
-                loading: () => HomeShimmer(isDark: isDark, id: 2))
+                loading: () => HomeShimmer(isDark: isDark, id: 2)),
+            SizedBox(height: 10),
           ],
         ),
       ),

@@ -43,6 +43,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     bool canShow = ref.watch(LoginController.canShowPassword);
     bool isLoading = ref.watch(LoginController.isLoading);
     bool isChecked = ref.watch(LoginController.isChecked);
+    Size size = MediaQuery.of(context).size;
+    double flexWidth = size.width > 500
+        ? size.width > 800
+            ? size.width > 1000
+                ? size.width * 0.3
+                : size.width * 0.1
+            : size.width * 0.04
+        : 10;
 
     return Scaffold(
       body: SafeArea(
@@ -55,100 +63,110 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             const Color.fromARGB(255, 137, 0, 179),
             baseColor
           ])),
-          child: Card(
-            margin: EdgeInsets.all(10),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-              child: Form(
-                key: formKey,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    if (isLoading) LinearProgressIndicator(),
-                    SizedBox(height: 15),
-                    Image.asset('assets/images/logo.png',
-                        height: 120, width: 120, fit: BoxFit.cover),
-                    SizedBox(height: 15),
-                    Text(
-                      'Welcome Back!',
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
-                    SizedBox(height: 10),
-                    Text('Please login to continue..'),
-                    SizedBox(height: 10),
-                    TextFormField(
-                      decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: 'Username',
-                          prefixIcon: Icon(TablerIcons.user)),
-                      onChanged: (value) => username = value,
-                      validator: (value) => value == null || value.isEmpty
-                          ? 'Please enter username!'
-                          : null,
-                      onSaved: (newValue) => username = newValue,
-                    ),
-                    SizedBox(height: 10),
-                    TextFormField(
-                      decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: 'Password',
-                          prefixIcon: Icon(TablerIcons.lock),
-                          suffixIcon: GestureDetector(
-                            onTap: () {
+          child: SingleChildScrollView(
+            child: Card(
+              margin: EdgeInsets.symmetric(vertical: 10, horizontal: flexWidth),
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                child: Form(
+                  key: formKey,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (isLoading) LinearProgressIndicator(),
+                      SizedBox(height: 15),
+                      Image.asset('assets/images/logo.png',
+                          height: 120, width: 120, fit: BoxFit.cover),
+                      SizedBox(height: 15),
+                      Text(
+                        'Welcome Back!',
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                      SizedBox(height: 10),
+                      Text('Please login to continue..'),
+                      SizedBox(height: 10),
+                      TextFormField(
+                        decoration: InputDecoration(
+                            border: OutlineInputBorder(),
+                            labelText: 'Username',
+                            prefixIcon: Icon(TablerIcons.user)),
+                        onChanged: (value) => username = value,
+                        validator: (value) => value == null || value.isEmpty
+                            ? 'Please enter username!'
+                            : null,
+                        onSaved: (newValue) => username = newValue,
+                      ),
+                      SizedBox(height: 10),
+                      TextFormField(
+                        decoration: InputDecoration(
+                            border: OutlineInputBorder(),
+                            labelText: 'Password',
+                            prefixIcon: Icon(TablerIcons.lock),
+                            suffixIcon: GestureDetector(
+                              onTap: () {
+                                ref
+                                    .read(LoginController
+                                        .canShowPassword.notifier)
+                                    .state = !canShow;
+                              },
+                              child: Icon(canShow
+                                  ? Icons.visibility
+                                  : Icons.visibility_off),
+                            )),
+                        obscureText: !canShow,
+                        validator: (value) => value == null || value.isEmpty
+                            ? 'Please enter password!'
+                            : null,
+                        onChanged: (value) => password = value,
+                        onSaved: (newValue) => password = newValue,
+                      ),
+                      SizedBox(height: 10),
+                      Row(
+                        children: [
+                          Checkbox(
+                            value: isChecked,
+                            onChanged: (val) {
                               ref
-                                  .read(
-                                      LoginController.canShowPassword.notifier)
-                                  .state = !canShow;
+                                  .read(LoginController.isChecked.notifier)
+                                  .state = val ?? false;
                             },
-                            child: Icon(canShow
-                                ? Icons.visibility
-                                : Icons.visibility_off),
-                          )),
-                      obscureText: !canShow,
-                      validator: (value) => value == null || value.isEmpty
-                          ? 'Please enter password!'
-                          : null,
-                      onChanged: (value) => password = value,
-                      onSaved: (newValue) => password = newValue,
-                    ),
-                    SizedBox(height: 10),
-                    Row(
-                      children: [
-                        Checkbox(
-                          value: isChecked,
-                          onChanged: (val) {
-                            ref.read(LoginController.isChecked.notifier).state =
-                                val ?? false;
-                          },
-                        ),
-                        SizedBox(width: 6),
-                        Expanded(
-                          child: Text.rich(
-                            TextSpan(text: 'I agreed to the ', children: [
-                              TextSpan(
-                                  text: 'Privacy Policy ',
-                                  style: TextStyle(color: Colors.blue)),
-                              TextSpan(text: 'and '),
-                              TextSpan(
-                                  text: 'Terms & Conditions.',
-                                  style: TextStyle(color: Colors.blue)),
-                            ]),
+                          ),
+                          SizedBox(width: 6),
+                          Expanded(
+                            child: Text.rich(
+                              TextSpan(text: 'I agreed to the ', children: [
+                                TextSpan(
+                                    text: 'Privacy Policy ',
+                                    style: TextStyle(color: Colors.blue)),
+                                TextSpan(text: 'and '),
+                                TextSpan(
+                                    text: 'Terms & Conditions.',
+                                    style: TextStyle(color: Colors.blue)),
+                              ]),
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 10),
+                      SizedBox(
+                        width: double.infinity,
+                        child: FilledButton(
+                          onPressed: isLoading || !isChecked ? null : login,
+                          child: Text(
+                            'Login',
+                            style: TextStyle(
+                                color: isLoading || !isChecked
+                                    ? Colors.black54
+                                    : null),
                           ),
                         ),
-                      ],
-                    ),
-                    SizedBox(height: 10),
-                    SizedBox(
-                      width: double.infinity,
-                      child: FilledButton(
-                        onPressed: isLoading || !isChecked ? null : login,
-                        child: Text('Login'),
                       ),
-                    ),
-                    SizedBox(height: 15),
-                  ],
+                      SizedBox(height: 15),
+                    ],
+                  ),
                 ),
               ),
             ),

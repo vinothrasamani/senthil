@@ -1,4 +1,3 @@
-import 'package:another_flutter_splash_screen/another_flutter_splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
@@ -8,45 +7,73 @@ import 'package:senthil/view/home_screen.dart';
 import 'package:senthil/view/login_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class SplashScreen extends ConsumerWidget {
+class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
+  @override
+  ConsumerState<ConsumerStatefulWidget> createState() => _SplashScreenState();
+}
+
+class _SplashScreenState extends ConsumerState<SplashScreen>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _animation;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  void initState() {
+    _controller =
+        AnimationController(vsync: this, duration: Duration(seconds: 4))
+          ..forward();
+    _animation = Tween<double>(begin: 0.05, end: 1.0).animate(_controller);
+    loadScreen();
+    super.initState();
+  }
+
+  void loadScreen() async {
+    await Future.delayed(Duration(seconds: 4), () async {
+      late SharedPreferences preferences;
+      preferences = await SharedPreferences.getInstance();
+      var data = preferences.getString('user');
+      if (data != null) {
+        final user = loginModelFromJson(data);
+        ref.read(LoginController.userProvider.notifier).state = user;
+        Get.offAll(() => HomeScreen(), transition: Transition.zoom);
+      } else {
+        Get.offAll(() => LoginScreen(), transition: Transition.zoom);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text('Senthil Group of Schools',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-          SizedBox(
-            height: 200,
-            child: FlutterSplashScreen.scale(
-              asyncNavigationCallback: () async {
-                await Future.delayed(Duration(seconds: 4), () async {
-                  late SharedPreferences preferences;
-                  preferences = await SharedPreferences.getInstance();
-                  var data = preferences.getString('user');
-                  if (data != null) {
-                    final user = loginModelFromJson(data);
-                    ref.read(LoginController.userProvider.notifier).state =
-                        user;
-                    Get.offAll(() => HomeScreen(), transition: Transition.zoom);
-                  } else {
-                    Get.offAll(() => LoginScreen(),
-                        transition: Transition.zoom);
-                  }
-                });
+      body: SizedBox(
+        width: double.infinity,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text('Senthil Group of Schools',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            AnimatedBuilder(
+              animation: _animation,
+              builder: (context, child) {
+                return Transform.scale(
+                  scale: _animation.value,
+                  child: Image.asset(
+                    'assets/images/logo.png',
+                    width: 200,
+                    height: 200,
+                  ),
+                );
               },
-              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-              animationDuration: Duration(seconds: 3),
-              childWidget: SizedBox(
-                  height: 200,
-                  width: 200,
-                  child: Image.asset('assets/images/logo.png')),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

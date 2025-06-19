@@ -11,6 +11,27 @@ class AppDrawer extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.watch(LoginController.userProvider);
+    final schools = ['Public School', 'Metric School'];
+    final menuItems = [
+      'Comparison',
+      'Topper List',
+      'Topper List Image',
+      'Consistency',
+      'Question & M.Scheme',
+      'Feedback View',
+      'Staff Details',
+      'Exam Upload Details'
+    ];
+    final menuIcons = [
+      Icons.compare,
+      Icons.view_list,
+      Icons.image,
+      Icons.person,
+      Icons.question_mark,
+      Icons.feedback,
+      Icons.person_3_rounded,
+      Icons.question_answer
+    ];
 
     return Drawer(
       child: ListView(
@@ -38,6 +59,28 @@ class AppDrawer extends ConsumerWidget {
               ],
             ),
           ),
+          for (var school in schools)
+            ExpansionTile(
+              title: Row(
+                children: [
+                  SizedBox(
+                    width: 30,
+                    child: Text(school[0].toUpperCase(),
+                        style: TextStyle(fontSize: 24, color: Colors.blue)),
+                  ),
+                  Text(school),
+                ],
+              ),
+              children: [
+                for (var item in menuItems)
+                  ListTile(
+                    leading: Icon(
+                      menuIcons[menuItems.indexOf(item)],
+                    ),
+                    title: Text(item),
+                  ),
+              ],
+            ),
           ListTile(
             leading: Icon(TablerIcons.settings),
             title: Text('Settings'),

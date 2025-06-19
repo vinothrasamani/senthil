@@ -70,12 +70,13 @@ class AppController {
   }
 
   static String convertToCurrency(String amount) {
+    final amt = num.parse(amount);
     final formatter = NumberFormat.currency(
       locale: 'en_IN',
-      symbol: '₹ ',
       name: 'INR',
+      symbol: '₹ ',
       decimalDigits: 0,
     );
-    return formatter.format(amount);
+    return formatter.format(amt);
   }
 }
