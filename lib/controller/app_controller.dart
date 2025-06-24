@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:senthil/controller/theme_controller.dart';
 
 enum Purpose { success, fail }
 
@@ -79,4 +81,12 @@ class AppController {
     );
     return formatter.format(amt);
   }
+
+  static Widget heading(String text, bool isDark) => Text(
+        text,
+        style: GoogleFonts.poppins(
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
+            color: isDark ? Colors.blue : baseColor),
+      );
 }

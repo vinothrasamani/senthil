@@ -1,13 +1,242 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:senthil/controller/app_controller.dart';
+import 'package:senthil/controller/theme_controller.dart';
+import 'package:senthil/controller/topper_list_controller.dart';
+import 'package:senthil/shimmer/comparison_shimmer.dart';
 
-class TopperListScreen extends StatelessWidget {
-  const TopperListScreen({super.key});
+class TopperListScreen extends ConsumerStatefulWidget {
+  const TopperListScreen(
+      {super.key, required this.index, required this.userId});
+  final int index;
+  final int userId;
+
+  @override
+  ConsumerState<TopperListScreen> createState() => _TopperListScreenState();
+}
+
+class _TopperListScreenState extends ConsumerState<TopperListScreen> {
+  final formKey = GlobalKey<FormState>();
+  String? selectedClass, selectedYear, selectedCourse, selectedRefGroup;
+  String? selectedExam, selectedStmGroup, selectedCrGroup;
+  Object? data;
+
+  @override
+  void initState() {
+    TopperListController.setDataTop(ref, 'years-top', {'index': widget.index});
+    super.initState();
+  }
+
+  void search() async {
+    ref.read(TopperListController.searchingTop.notifier).state = true;
+    selectedStmGroup ??= "All";
+    selectedRefGroup ??= "All";
+    selectedCrGroup ??= "All";
+    data = {
+      "academic_year": selectedYear,
+      "exam_name": selectedExam,
+      "class_name": selectedClass,
+      "subject_name": '',
+      "coursegroup": selectedCrGroup,
+      "streamgroup": selectedStmGroup,
+      "refgroup": selectedRefGroup,
+      "course": selectedCourse,
+      "index": widget.index,
+      "userId": widget.userId
+    };
+  }
 
   @override
   Widget build(BuildContext context) {
+    bool isDark = ref.watch(ThemeController.themeMode) == ThemeMode.dark;
+    Size size = MediaQuery.of(context).size;
+
     return Scaffold(
       appBar: AppBar(
-        title: Text('Topper List'),
+        title: Text('${widget.index == 0 ? 'CBSE' : "Metric"} School'),
+      ),
+      body: SafeArea(
+        child: ListView(
+          shrinkWrap: true,
+          padding: EdgeInsets.all(10),
+          children: [
+            if (ref.watch(TopperListController.yearsTop).isNotEmpty)
+              Form(
+                key: formKey,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    AppController.heading('search', isDark),
+                    SizedBox(height: 10),
+                    Wrap(
+                      spacing: 5,
+                      children: [
+                        DropdownButtonFormField<String>(
+                          value: selectedYear,
+                          items: ref
+                              .watch(TopperListController.yearsTop)
+                              .map((e) => DropdownMenuItem<String>(
+                                  value: e ?? '', child: Text(e ?? 'None')))
+                              .toList(),
+                          decoration: InputDecoration(
+                              labelText: 'Year',
+                              prefixIcon: Icon(Icons.date_range)),
+                          onChanged: (val) {
+                            selectedYear = val;
+                            selectedClass = null;
+                            selectedCourse = null;
+                            selectedCrGroup = null;
+                            selectedExam = null;
+                            selectedStmGroup = null;
+                            TopperListController.setDataTop(
+                                ref, 'classes-top', {
+                              'index': widget.index,
+                              'userId': widget.userId
+                            });
+                          },
+                        ),
+                        SizedBox(height: 10),
+                        DropdownButtonFormField<String>(
+                          value: selectedClass,
+                          items: ref
+                              .watch(TopperListController.classesTop)
+                              .map((e) => DropdownMenuItem<String>(
+                                  value: e ?? '', child: Text(e ?? 'None')))
+                              .toList(),
+                          decoration: InputDecoration(
+                              labelText: 'Class',
+                              prefixIcon: Icon(Icons.class_)),
+                          onChanged: (val) {
+                            selectedClass = val;
+                            selectedCourse = null;
+                            selectedCrGroup = null;
+                            selectedExam = null;
+                            selectedStmGroup = null;
+                            TopperListController.setDataTop(ref, 'exams-top', {
+                              'index': widget.index,
+                              'className': val,
+                              'userId': widget.userId
+                            });
+                            if (selectedClass == "XI" ||
+                                selectedClass == "XI*" ||
+                                selectedClass == "XII" ||
+                                selectedClass == "XII*") {
+                              ref
+                                  .read(TopperListController.canAddTop.notifier)
+                                  .state = true;
+                            } else {
+                              ref
+                                  .read(TopperListController.canAddTop.notifier)
+                                  .state = false;
+                            }
+                          },
+                        ),
+                        SizedBox(height: 10),
+                        DropdownButtonFormField<String>(
+                          value: selectedExam,
+                          items: ref
+                              .watch(TopperListController.examsTop)
+                              .map((e) => DropdownMenuItem<String>(
+                                  value: e ?? '', child: Text(e ?? 'None')))
+                              .toList(),
+                          decoration: InputDecoration(
+                              labelText: 'Exam',
+                              prefixIcon: Icon(Icons.insert_drive_file)),
+                          onChanged: (val) {
+                            selectedExam = val;
+                            selectedStmGroup = null;
+                            selectedCourse = null;
+                            selectedCrGroup = null;
+                            TopperListController.setDataTop(
+                                ref, 'courses-top', {
+                              'index': widget.index,
+                              'className': selectedClass,
+                              'userId': widget.userId
+                            });
+                            TopperListController.setDataTop(
+                                ref, 'course-group-top', {
+                              'index': widget.index,
+                              'className': selectedClass,
+                              'exam': selectedExam,
+                              'userId': widget.userId
+                            });
+                            TopperListController.setDataTop(
+                                ref, 'stream-group-top', {
+                              'index': widget.index,
+                              'userId': widget.userId
+                            });
+                          },
+                        ),
+                        if (ref.watch(TopperListController.canAddTop)) ...[
+                          SizedBox(height: 10),
+                          DropdownButtonFormField<String>(
+                            value: selectedCrGroup,
+                            items: ref
+                                .watch(TopperListController.coursegroupsTop)
+                                .map((e) => DropdownMenuItem<String>(
+                                    value: e ?? '', child: Text(e ?? 'None')))
+                                .toList(),
+                            decoration: InputDecoration(
+                                labelText: 'Course Group',
+                                prefixIcon: Icon(Icons.group)),
+                            onChanged: (val) {
+                              selectedCrGroup = val;
+                            },
+                          ),
+                          SizedBox(height: 10),
+                          DropdownButtonFormField<String>(
+                            value: selectedStmGroup,
+                            items: ref
+                                .watch(TopperListController.streamgroupsTop)
+                                .map((e) => DropdownMenuItem<String>(
+                                    value: e ?? '', child: Text(e ?? 'None')))
+                                .toList(),
+                            decoration: InputDecoration(
+                                labelText: 'stream group',
+                                prefixIcon: Icon(Icons.group)),
+                            onChanged: (val) {
+                              selectedStmGroup = val;
+                            },
+                          ),
+                        ],
+                        SizedBox(height: 10),
+                        DropdownButtonFormField<String>(
+                          value: selectedCourse,
+                          items: ref
+                              .watch(TopperListController.coursesTop)
+                              .map((e) => DropdownMenuItem<String>(
+                                  value: e ?? '', child: Text(e ?? 'None')))
+                              .toList(),
+                          decoration: InputDecoration(
+                              labelText: 'Course',
+                              prefixIcon: Icon(Icons.golf_course)),
+                          onChanged: (val) {
+                            selectedCourse = val;
+                          },
+                        ),
+                        SizedBox(height: 10),
+                        Builder(builder: (context) {
+                          bool searching =
+                              ref.watch(TopperListController.searchingTop);
+                          return SizedBox(
+                            width: double.infinity,
+                            child: FilledButton(
+                              onPressed: searching ? null : search,
+                              child:
+                                  Text(searching ? 'Searching...' : 'Search'),
+                            ),
+                          );
+                        }),
+                      ],
+                    ),
+                  ],
+                ),
+              )
+            else
+              ComparisonShimmer(isDark: isDark),
+          ],
+        ),
       ),
     );
   }

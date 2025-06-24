@@ -102,13 +102,13 @@ class AppDrawer extends ConsumerWidget {
                             case 0:
                               Get.to(
                                   () => ComparisonScreen(
-                                        index: schoolIndex,
-                                        userId: user.data.id,
-                                      ),
+                                      index: schoolIndex, userId: user.data.id),
                                   transition: Transition.zoom);
                               break;
                             case 1:
-                              Get.to(() => TopperListScreen(),
+                              Get.to(
+                                  () => TopperListScreen(
+                                      index: schoolIndex, userId: user.data.id),
                                   transition: Transition.zoom);
                               break;
                             case 2:
