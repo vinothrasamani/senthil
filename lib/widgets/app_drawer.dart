@@ -2,15 +2,26 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:senthil/controller/login_controller.dart';
+import 'package:senthil/controller/theme_controller.dart';
 import 'package:senthil/view/app_settings.dart';
+import 'package:senthil/view/comparison_screen.dart';
+import 'package:senthil/view/consistency_screen.dart';
+import 'package:senthil/view/exam_upload_details_screen.dart';
+import 'package:senthil/view/feedback_screen.dart';
+import 'package:senthil/view/question_screen.dart';
+import 'package:senthil/view/staff_details_screen.dart';
+import 'package:senthil/view/topper_list_image_screen.dart';
+import 'package:senthil/view/topper_list_screen.dart';
 
 class AppDrawer extends ConsumerWidget {
   const AppDrawer({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final user = ref.watch(LoginController.userProvider);
+    final user = ref.read(LoginController.userProvider);
+    final isDark = ref.watch(ThemeController.themeMode) == ThemeMode.dark;
     final schools = ['Public School', 'Metric School'];
     final menuItems = [
       'Comparison',
@@ -60,27 +71,78 @@ class AppDrawer extends ConsumerWidget {
             ),
           ),
           for (var school in schools)
-            ExpansionTile(
-              title: Row(
-                children: [
-                  SizedBox(
-                    width: 30,
-                    child: Text(school[0].toUpperCase(),
-                        style: TextStyle(fontSize: 24, color: Colors.blue)),
-                  ),
-                  Text(school),
-                ],
-              ),
-              children: [
-                for (var item in menuItems)
-                  ListTile(
-                    leading: Icon(
-                      menuIcons[menuItems.indexOf(item)],
+            Builder(builder: (context) {
+              final schoolIndex = schools.indexOf(school);
+              return ExpansionTile(
+                title: Row(
+                  children: [
+                    SizedBox(
+                      width: 30,
+                      child: Text(
+                        school[0].toUpperCase(),
+                        style: GoogleFonts.poppins(
+                            fontSize: 24,
+                            color: isDark ? Colors.blue : baseColor,
+                            fontWeight: FontWeight.bold),
+                      ),
                     ),
-                    title: Text(item),
-                  ),
-              ],
-            ),
+                    Text(school),
+                  ],
+                ),
+                children: [
+                  for (var item in menuItems)
+                    Builder(builder: (context) {
+                      final index = menuItems.indexOf(item);
+                      return ListTile(
+                        leading: Icon(menuIcons[index]),
+                        title: Text(item),
+                        onTap: () {
+                          Get.back();
+                          switch (index) {
+                            case 0:
+                              Get.to(
+                                  () => ComparisonScreen(
+                                        index: schoolIndex,
+                                        userId: user.data.id,
+                                      ),
+                                  transition: Transition.zoom);
+                              break;
+                            case 1:
+                              Get.to(() => TopperListScreen(),
+                                  transition: Transition.zoom);
+                              break;
+                            case 2:
+                              Get.to(() => TopperListImageScreen(),
+                                  transition: Transition.zoom);
+                              break;
+                            case 3:
+                              Get.to(() => ConsistencyScreen(),
+                                  transition: Transition.zoom);
+                              break;
+                            case 4:
+                              Get.to(() => QuestionScreen(),
+                                  transition: Transition.zoom);
+                              break;
+                            case 5:
+                              Get.to(() => FeedbackScreen(),
+                                  transition: Transition.zoom);
+                              break;
+                            case 6:
+                              Get.to(() => StaffDetailsScreen(),
+                                  transition: Transition.zoom);
+                              break;
+                            case 7:
+                              Get.to(() => ExamUploadDetailsScreen(),
+                                  transition: Transition.zoom);
+                              break;
+                            default:
+                          }
+                        },
+                      );
+                    }),
+                ],
+              );
+            }),
           ListTile(
             leading: Icon(TablerIcons.settings),
             title: Text('Settings'),

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 Color baseColor = const Color.fromARGB(255, 0, 27, 177);
+Color secoundary = const Color.fromARGB(255, 182, 0, 167);
 
 class ThemeController {
   static FilledButtonThemeData filledButtonThemeData = FilledButtonThemeData(
@@ -11,12 +12,13 @@ class ThemeController {
       backgroundBuilder: (context, states, child) => Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(8),
-          color:
-              states.contains(WidgetState.disabled) ? Colors.grey.withAlpha(60) : null,
+          color: states.contains(WidgetState.disabled)
+              ? Colors.grey.withAlpha(60)
+              : null,
           gradient: states.contains(WidgetState.disabled)
               ? null
               : LinearGradient(
-                  colors: [baseColor, const Color.fromARGB(255, 182, 0, 167)],
+                  colors: [baseColor, secoundary],
                   begin: Alignment.topLeft,
                   end: Alignment.topRight),
         ),
@@ -46,6 +48,7 @@ class ThemeController {
     filledButtonTheme: filledButtonThemeData,
     appBarTheme: appBarTheme,
     outlinedButtonTheme: outlinedButtonThemeData,
+    inputDecorationTheme: InputDecorationTheme(border: OutlineInputBorder()),
   );
 
   static ThemeData darkTheme = ThemeData(
@@ -57,6 +60,7 @@ class ThemeController {
     filledButtonTheme: filledButtonThemeData,
     appBarTheme: appBarTheme,
     outlinedButtonTheme: outlinedButtonThemeData,
+    inputDecorationTheme: InputDecorationTheme(border: OutlineInputBorder()),
   );
 
   static final themeMode = StateProvider<ThemeMode>((ref) => ThemeMode.light);
