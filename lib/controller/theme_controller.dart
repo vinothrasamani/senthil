@@ -13,7 +13,7 @@ class ThemeController {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(8),
           color: states.contains(WidgetState.disabled)
-              ? Colors.grey.withAlpha(60)
+              ? Colors.grey
               : null,
           gradient: states.contains(WidgetState.disabled)
               ? null

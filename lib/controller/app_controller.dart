@@ -17,11 +17,15 @@ final Map<Purpose, Color> messagePurpose = {
 class AppController {
   //--------------------- colors -----------------------
   static final lightBlue = Colors.lightBlue;
-  static final headColor = const Color.fromARGB(255, 182, 0, 152);
+  static final headColor = const Color.fromARGB(255, 219, 0, 183);
   static final darkGreen = const Color.fromARGB(255, 4, 124, 0);
+  static final yellow = const Color.fromARGB(255, 243, 188, 8);
+  static final red = const Color.fromARGB(255, 199, 31, 1);
   //-------------------- For an API --------------------
-  static final String baseUrl = 'https://senthil.ijessi.com';
+  static final String baseUrl = 'https://stest.ijessi.com';
   static final String baseApiUrl = '$baseUrl/api';
+  static final String basefileUrl = '$baseUrl/public/pdf';
+  static final String baseImageUrl = '$baseUrl/public/images';
 
   static Future<dynamic> fetch(String endPoint) async {
     final url = Uri.parse('$baseApiUrl/$endPoint');

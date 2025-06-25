@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:senthil/controller/app_controller.dart';
-import 'package:senthil/model/search_comparison_model.dart';
+import 'package:senthil/model/class_topper_list_model.dart';
 
 class TopperListController {
   static final yearsTop = StateProvider.autoDispose<List<dynamic>>((ref) => []);
@@ -52,10 +52,19 @@ class TopperListController {
     }
   }
 
-  static final tableData =
-      FutureProvider.family<SearchComparisonModel, Object>((ref, data) async {
-    final res = await AppController.send('comparison-search', data);
+  static final classTopperData =
+      FutureProvider.family<ClassTopperListModel, Object>((ref, data) async {
+    print('Start!');
+    final res = await AppController.send('topper-list-search', data);
     ref.read(searchingTop.notifier).state = false;
-    return searchComparisonModelFromJson(res);
+    print(res);
+    return classTopperListModelFromJson(res);
+  });
+
+  static final subjectTopperData =
+      FutureProvider.family<ClassTopperListModel, Object>((ref, data) async {
+    final res = await AppController.send('topper-list-search', data);
+    ref.read(searchingTop.notifier).state = false;
+    return classTopperListModelFromJson(res);
   });
 }

@@ -55,6 +55,160 @@ class _ComparisonScreen extends ConsumerState<ComparisonScreen> {
     final listener =
         data == null ? null : ref.watch(ComparisonController.tableData(data!));
 
+    List<Widget> dropdownList = [
+      DropdownButtonFormField<String>(
+        value: selectedYear,
+        items: ref
+            .watch(ComparisonController.years)
+            .map((e) => DropdownMenuItem<String>(
+                value: e ?? '', child: Text(e ?? 'None')))
+            .toList(),
+        decoration: InputDecoration(
+            labelText: 'Year', prefixIcon: Icon(Icons.date_range)),
+        onChanged: (val) {
+          selectedYear = val;
+          selectedClass = null;
+          selectedCourse = null;
+          selectedCrGroup = null;
+          selectedExam = null;
+          selectedStmGroup = null;
+          selectedRefGroup = null;
+          ComparisonController.setData(
+              ref, 'classes', {'index': widget.index, 'userId': widget.userId});
+        },
+      ),
+      DropdownButtonFormField<String>(
+        value: selectedClass,
+        items: ref
+            .watch(ComparisonController.classes)
+            .map((e) => DropdownMenuItem<String>(
+                value: e ?? '', child: Text(e ?? 'None')))
+            .toList(),
+        decoration:
+            InputDecoration(labelText: 'Class', prefixIcon: Icon(Icons.class_)),
+        onChanged: (val) {
+          selectedClass = val;
+          selectedCourse = null;
+          selectedCrGroup = null;
+          selectedExam = null;
+          selectedStmGroup = null;
+          selectedRefGroup = null;
+          ComparisonController.setData(ref, 'exams', {
+            'index': widget.index,
+            'className': val,
+            'userId': widget.userId
+          });
+          if (selectedClass == "XI" ||
+              selectedClass == "XI*" ||
+              selectedClass == "XII" ||
+              selectedClass == "XII*") {
+            ref.read(ComparisonController.canAdd.notifier).state = true;
+          } else {
+            ref.read(ComparisonController.canAdd.notifier).state = false;
+          }
+        },
+      ),
+      DropdownButtonFormField<String>(
+        value: selectedExam,
+        items: ref
+            .watch(ComparisonController.exams)
+            .map((e) => DropdownMenuItem<String>(
+                value: e ?? '', child: Text(e ?? 'None')))
+            .toList(),
+        decoration: InputDecoration(
+            labelText: 'Exam', prefixIcon: Icon(Icons.insert_drive_file)),
+        onChanged: (val) {
+          selectedExam = val;
+          selectedStmGroup = null;
+          selectedRefGroup = null;
+          selectedCourse = null;
+          selectedCrGroup = null;
+          ComparisonController.setData(ref, 'courses', {
+            'index': widget.index,
+            'className': selectedClass,
+            'userId': widget.userId
+          });
+          ComparisonController.setData(ref, 'course-group', {
+            'index': widget.index,
+            'className': selectedClass,
+            'exam': selectedExam,
+            'userId': widget.userId
+          });
+          ComparisonController.setData(ref, 'stream-group',
+              {'index': widget.index, 'userId': widget.userId});
+          ComparisonController.setData(ref, 'ref-group', {
+            'index': widget.index,
+            'className': selectedClass,
+            'userId': widget.userId
+          });
+        },
+      ),
+      if (ref.watch(ComparisonController.canAdd)) ...[
+        DropdownButtonFormField<String>(
+          value: selectedCrGroup,
+          items: ref
+              .watch(ComparisonController.coursegroups)
+              .map((e) => DropdownMenuItem<String>(
+                  value: e ?? '', child: Text(e ?? 'None')))
+              .toList(),
+          decoration: InputDecoration(
+              labelText: 'Course Group', prefixIcon: Icon(Icons.group)),
+          onChanged: (val) {
+            selectedCrGroup = val;
+          },
+        ),
+        DropdownButtonFormField<String>(
+          value: selectedStmGroup,
+          items: ref
+              .watch(ComparisonController.streamgroups)
+              .map((e) => DropdownMenuItem<String>(
+                  value: e ?? '', child: Text(e ?? 'None')))
+              .toList(),
+          decoration: InputDecoration(
+              labelText: 'stream group', prefixIcon: Icon(Icons.group)),
+          onChanged: (val) {
+            selectedStmGroup = val;
+          },
+        ),
+        DropdownButtonFormField<String>(
+          value: selectedRefGroup,
+          items: ref
+              .watch(ComparisonController.refgroups)
+              .map((e) => DropdownMenuItem<String>(
+                  value: e ?? '', child: Text(e ?? 'None')))
+              .toList(),
+          decoration: InputDecoration(
+              labelText: 'Ref Group', prefixIcon: Icon(Icons.group)),
+          onChanged: (val) {
+            selectedRefGroup = val;
+          },
+        ),
+      ],
+      DropdownButtonFormField<String>(
+        value: selectedCourse,
+        items: ref
+            .watch(ComparisonController.courses)
+            .map((e) => DropdownMenuItem<String>(
+                value: e ?? '', child: Text(e ?? 'None')))
+            .toList(),
+        decoration: InputDecoration(
+            labelText: 'Course', prefixIcon: Icon(Icons.golf_course)),
+        onChanged: (val) {
+          selectedCourse = val;
+        },
+      ),
+      Builder(builder: (context) {
+        bool searching = ref.watch(ComparisonController.searching);
+        return SizedBox(
+          width: double.infinity,
+          child: FilledButton(
+            onPressed: searching ? null : search,
+            child: Text(searching ? 'Searching...' : 'Search'),
+          ),
+        );
+      }),
+    ];
+
     return Scaffold(
       appBar: AppBar(
           title: Text(
@@ -75,183 +229,17 @@ class _ComparisonScreen extends ConsumerState<ComparisonScreen> {
                     SizedBox(height: 10),
                     Wrap(
                       spacing: 5,
-                      children: [
-                        DropdownButtonFormField<String>(
-                          value: selectedYear,
-                          items: ref
-                              .watch(ComparisonController.years)
-                              .map((e) => DropdownMenuItem<String>(
-                                  value: e ?? '', child: Text(e ?? 'None')))
-                              .toList(),
-                          decoration: InputDecoration(
-                              labelText: 'Year',
-                              prefixIcon: Icon(Icons.date_range)),
-                          onChanged: (val) {
-                            selectedYear = val;
-                            selectedClass = null;
-                            selectedCourse = null;
-                            selectedCrGroup = null;
-                            selectedExam = null;
-                            selectedStmGroup = null;
-                            selectedRefGroup = null;
-                            ComparisonController.setData(ref, 'classes', {
-                              'index': widget.index,
-                              'userId': widget.userId
-                            });
-                          },
-                        ),
-                        SizedBox(height: 10),
-                        DropdownButtonFormField<String>(
-                          value: selectedClass,
-                          items: ref
-                              .watch(ComparisonController.classes)
-                              .map((e) => DropdownMenuItem<String>(
-                                  value: e ?? '', child: Text(e ?? 'None')))
-                              .toList(),
-                          decoration: InputDecoration(
-                              labelText: 'Class',
-                              prefixIcon: Icon(Icons.class_)),
-                          onChanged: (val) {
-                            selectedClass = val;
-                            selectedCourse = null;
-                            selectedCrGroup = null;
-                            selectedExam = null;
-                            selectedStmGroup = null;
-                            selectedRefGroup = null;
-                            ComparisonController.setData(ref, 'exams', {
-                              'index': widget.index,
-                              'className': val,
-                              'userId': widget.userId
-                            });
-                            if (selectedClass == "XI" ||
-                                selectedClass == "XI*" ||
-                                selectedClass == "XII" ||
-                                selectedClass == "XII*") {
-                              ref
-                                  .read(ComparisonController.canAdd.notifier)
-                                  .state = true;
-                            } else {
-                              ref
-                                  .read(ComparisonController.canAdd.notifier)
-                                  .state = false;
-                            }
-                          },
-                        ),
-                        SizedBox(height: 10),
-                        DropdownButtonFormField<String>(
-                          value: selectedExam,
-                          items: ref
-                              .watch(ComparisonController.exams)
-                              .map((e) => DropdownMenuItem<String>(
-                                  value: e ?? '', child: Text(e ?? 'None')))
-                              .toList(),
-                          decoration: InputDecoration(
-                              labelText: 'Exam',
-                              prefixIcon: Icon(Icons.insert_drive_file)),
-                          onChanged: (val) {
-                            selectedExam = val;
-                            selectedStmGroup = null;
-                            selectedRefGroup = null;
-                            selectedCourse = null;
-                            selectedCrGroup = null;
-                            ComparisonController.setData(ref, 'courses', {
-                              'index': widget.index,
-                              'className': selectedClass,
-                              'userId': widget.userId
-                            });
-                            ComparisonController.setData(ref, 'course-group', {
-                              'index': widget.index,
-                              'className': selectedClass,
-                              'exam': selectedExam,
-                              'userId': widget.userId
-                            });
-                            ComparisonController.setData(ref, 'stream-group', {
-                              'index': widget.index,
-                              'userId': widget.userId
-                            });
-                            ComparisonController.setData(ref, 'ref-group', {
-                              'index': widget.index,
-                              'className': selectedClass,
-                              'userId': widget.userId
-                            });
-                          },
-                        ),
-                        if (ref.watch(ComparisonController.canAdd)) ...[
-                          SizedBox(height: 10),
-                          DropdownButtonFormField<String>(
-                            value: selectedCrGroup,
-                            items: ref
-                                .watch(ComparisonController.coursegroups)
-                                .map((e) => DropdownMenuItem<String>(
-                                    value: e ?? '', child: Text(e ?? 'None')))
-                                .toList(),
-                            decoration: InputDecoration(
-                                labelText: 'Course Group',
-                                prefixIcon: Icon(Icons.group)),
-                            onChanged: (val) {
-                              selectedCrGroup = val;
-                            },
-                          ),
-                          SizedBox(height: 10),
-                          DropdownButtonFormField<String>(
-                            value: selectedStmGroup,
-                            items: ref
-                                .watch(ComparisonController.streamgroups)
-                                .map((e) => DropdownMenuItem<String>(
-                                    value: e ?? '', child: Text(e ?? 'None')))
-                                .toList(),
-                            decoration: InputDecoration(
-                                labelText: 'stream group',
-                                prefixIcon: Icon(Icons.group)),
-                            onChanged: (val) {
-                              selectedStmGroup = val;
-                            },
-                          ),
-                          SizedBox(height: 10),
-                          DropdownButtonFormField<String>(
-                            value: selectedRefGroup,
-                            items: ref
-                                .watch(ComparisonController.refgroups)
-                                .map((e) => DropdownMenuItem<String>(
-                                    value: e ?? '', child: Text(e ?? 'None')))
-                                .toList(),
-                            decoration: InputDecoration(
-                                labelText: 'Ref Group',
-                                prefixIcon: Icon(Icons.group)),
-                            onChanged: (val) {
-                              selectedRefGroup = val;
-                            },
-                          ),
-                        ],
-                        SizedBox(height: 10),
-                        DropdownButtonFormField<String>(
-                          value: selectedCourse,
-                          items: ref
-                              .watch(ComparisonController.courses)
-                              .map((e) => DropdownMenuItem<String>(
-                                  value: e ?? '', child: Text(e ?? 'None')))
-                              .toList(),
-                          decoration: InputDecoration(
-                              labelText: 'Course',
-                              prefixIcon: Icon(Icons.golf_course)),
-                          onChanged: (val) {
-                            selectedCourse = val;
-                          },
-                        ),
-                        SizedBox(height: 10),
-                        Builder(builder: (context) {
-                          bool searching =
-                              ref.watch(ComparisonController.searching);
-                          return SizedBox(
-                            width: double.infinity,
-                            child: FilledButton(
-                              onPressed: searching ? null : search,
-                              child:
-                                  Text(searching ? 'Searching...' : 'Search'),
-                            ),
-                          );
-                        }),
-                      ],
+                      runSpacing: 10,
+                      children: dropdownList
+                          .map((child) => SizedBox(
+                                width: size.width < 500
+                                    ? null
+                                    : size.width < 850
+                                        ? (size.width / 2) - 15
+                                        : (size.width / 3) - 15,
+                                child: child,
+                              ))
+                          .toList(),
                     ),
                   ],
                 ),
@@ -278,11 +266,12 @@ class _ComparisonScreen extends ConsumerState<ComparisonScreen> {
                       children: [
                         Text(
                           'Note : Class / Course / Stream / Group',
-                          style: TextStyle(fontSize: 12),
+                          style: TextStyle(fontSize: 12, color: Colors.grey),
                         ),
                         Text.rich(
                           TextSpan(
                             text: 'Comparison of Result for class ',
+                            style: TextStyle(fontWeight: FontWeight.bold),
                             children: [
                               TextSpan(
                                   text:
