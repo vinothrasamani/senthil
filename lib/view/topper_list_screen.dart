@@ -1,12 +1,11 @@
-import 'package:expansion_tile_group/expansion_tile_group.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:senthil/controller/app_controller.dart';
 import 'package:senthil/controller/theme_controller.dart';
 import 'package:senthil/controller/topper_list_controller.dart';
-import 'package:senthil/model/class_topper_list_model.dart';
 import 'package:senthil/shimmer/comparison_shimmer.dart';
+import 'package:senthil/widgets/class_topper_card.dart';
+import 'package:senthil/widgets/topper_list/subject_topper_table.dart';
 
 class TopperListScreen extends ConsumerStatefulWidget {
   const TopperListScreen(
@@ -188,135 +187,6 @@ class _TopperListScreenState extends ConsumerState<TopperListScreen> {
       }),
     ];
 
-    Widget myRow(ListElement item, int index) => Builder(builder: (context) {
-          String link = item.filename;
-          TextStyle style1 = TextStyle(color: link.isEmpty ? null : baseColor);
-          return GestureDetector(
-            onTap: () {},
-            child: Padding(
-              padding: const EdgeInsets.all(5.0),
-              child: Row(
-                children: [
-                  Container(
-                    width: 20,
-                    height: 20,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                        color: AppController.darkGreen,
-                        borderRadius: BorderRadius.circular(5)),
-                    child: Text(
-                      (index + 1).toString(),
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ),
-                  SizedBox(width: 8),
-                  Text(item.subjectName, style: style1),
-                  SizedBox(width: 8),
-                  Spacer(),
-                  Text(item.value.toStringAsFixed(1), style: style1)
-                ],
-              ),
-            ),
-          );
-        });
-
-    Widget topperContent(ClassTopperListModel snap) => DefaultTabController(
-          length: snap.data.clsToppers.length,
-          child: Card(
-            child: Padding(
-              padding: const EdgeInsets.all(5.0),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  TabBar(
-                    // isScrollable: true,
-                    // tabAlignment: TabAlignment.start,
-                    labelStyle:
-                        TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                    labelColor: AppController.headColor,
-                    indicatorColor: AppController.darkGreen,
-                    dividerColor: Colors.grey.withAlpha(30),
-                    tabs: [
-                      for (var topper in snap.data.clsToppers)
-                        Tab(text: topper.school)
-                    ],
-                  ),
-                  SizedBox(
-                    height: size.height * 0.7,
-                    child: TabBarView(children: [
-                      for (var topper in snap.data.clsToppers)
-                        ListView(
-                          children: [
-                            for (var data in topper.details)
-                              Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Container(
-                                    width: double.infinity,
-                                    padding: EdgeInsets.all(8),
-                                    margin: EdgeInsets.all(5),
-                                    decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(6),
-                                        color: baseColor.withAlpha(50)),
-                                    child: Text(
-                                      'Rank ${data.rank}',
-                                      textAlign: TextAlign.center,
-                                      style: GoogleFonts.poppins(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  ),
-                                  for (var details in data.topper)
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 2, horizontal: 5),
-                                      child: ExpansionTileItem.outlined(
-                                        title:
-                                            Text(details.list[0].studentName),
-                                        leading: CircleAvatar(
-                                          backgroundColor:
-                                              baseColor.withAlpha(150),
-                                          backgroundImage: NetworkImage(details
-                                                  .list[0].photo.isEmpty
-                                              ? '${AppController.baseImageUrl}/placeholder.jpg'
-                                              : '${AppController.basefileUrl}/${details.list[0].photo}'),
-                                        ),
-                                        children: [
-                                          for (var item in details.list)
-                                            myRow(item,
-                                                details.list.indexOf(item)),
-                                          SizedBox(height: 10),
-                                          Container(
-                                            width: double.infinity,
-                                            padding: EdgeInsets.all(8),
-                                            decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(6),
-                                                border: Border.all(
-                                                    color: AppController.red)),
-                                            child: Text(
-                                              details.list[0].subjectTeacher,
-                                              textAlign: TextAlign.center,
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  color: AppController.red),
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                    )
-                                ],
-                              )
-                          ],
-                        ),
-                    ]),
-                  )
-                ],
-              ),
-            ),
-          ),
-        );
-
     return Scaffold(
       appBar: AppBar(
         title:
@@ -363,18 +233,88 @@ class _TopperListScreenState extends ConsumerState<TopperListScreen> {
               listener == null
                   ? SizedBox(
                       height: 200,
-                      child: Center(
-                        child: Text('Search to Continue!'),
-                      ),
+                      child:
+                          Center(child: Text('Search to get class toppers!')),
                     )
                   : listener.when(
                       data: (snap) {
-                        return topperContent(snap);
+                        bool isTheOne = selectedClass == 'XI' ||
+                            selectedClass == 'XI*' ||
+                            selectedClass == 'XII' ||
+                            selectedClass == 'XII*';
+
+                        TextStyle style = TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: AppController.darkGreen);
+
+                        Widget commonText = Text.rich(
+                          TextSpan(
+                            text: 'Comparison of Result for class ',
+                            children: [
+                              TextSpan(text: '$selectedClass ', style: style),
+                              TextSpan(text: 'for '),
+                              TextSpan(text: '$selectedExam ', style: style),
+                              TextSpan(text: '/ Exam for '),
+                              TextSpan(text: '$selectedYear', style: style),
+                            ],
+                          ),
+                        );
+
+                        return Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            if (isTheOne)
+                              Column(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Note : (ClassName / Course / Stream / Group)',
+                                    style: TextStyle(
+                                        color: Colors.grey, fontSize: 12),
+                                  ),
+                                  Text.rich(
+                                    TextSpan(
+                                      text: 'Comparison of Result for class ',
+                                      children: [
+                                        TextSpan(
+                                            text: '$selectedClass ',
+                                            style: style),
+                                        TextSpan(text: '/'),
+                                        TextSpan(
+                                            text: '$selectedCrGroup ',
+                                            style: style),
+                                        TextSpan(text: 'for '),
+                                        TextSpan(
+                                            text: '$selectedExam ',
+                                            style: style),
+                                        TextSpan(text: '/ Exam for '),
+                                        TextSpan(
+                                            text: '$selectedYear',
+                                            style: style),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              )
+                            else
+                              commonText,
+                            ClassTopperCard(snap: snap),
+                            SizedBox(height: 20),
+                            AppController.heading(
+                                'Subject Wise Topper List', isDark),
+                            SizedBox(height: 10),
+                            commonText,
+                            SizedBox(height: 10),
+                            if (snap.data.subToppers.schools.isNotEmpty)
+                              SubjectTopperTable(snap: snap),
+                          ],
+                        );
                       },
                       error: (e, _) => SizedBox(
                         height: 200,
-                        child: Center(
-                            child: Text('Failed to fetch. Try again Later!')),
+                        child: Center(child: Text('Something went wrong! $e')),
                       ),
                       loading: () => SizedBox(
                         height: 200,

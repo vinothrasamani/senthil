@@ -1,8 +1,10 @@
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:get/get.dart';
 import 'package:senthil/controller/app_controller.dart';
-import 'package:senthil/model/class_topper_list_model.dart';
+import 'package:senthil/model/topper_list_model.dart';
 
 class TopperListController {
   static final yearsTop = StateProvider.autoDispose<List<dynamic>>((ref) => []);
@@ -53,18 +55,38 @@ class TopperListController {
   }
 
   static final classTopperData =
-      FutureProvider.family<ClassTopperListModel, Object>((ref, data) async {
-    print('Start!');
+      FutureProvider.family<TopperListModel, Object>((ref, data) async {
     final res = await AppController.send('topper-list-search', data);
     ref.read(searchingTop.notifier).state = false;
-    print(res);
-    return classTopperListModelFromJson(res);
+    return topperListModelFromJson(res);
   });
 
-  static final subjectTopperData =
-      FutureProvider.family<ClassTopperListModel, Object>((ref, data) async {
-    final res = await AppController.send('topper-list-search', data);
-    ref.read(searchingTop.notifier).state = false;
-    return classTopperListModelFromJson(res);
-  });
+  static void openImage(BuildContext context, String image) async {
+    await showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog.adaptive(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 200,
+              height: 200,
+              decoration:
+                  BoxDecoration(borderRadius: BorderRadius.circular(10)),
+              clipBehavior: Clip.hardEdge,
+              child: Image.network(image, fit: BoxFit.cover),
+            ),
+            SizedBox(height: 2),
+            SizedBox(
+              width: double.infinity,
+              child: FilledButton(
+                  onPressed: () => Get.back(), child: Text('Cloase')),
+            )
+          ],
+        ),
+        contentPadding: EdgeInsets.all(2),
+      ),
+    );
+  }
 }
