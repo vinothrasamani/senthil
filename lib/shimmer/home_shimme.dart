@@ -80,11 +80,18 @@ class HomeShimmer extends StatelessWidget {
                   ),
           );
         } else {
-          return Padding(
-            padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 10),
+          return Container(
+            margin: EdgeInsets.all(5),
+            padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 5),
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: Colors.grey)),
             child: Column(
               children: [
-                for (var i = 0; i < 5; i++) shimmer(130, null, 5),
+                ListTile(
+                    leading: CircleAvatar(child: shimmer(60, 60)),
+                    title: shimmer(20, null)),
+                for (var i = 0; i < 5; i++) shimmer(80, null, 5),
               ],
             ),
           );

@@ -4,7 +4,7 @@ import 'package:senthil/controller/app_controller.dart';
 import 'package:senthil/controller/theme_controller.dart';
 import 'package:senthil/controller/topper_list_controller.dart';
 import 'package:senthil/shimmer/comparison_shimmer.dart';
-import 'package:senthil/widgets/class_topper_card.dart';
+import 'package:senthil/widgets/topper_list/class_topper_card.dart';
 import 'package:senthil/widgets/topper_list/subject_topper_table.dart';
 
 class TopperListScreen extends ConsumerStatefulWidget {
@@ -213,7 +213,7 @@ class _TopperListScreenState extends ConsumerState<TopperListScreen> {
                           .map((child) => SizedBox(
                                 width: size.width < 500
                                     ? null
-                                    : size.width < 850
+                                    : size.width < 1020
                                         ? (size.width / 2) - 15
                                         : (size.width / 3) - 15,
                                 child: child,

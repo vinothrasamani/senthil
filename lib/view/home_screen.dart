@@ -1,9 +1,11 @@
+import 'package:expansion_tile_group/expansion_tile_group.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:senthil/controller/app_controller.dart';
 import 'package:senthil/controller/home_controller.dart';
 import 'package:senthil/controller/login_controller.dart';
 import 'package:senthil/controller/theme_controller.dart';
+import 'package:senthil/model/dashboard_model.dart';
 import 'package:senthil/shimmer/home_shimme.dart';
 import 'package:senthil/widgets/app_drawer.dart';
 import 'package:transparent_image/transparent_image.dart';
@@ -29,67 +31,82 @@ class HomeScreen extends ConsumerWidget {
       'Balance'
     ];
 
-    List<Widget> cardList(schools) => [
-          for (var item in schools.data)
-            Card(
-              color: Theme.of(context).scaffoldBackgroundColor,
-              child: ExpansionTile(
-                showTrailingIcon: false,
-                title: Column(
-                  children: [
-                    Row(
+    Widget amountCard(String title, TextStyle style, String amt) => Padding(
+          padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
+          child: Row(
+            children: [
+              Expanded(child: Text(title, style: style)),
+              SizedBox(width: 10),
+              Text(AppController.convertToCurrency(amt), style: style),
+            ],
+          ),
+        );
+
+    List<Widget> cardList(DashboardModel banner) => [
+          for (var item in banner.data)
+            Builder(builder: (context) {
+              final index = 3;
+              return Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 5),
+                child: Builder(builder: (context) {
+                  TextStyle style =
+                      TextStyle(fontSize: 15, fontWeight: FontWeight.bold);
+                  return ExpansionTileItem.outlined(
+                    isHasTrailing: false,
+                    title: Column(
                       children: [
-                        Expanded(child: Text(item.name)),
-                        SizedBox(width: 8),
-                        Icon(Icons.arrow_drop_down)
+                        Row(
+                          children: [
+                            Expanded(child: Text(item.school.name)),
+                            SizedBox(width: 8),
+                            Icon(Icons.arrow_drop_down)
+                          ],
+                        ),
+                        SizedBox(height: 10),
                       ],
                     ),
-                    SizedBox(height: 10),
-                  ],
-                ),
-                subtitle: Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        amounttitles[0],
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.bold),
-                      ),
+                    subtitle: Row(
+                      children: [
+                        Expanded(
+                            child: Text(amounttitles[index], style: style)),
+                        SizedBox(width: 10),
+                        Text(
+                            AppController.convertToCurrency(switch (index) {
+                              0 => item.banner.targetamount.toString(),
+                              1 => item.banner.concussionamount.toString(),
+                              2 => item.banner.netamount.toString(),
+                              3 => item.banner.paidamount.toString(),
+                              4 => item.banner.exclusionamount.toString(),
+                              5 => item.banner.balanceamount.toString(),
+                              _ => '00',
+                            }),
+                            style: style),
+                      ],
                     ),
-                    SizedBox(width: 10),
-                    Text(
-                      AppController.convertToCurrency('345745435'),
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                    ),
-                  ],
-                ),
-                children: [
-                  for (var i = 1; i < amounttitles.length; i++)
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 6, horizontal: 20),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              amounttitles[i],
-                              style: TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                          SizedBox(width: 10),
-                          Text(
-                            AppController.convertToCurrency('${i * 345}'),
-                            style: TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.bold),
-                          ),
-                        ],
-                      ),
-                    ),
-                ],
-              ),
-            ),
+                    children: [
+                      if (index != 0)
+                        amountCard(amounttitles[0], style,
+                            item.banner.targetamount.toString()),
+                      if (index != 1)
+                        amountCard(amounttitles[1], style,
+                            item.banner.concussionamount.toString()),
+                      if (index != 2)
+                        amountCard(amounttitles[2], style,
+                            item.banner.netamount.toString()),
+                      if (index != 3)
+                        amountCard(amounttitles[3], style,
+                            item.banner.paidamount.toString()),
+                      if (index != 4)
+                        amountCard(amounttitles[4], style,
+                            item.banner.exclusionamount.toString()),
+                      if (index != 5)
+                        amountCard(amounttitles[5], style,
+                            item.banner.balanceamount.toString()),
+                    ],
+                  );
+                }),
+              );
+            }),
         ];
 
     return Scaffold(
@@ -169,7 +186,7 @@ class HomeScreen extends ConsumerWidget {
               loading: () => HomeShimmer(isDark: isDark, id: 1),
             ),
             listenBanner.when(
-                data: (schools) {
+                data: (banner) {
                   return Padding(
                     padding: const EdgeInsets.all(5.0),
                     child: Card(
@@ -196,12 +213,12 @@ class HomeScreen extends ConsumerWidget {
                             ),
                           ),
                           if (size.width < 800)
-                            ...cardList(schools)
+                            ...cardList(banner)
                           else
                             LayoutBuilder(builder: (context, cons) {
                               return Wrap(
                                 spacing: 5,
-                                children: cardList(schools)
+                                children: cardList(banner)
                                     .map((card) => SizedBox(
                                           width: (cons.maxWidth / 2) - 15,
                                           child: card,

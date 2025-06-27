@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:senthil/controller/app_controller.dart';
 import 'package:senthil/controller/login_controller.dart';
 import 'package:senthil/controller/theme_controller.dart';
 import 'package:senthil/view/app_settings.dart';
@@ -73,22 +74,15 @@ class AppDrawer extends ConsumerWidget {
           for (var school in schools)
             Builder(builder: (context) {
               final schoolIndex = schools.indexOf(school);
+
               return ExpansionTile(
-                title: Row(
-                  children: [
-                    SizedBox(
-                      width: 30,
-                      child: Text(
-                        school[0].toUpperCase(),
-                        style: GoogleFonts.poppins(
-                            fontSize: 24,
-                            color: isDark ? Colors.blue : baseColor,
-                            fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    Text(school),
-                  ],
-                ),
+                leading: Text(school[0].toUpperCase(),
+                    style: GoogleFonts.poppins(
+                        fontSize: 24,
+                        color: isDark ? Colors.blue : baseColor,
+                        fontWeight: FontWeight.bold)),
+                textColor: AppController.headColor,
+                title: Text(school),
                 children: [
                   for (var item in menuItems)
                     Builder(builder: (context) {
