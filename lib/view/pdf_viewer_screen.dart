@@ -3,16 +3,15 @@ import 'package:senthil/controller/app_controller.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
 class PdfViewerScreen extends StatelessWidget {
-  const PdfViewerScreen({super.key, required this.pdfName});
-  final String pdfName;
+  const PdfViewerScreen({super.key, required this.fileName});
+  final String fileName;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(pdfName.split('_').last),
-      ),
-      body: SfPdfViewer.network('${AppController.basefileUrl}/$pdfName'),
-    );
+        appBar: AppBar(
+          title: Text(fileName),
+        ),
+        body: SfPdfViewer.network('${AppController.basefileUrl}/$fileName'));
   }
 }

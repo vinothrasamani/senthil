@@ -210,14 +210,16 @@ class _ComparisonScreen extends ConsumerState<ComparisonScreen> {
     ];
 
     return Scaffold(
-      appBar: AppBar(
-          title: Text(
-              '${widget.index == 0 ? 'CBSE' : 'Metric'} School Comparison')),
+      appBar: AppBar(title: Text('School Comparison')),
       body: SafeArea(
         child: ListView(
           shrinkWrap: true,
           padding: EdgeInsets.all(10),
           children: [
+            if (ref.watch(ComparisonController.years).isNotEmpty)
+              AppController.animatedTitle(
+                  '${widget.index == 0 ? 'CBSE' : "Metric"} School', isDark),
+            SizedBox(height: 10),
             if (ref.watch(ComparisonController.years).isNotEmpty)
               Form(
                 key: formkey,

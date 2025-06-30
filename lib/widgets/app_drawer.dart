@@ -106,7 +106,9 @@ class AppDrawer extends ConsumerWidget {
                                   transition: Transition.zoom);
                               break;
                             case 2:
-                              Get.to(() => TopperListImageScreen(),
+                              Get.to(
+                                  () => TopperListImageScreen(
+                                      index: schoolIndex, userId: user.data.id),
                                   transition: Transition.zoom);
                               break;
                             case 3:

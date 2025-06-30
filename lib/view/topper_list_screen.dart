@@ -188,15 +188,16 @@ class _TopperListScreenState extends ConsumerState<TopperListScreen> {
     ];
 
     return Scaffold(
-      appBar: AppBar(
-        title:
-            Text('${widget.index == 0 ? 'CBSE' : "Metric"} School Topper List'),
-      ),
+      appBar: AppBar(title: Text('Topper List')),
       body: SafeArea(
         child: ListView(
           shrinkWrap: true,
           padding: EdgeInsets.all(10),
           children: [
+            if (ref.watch(TopperListController.yearsTop).isNotEmpty)
+              AppController.animatedTitle(
+                  '${widget.index == 0 ? 'CBSE' : "Metric"} School', isDark),
+            SizedBox(height: 10),
             if (ref.watch(TopperListController.yearsTop).isNotEmpty)
               Form(
                 key: formKey,
@@ -300,7 +301,7 @@ class _TopperListScreenState extends ConsumerState<TopperListScreen> {
                               )
                             else
                               commonText,
-                            ClassTopperCard(snap: snap),
+                            ClassTopperCard(snap: snap, isDark: isDark),
                             SizedBox(height: 20),
                             AppController.heading(
                                 'Subject Wise Topper List', isDark),
@@ -308,13 +309,13 @@ class _TopperListScreenState extends ConsumerState<TopperListScreen> {
                             commonText,
                             SizedBox(height: 10),
                             if (snap.data.subToppers.schools.isNotEmpty)
-                              SubjectTopperTable(snap: snap),
+                              SubjectTopperTable(snap: snap, isDark: isDark),
                           ],
                         );
                       },
                       error: (e, _) => SizedBox(
                         height: 200,
-                        child: Center(child: Text('Something went wrong! $e')),
+                        child: Center(child: Text('Something went wrong!')),
                       ),
                       loading: () => SizedBox(
                         height: 200,

@@ -9,8 +9,9 @@ import 'package:senthil/model/topper_list_model.dart';
 import 'package:senthil/view/pdf_viewer_screen.dart';
 
 class ClassTopperCard extends StatelessWidget {
-  const ClassTopperCard({super.key, required this.snap});
+  const ClassTopperCard({super.key, required this.snap, required this.isDark});
   final TopperListModel snap;
+  final bool isDark;
 
   @override
   Widget build(BuildContext context) {
@@ -18,11 +19,16 @@ class ClassTopperCard extends StatelessWidget {
 
     Widget myRow(TopDatum item, int index) => Builder(builder: (context) {
           String link = item.filename;
-          TextStyle style1 = TextStyle(color: link.isEmpty ? null : baseColor);
+          TextStyle style1 = TextStyle(
+              color: link.isEmpty
+                  ? null
+                  : isDark
+                      ? AppController.lightBlue
+                      : baseColor);
           return InkWell(
             onTap: () {
               if (link.isNotEmpty) {
-                Get.to(() => PdfViewerScreen(pdfName: link),
+                Get.to(() => PdfViewerScreen(fileName: link),
                     transition: Transition.zoom);
               }
             },
@@ -126,7 +132,10 @@ class ClassTopperCard extends StatelessWidget {
                                                 onTap: () =>
                                                     TopperListController
                                                         .openImage(
-                                                            context, image),
+                                                            context,
+                                                            image,
+                                                            details.list[0]
+                                                                .studentName),
                                                 child: CircleAvatar(
                                                   backgroundColor:
                                                       baseColor.withAlpha(150),

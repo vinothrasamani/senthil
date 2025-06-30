@@ -70,17 +70,27 @@ class HomeScreen extends ConsumerWidget {
                         Expanded(
                             child: Text(amounttitles[index], style: style)),
                         SizedBox(width: 10),
-                        Text(
-                            AppController.convertToCurrency(switch (index) {
-                              0 => item.banner.targetamount.toString(),
-                              1 => item.banner.concussionamount.toString(),
-                              2 => item.banner.netamount.toString(),
-                              3 => item.banner.paidamount.toString(),
-                              4 => item.banner.exclusionamount.toString(),
-                              5 => item.banner.balanceamount.toString(),
-                              _ => '00',
-                            }),
-                            style: style),
+                        Builder(builder: (context) {
+                          final amt = int.parse(switch (index) {
+                            0 => item.banner.targetamount.toString(),
+                            1 => item.banner.concussionamount.toString(),
+                            2 => item.banner.netamount.toString(),
+                            3 => item.banner.paidamount.toString(),
+                            4 => item.banner.exclusionamount.toString(),
+                            5 => item.banner.balanceamount.toString(),
+                            _ => '00',
+                          });
+
+                          return TweenAnimationBuilder<int>(
+                              duration: Duration(seconds: 3),
+                              tween: IntTween(
+                                  begin: amt > 50 ? amt - 50 : amt, end: amt),
+                              builder: (context, value, child) {
+                                return Text(
+                                    AppController.convertToCurrency('$value'),
+                                    style: style);
+                              });
+                        }),
                       ],
                     ),
                     children: [
