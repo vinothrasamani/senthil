@@ -112,7 +112,9 @@ class AppDrawer extends ConsumerWidget {
                                   transition: Transition.zoom);
                               break;
                             case 3:
-                              Get.to(() => ConsistencyScreen(),
+                              Get.to(
+                                  () => ConsistencyScreen(
+                                      index: schoolIndex, userId: user.data.id),
                                   transition: Transition.zoom);
                               break;
                             case 4:

@@ -18,7 +18,7 @@ class SettingsController {
     await Get.dialog(
       AlertDialog(
         title: Text(
-          'Loging Out..',
+          'Logging Out..',
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
         content: Text('Make sure do you wanna continue!'),

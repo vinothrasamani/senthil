@@ -116,7 +116,7 @@ class AppController {
             fontWeight: FontWeight.bold,
             shadows: [
               Shadow(
-                  color: isDark ? baseColor : lightBlue,
+                  color: isDark ? baseColor : Colors.grey.withAlpha(200),
                   blurRadius: 4,
                   offset: Offset(3, 4))
             ],
