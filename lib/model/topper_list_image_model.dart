@@ -131,10 +131,10 @@ class TopperListImageListElement {
   int ord;
   String year;
   String sectionGroup;
-  String filename;
+  dynamic filename;
   String subjectTeacher;
   String adminno;
-  String photo;
+  dynamic photo;
   String toppertype;
   int rank;
   int subord;

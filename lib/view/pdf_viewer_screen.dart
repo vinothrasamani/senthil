@@ -9,9 +9,15 @@ class PdfViewerScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text(fileName),
+      appBar: AppBar(
+        title: Text(fileName),
+      ),
+      body: ScrollConfiguration(
+        behavior: ScrollBehavior().copyWith(overscroll: false),
+        child: SfPdfViewer.network(
+          '${AppController.basefileUrl}/$fileName',
         ),
-        body: SfPdfViewer.network('${AppController.basefileUrl}/$fileName'));
+      ),
+    );
   }
 }

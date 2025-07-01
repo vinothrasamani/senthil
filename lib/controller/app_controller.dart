@@ -43,6 +43,7 @@ class AppController {
     final res = await http.post(url,
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(object));
+    print(res.body);
     if (res.statusCode == 200) {
       return res.body;
     } else {

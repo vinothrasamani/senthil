@@ -130,7 +130,7 @@ class ClassTopperImageCard extends StatelessWidget {
                     margin: EdgeInsets.all(5),
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(6),
-                        color: baseColor.withAlpha(50)),
+                        color: baseColor.withAlpha(isDark ? 100 : 50)),
                     child: Text(
                       'Rank ${data.rank}',
                       textAlign: TextAlign.center,

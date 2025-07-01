@@ -87,7 +87,7 @@ class TopperListController {
               width: double.infinity,
               child: FilledButton(
                   onPressed: () => Get.back(), child: Text('Cloase')),
-            )
+            ),
           ],
         ),
         contentPadding: EdgeInsets.all(2),
@@ -96,7 +96,7 @@ class TopperListController {
   }
 
   static void listDocs(
-      BuildContext context, List<TopDatum> list, bool isDark) async {
+      BuildContext context, List<dynamic> list, bool isDark) async {
     await showModalBottomSheet(
       context: context,
       showDragHandle: true,

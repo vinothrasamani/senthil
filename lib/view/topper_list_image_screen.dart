@@ -5,6 +5,7 @@ import 'package:senthil/controller/theme_controller.dart';
 import 'package:senthil/controller/topper_list_controller.dart';
 import 'package:senthil/shimmer/comparison_shimmer.dart';
 import 'package:senthil/widgets/topper_list-image/class_topper_image_card.dart';
+import 'package:senthil/widgets/topper_list-image/subject_topper_image_table.dart';
 
 class TopperListImageScreen extends ConsumerStatefulWidget {
   const TopperListImageScreen(
@@ -32,9 +33,9 @@ class _TopperListImageScreenState extends ConsumerState<TopperListImageScreen> {
 
   void search() async {
     ref.read(TopperListController.searchingTop.notifier).state = true;
-    selectedStmGroup ??= "All";
-    selectedRefGroup ??= "All";
-    selectedCrGroup ??= "All";
+    selectedStmGroup ??= "None";
+    selectedRefGroup ??= "None";
+    selectedCrGroup ??= "None";
     data = {
       "index": widget.index,
       "year": selectedYear,
@@ -211,135 +212,140 @@ class _TopperListImageScreenState extends ConsumerState<TopperListImageScreen> {
         title: Text('Topper List Image'),
       ),
       body: SafeArea(
-          child: ListView(
-        shrinkWrap: true,
-        padding: EdgeInsets.all(10),
-        children: [
-          if (ref.watch(TopperListController.yearsTop).isNotEmpty)
-            AppController.animatedTitle(
-                '${widget.index == 0 ? 'CBSE' : "Metric"} School', isDark),
-          SizedBox(height: 10),
-          if (ref.watch(TopperListController.yearsTop).isNotEmpty)
-            Form(
-              key: formKey,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  AppController.heading('search', isDark),
-                  SizedBox(height: 10),
-                  Wrap(
-                    spacing: 5,
-                    runSpacing: 10,
-                    children: dropdownList
-                        .map((child) => SizedBox(
-                              width: size.width < 500
-                                  ? null
-                                  : size.width < 1020
-                                      ? (size.width / 2) - 15
-                                      : (size.width / 3) - 15,
-                              child: child,
-                            ))
-                        .toList(),
-                  ),
-                ],
-              ),
-            )
-          else
-            ComparisonShimmer(isDark: isDark),
-          SizedBox(height: 30),
-          if (ref.watch(TopperListController.yearsTop).isNotEmpty)
-            AppController.heading('Class Topper List', isDark),
-          SizedBox(height: 10),
-          if (ref.watch(TopperListController.yearsTop).isNotEmpty)
-            listener == null
-                ? SizedBox(
-                    height: 200,
-                    child: Center(child: Text('Search to get class toppers!')),
-                  )
-                : listener.when(
-                    data: (snap) {
-                      bool isTheOne = selectedClass == 'XI' ||
-                          selectedClass == 'XI*' ||
-                          selectedClass == 'XII' ||
-                          selectedClass == 'XII*';
+        child: ListView(
+          shrinkWrap: true,
+          padding: EdgeInsets.all(10),
+          children: [
+            if (ref.watch(TopperListController.yearsTop).isNotEmpty)
+              AppController.animatedTitle(
+                  '${widget.index == 0 ? 'CBSE' : "Metric"} School', isDark),
+            SizedBox(height: 10),
+            if (ref.watch(TopperListController.yearsTop).isNotEmpty)
+              Form(
+                key: formKey,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    AppController.heading('search', isDark),
+                    SizedBox(height: 10),
+                    Wrap(
+                      spacing: 5,
+                      runSpacing: 10,
+                      children: dropdownList
+                          .map((child) => SizedBox(
+                                width: size.width < 500
+                                    ? null
+                                    : size.width < 1020
+                                        ? (size.width / 2) - 15
+                                        : (size.width / 3) - 15,
+                                child: child,
+                              ))
+                          .toList(),
+                    ),
+                  ],
+                ),
+              )
+            else
+              ComparisonShimmer(isDark: isDark),
+            SizedBox(height: 30),
+            if (ref.watch(TopperListController.yearsTop).isNotEmpty)
+              AppController.heading('Class Topper List', isDark),
+            SizedBox(height: 10),
+            if (ref.watch(TopperListController.yearsTop).isNotEmpty)
+              listener == null
+                  ? SizedBox(
+                      height: 200,
+                      child:
+                          Center(child: Text('Search to get class toppers!')),
+                    )
+                  : listener.when(
+                      data: (snap) {
+                        bool isTheOne = selectedClass == 'XI' ||
+                            selectedClass == 'XI*' ||
+                            selectedClass == 'XII' ||
+                            selectedClass == 'XII*';
 
-                      TextStyle style = TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: AppController.darkGreen);
+                        TextStyle style = TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: AppController.darkGreen);
 
-                      Widget commonText = Text.rich(
-                        TextSpan(
-                          text: 'Comparison of Result for class ',
+                        Widget commonText = Text.rich(
+                          TextSpan(
+                            text: 'Comparison of Result for class ',
+                            children: [
+                              TextSpan(text: '$selectedClass ', style: style),
+                              TextSpan(text: 'for '),
+                              TextSpan(text: '$selectedExam ', style: style),
+                              TextSpan(text: '/ Exam for '),
+                              TextSpan(text: '$selectedYear', style: style),
+                            ],
+                          ),
+                        );
+
+                        return Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            TextSpan(text: '$selectedClass ', style: style),
-                            TextSpan(text: 'for '),
-                            TextSpan(text: '$selectedExam ', style: style),
-                            TextSpan(text: '/ Exam for '),
-                            TextSpan(text: '$selectedYear', style: style),
-                          ],
-                        ),
-                      );
-
-                      return Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          if (isTheOne)
-                            Column(
-                              mainAxisSize: MainAxisSize.min,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Note : (ClassName / Course / Stream / Group)',
-                                  style: TextStyle(
-                                      color: Colors.grey, fontSize: 12),
-                                ),
-                                Text.rich(
-                                  TextSpan(
-                                    text: 'Comparison of Result for class ',
-                                    children: [
-                                      TextSpan(
-                                          text: '$selectedClass ',
-                                          style: style),
-                                      TextSpan(text: '/'),
-                                      TextSpan(
-                                          text: '$selectedCrGroup ',
-                                          style: style),
-                                      TextSpan(text: 'for '),
-                                      TextSpan(
-                                          text: '$selectedExam ', style: style),
-                                      TextSpan(text: '/ Exam for '),
-                                      TextSpan(
-                                          text: '$selectedYear', style: style),
-                                    ],
+                            if (isTheOne)
+                              Column(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Note : (ClassName / Course / Stream / Group)',
+                                    style: TextStyle(
+                                        color: Colors.grey, fontSize: 12),
                                   ),
-                                ),
-                              ],
-                            )
-                          else
+                                  Text.rich(
+                                    TextSpan(
+                                      text: 'Comparison of Result for class ',
+                                      children: [
+                                        TextSpan(
+                                            text: '$selectedClass ',
+                                            style: style),
+                                        TextSpan(text: '/'),
+                                        TextSpan(
+                                            text: '$selectedCrGroup ',
+                                            style: style),
+                                        TextSpan(text: 'for '),
+                                        TextSpan(
+                                            text: '$selectedExam ',
+                                            style: style),
+                                        TextSpan(text: '/ Exam for '),
+                                        TextSpan(
+                                            text: '$selectedYear',
+                                            style: style),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              )
+                            else
+                              commonText,
+                            ClassTopperImageCard(snap: snap, isDark: isDark),
+                            SizedBox(height: 20),
+                            AppController.heading(
+                                'Subject Wise Topper List', isDark),
+                            SizedBox(height: 10),
                             commonText,
-                          ClassTopperImageCard(snap: snap, isDark: isDark),
-                          SizedBox(height: 20),
-                          AppController.heading(
-                              'Subject Wise Topper List', isDark),
-                          SizedBox(height: 10),
-                          commonText,
-                          SizedBox(height: 10),
-                        ],
-                      );
-                    },
-                    error: (e, _) => SizedBox(
-                      height: 200,
-                      child: Center(child: Text('Something went wrong!')),
+                            SizedBox(height: 10),
+                            SubjectTopperImageTable(snap: snap, isDark: isDark)
+                          ],
+                        );
+                      },
+                      error: (e, _) => SizedBox(
+                        height: 200,
+                        child: Center(child: Text('Something went wrong!')),
+                      ),
+                      loading: () => SizedBox(
+                        height: 200,
+                        child: Center(child: CircularProgressIndicator()),
+                      ),
                     ),
-                    loading: () => SizedBox(
-                      height: 200,
-                      child: Center(child: CircularProgressIndicator()),
-                    ),
-                  ),
-        ],
-      )),
+          ],
+        ),
+      ),
     );
   }
 }
