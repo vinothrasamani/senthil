@@ -12,9 +12,7 @@ class ThemeController {
       backgroundBuilder: (context, states, child) => Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(8),
-          color: states.contains(WidgetState.disabled)
-              ? Colors.grey
-              : null,
+          color: states.contains(WidgetState.disabled) ? Colors.grey : null,
           gradient: states.contains(WidgetState.disabled)
               ? null
               : LinearGradient(

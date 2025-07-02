@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:senthil/controller/app_controller.dart';
 import 'package:senthil/controller/comparison_controller.dart';
 import 'package:senthil/controller/theme_controller.dart';
-import 'package:senthil/shimmer/comparison_shimmer.dart';
+import 'package:senthil/shimmer/search_shimmer.dart';
 
 class ComparisonScreen extends ConsumerStatefulWidget {
   const ComparisonScreen(
@@ -247,7 +247,7 @@ class _ComparisonScreen extends ConsumerState<ComparisonScreen> {
                 ),
               )
             else
-              ComparisonShimmer(isDark: isDark),
+              SearchShimmer(isDark: isDark),
             SizedBox(height: 30),
             if (ref.watch(ComparisonController.years).isNotEmpty)
               AppController.heading('Exam Result Comparison', isDark),

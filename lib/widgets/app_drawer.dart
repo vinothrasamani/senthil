@@ -118,7 +118,9 @@ class AppDrawer extends ConsumerWidget {
                                   transition: Transition.zoom);
                               break;
                             case 4:
-                              Get.to(() => QuestionScreen(),
+                              Get.to(
+                                  () => QuestionScreen(
+                                      index: schoolIndex, userId: user.data.id),
                                   transition: Transition.zoom);
                               break;
                             case 5:

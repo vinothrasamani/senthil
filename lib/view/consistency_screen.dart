@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:senthil/controller/app_controller.dart';
 import 'package:senthil/controller/consistency_controller.dart';
 import 'package:senthil/controller/theme_controller.dart';
-import 'package:senthil/shimmer/comparison_shimmer.dart';
+import 'package:senthil/shimmer/search_shimmer.dart';
 import 'package:senthil/widgets/consistency_table.dart';
 
 class ConsistencyScreen extends ConsumerStatefulWidget {
@@ -209,7 +209,7 @@ class _ConsistencyScreenState extends ConsumerState<ConsistencyScreen> {
                 ),
               )
             else
-              ComparisonShimmer(isDark: isDark),
+              SearchShimmer(isDark: isDark),
             SizedBox(height: 20),
             Divider(),
             if (ref.watch(ConsistencyController.conYears).isNotEmpty)
@@ -272,6 +272,7 @@ class _ConsistencyScreenState extends ConsumerState<ConsistencyScreen> {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
+                                            SizedBox(height: 10),
                                             AppController.heading(
                                                 'Exam Result Student Consistency',
                                                 isDark),

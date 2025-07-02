@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:senthil/controller/app_controller.dart';
 import 'package:senthil/controller/theme_controller.dart';
 import 'package:senthil/controller/topper_list_controller.dart';
-import 'package:senthil/shimmer/comparison_shimmer.dart';
+import 'package:senthil/shimmer/search_shimmer.dart';
 import 'package:senthil/widgets/topper_list-image/class_topper_image_card.dart';
 import 'package:senthil/widgets/topper_list-image/subject_topper_image_table.dart';
 
@@ -247,7 +247,7 @@ class _TopperListImageScreenState extends ConsumerState<TopperListImageScreen> {
                 ),
               )
             else
-              ComparisonShimmer(isDark: isDark),
+              SearchShimmer(isDark: isDark),
             SizedBox(height: 30),
             if (ref.watch(TopperListController.yearsTop).isNotEmpty)
               AppController.heading('Class Topper List', isDark),

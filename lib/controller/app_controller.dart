@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:senthil/controller/theme_controller.dart';
 import 'package:zo_animated_border/zo_animated_border.dart';
 
@@ -90,7 +89,7 @@ class AppController {
 
   static Widget heading(String text, bool isDark) => Text(
         text,
-        style: GoogleFonts.poppins(
+        style: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 18,
             color: isDark ? Colors.blue : baseColor),
@@ -110,7 +109,7 @@ class AppController {
         decoration: BoxDecoration(),
         child: Text(
           val,
-          style: GoogleFonts.poppins(
+          style: TextStyle(
             fontSize: 30,
             color: isDark ? lightBlue : baseColor,
             fontWeight: FontWeight.bold,

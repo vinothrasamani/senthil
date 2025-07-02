@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 
-class ComparisonShimmer extends StatelessWidget {
-  const ComparisonShimmer({super.key, required this.isDark});
+class SearchShimmer extends StatelessWidget {
+  const SearchShimmer({super.key, required this.isDark});
   final bool isDark;
 
   Widget shimmer(double h, double? w, [double p = 0]) {
