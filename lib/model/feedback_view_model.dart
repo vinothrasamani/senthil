@@ -163,7 +163,7 @@ class FeedbackCount {
 class Feedback {
   int id;
   String subject;
-  Questype questype;
+  String questype;
   int show;
 
   Feedback({
@@ -176,21 +176,17 @@ class Feedback {
   factory Feedback.fromJson(Map<String, dynamic> json) => Feedback(
         id: json["id"],
         subject: json["subject"],
-        questype: questypeValues.map[json["questype"]]!,
+        questype: json["questype"],
         show: json["show"],
       );
 
   Map<String, dynamic> toJson() => {
         "id": id,
         "subject": subject,
-        "questype": questypeValues.reverse[questype],
+        "questype": questype,
         "show": show,
       };
 }
-
-enum Questype { COMMON }
-
-final questypeValues = EnumValues({"Common": Questype.COMMON});
 
 class FeedbackTotal {
   int mark;
@@ -265,16 +261,4 @@ class Feedrem {
   Map<String, dynamic> toJson() => {
         "remark": remark,
       };
-}
-
-class EnumValues<T> {
-  Map<String, T> map;
-  late Map<T, String> reverseMap;
-
-  EnumValues(this.map);
-
-  Map<T, String> get reverse {
-    reverseMap = map.map((k, v) => MapEntry(v, k));
-    return reverseMap;
-  }
 }

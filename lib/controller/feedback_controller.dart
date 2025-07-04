@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:senthil/controller/app_controller.dart';
+import 'package:senthil/model/feedback_view_model.dart';
 
 class FeedbackController {
   static final years = StateProvider.autoDispose<List>((ref) => []);
@@ -30,9 +31,9 @@ class FeedbackController {
   }
 
   static final searchData =
-      FutureProvider.family<dynamic, Object>((ref, data) async {
+      FutureProvider.family<FeedbackViewModel, Object>((ref, data) async {
     final res = await AppController.send('search-feedback', data);
     ref.read(searching.notifier).state = false;
-    return (res);
+    return feedbackViewModelFromJson(res);
   });
 }

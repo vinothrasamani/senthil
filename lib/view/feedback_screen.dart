@@ -4,6 +4,7 @@ import 'package:senthil/controller/app_controller.dart';
 import 'package:senthil/controller/feedback_controller.dart';
 import 'package:senthil/controller/theme_controller.dart';
 import 'package:senthil/shimmer/search_shimmer.dart';
+import 'package:senthil/widgets/feedback_view/feedback_details.dart';
 
 class FeedbackScreen extends ConsumerStatefulWidget {
   const FeedbackScreen({super.key, required this.index, required this.userId});
@@ -195,6 +196,7 @@ class _FeedbackScreenState extends ConsumerState<FeedbackScreen> {
               SearchShimmer(isDark: isDark),
             SizedBox(height: 20),
             Divider(),
+            SizedBox(height: 10),
             if (ref.watch(FeedbackController.years).isNotEmpty)
               listener == null
                   ? SizedBox(
@@ -202,7 +204,50 @@ class _FeedbackScreenState extends ConsumerState<FeedbackScreen> {
                       child: Center(child: Text('Search to get Feedback!')),
                     )
                   : listener.when(
-                      data: (snap) => Column(),
+                      data: (snap) {
+                        return DefaultTabController(
+                          length: 2,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              AppController.heading(
+                                  'Student FeedBack ( General ) / $selectedSchool / $selectedClass / $selectedsection / ${snap.data.feedbackStudents.isEmpty ? "Feedback is not available!" : ""}',
+                                  isDark),
+                              SizedBox(height: 10),
+                              TabBar(
+                                labelStyle: TextStyle(
+                                    fontSize: 16, fontWeight: FontWeight.bold),
+                                labelColor: AppController.headColor,
+                                indicatorColor: AppController.darkGreen,
+                                dividerColor: Colors.grey.withAlpha(30),
+                                tabs: [
+                                  Tab(text: 'Feedback Score'),
+                                  Tab(text: 'Optional Feedback'),
+                                ],
+                              ),
+                              SizedBox(
+                                height: size.height * 0.8,
+                                child: TabBarView(
+                                  children: [
+                                    FeedbackDetails(snap: snap, isDark: isDark),
+                                    Builder(builder: (context) {
+                                      return Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          SizedBox(height: 10),
+                                        ],
+                                      );
+                                    }),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
                       error: (e, _) => SizedBox(
                         height: 200,
                         child: Center(child: Text('Something went wrong!')),
