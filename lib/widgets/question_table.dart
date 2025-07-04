@@ -2,6 +2,7 @@ import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:get/get.dart';
+import 'package:senthil/controller/app_controller.dart';
 import 'package:senthil/controller/theme_controller.dart';
 import 'package:senthil/model/question_model.dart';
 import 'package:senthil/view/pdf_viewer_screen.dart';
@@ -45,9 +46,8 @@ class QuestionTable extends StatelessWidget {
           headingRowHeight: 60,
           horizontalMargin: 12,
           minWidth: island ? null : size.width * 4,
-          headingRowColor:
-              WidgetStatePropertyAll(const Color.fromARGB(43, 255, 214, 64)),
-          fixedColumnsColor: const Color.fromARGB(40, 255, 214, 64),
+          headingRowColor: WidgetStatePropertyAll(AppController.tableColor),
+          fixedColumnsColor: AppController.tableColor,
           dataRowHeight: 60,
           fixedLeftColumns: 2,
           fixedTopRows: 1,

@@ -41,9 +41,8 @@ class ConsistencyTable extends StatelessWidget {
           headingRowHeight: 68,
           horizontalMargin: 12,
           minWidth: size.width * snap.data.exams.length,
-          headingRowColor:
-              WidgetStatePropertyAll(const Color.fromARGB(43, 255, 214, 64)),
-          fixedColumnsColor: const Color.fromARGB(40, 255, 214, 64),
+          headingRowColor: WidgetStatePropertyAll(AppController.tableColor),
+          fixedColumnsColor: AppController.tableColor,
           dataRowHeight: 60,
           fixedLeftColumns: 1,
           fixedTopRows: 1,

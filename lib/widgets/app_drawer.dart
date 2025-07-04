@@ -124,7 +124,9 @@ class AppDrawer extends ConsumerWidget {
                                   transition: Transition.zoom);
                               break;
                             case 5:
-                              Get.to(() => FeedbackScreen(),
+                              Get.to(
+                                  () => FeedbackScreen(
+                                      index: schoolIndex, userId: user.data.id),
                                   transition: Transition.zoom);
                               break;
                             case 6:

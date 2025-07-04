@@ -21,6 +21,7 @@ class AppController {
   static final darkGreen = const Color.fromARGB(255, 4, 124, 0);
   static final yellow = const Color.fromARGB(255, 243, 188, 8);
   static final red = const Color.fromARGB(255, 199, 31, 1);
+  static final tableColor = headColor.withAlpha(40);
   //-------------------- For an API --------------------
   static final String baseUrl = 'https://stest.ijessi.com';
   static final String baseApiUrl = '$baseUrl/api';

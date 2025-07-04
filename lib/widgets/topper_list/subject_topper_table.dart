@@ -22,9 +22,8 @@ class SubjectTopperTable extends StatelessWidget {
         border: TableBorder.all(color: Colors.grey),
         columnSpacing: 12,
         horizontalMargin: 12,
-        headingRowColor:
-            WidgetStatePropertyAll(const Color.fromARGB(43, 255, 214, 64)),
-        fixedColumnsColor: const Color.fromARGB(40, 255, 214, 64),
+        headingRowColor: WidgetStatePropertyAll(AppController.tableColor),
+        fixedColumnsColor: AppController.tableColor,
         fixedLeftColumns: 1,
         fixedTopRows: 1,
         columns: [
