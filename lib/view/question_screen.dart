@@ -69,7 +69,7 @@ class _QuestionScreenState extends ConsumerState<QuestionScreen> {
                 value: e ?? '', child: Text(e ?? 'None')))
             .toList(),
         decoration: InputDecoration(
-            labelText: 'Exam', prefixIcon: Icon(Icons.date_range)),
+            labelText: 'Exam', prefixIcon: Icon(Icons.insert_drive_file)),
         onChanged: (val) {
           selectedExam = val;
           selectedClass = null;
@@ -82,8 +82,8 @@ class _QuestionScreenState extends ConsumerState<QuestionScreen> {
             .map((e) => DropdownMenuItem<String>(
                 value: e ?? '', child: Text(e ?? 'None')))
             .toList(),
-        decoration: InputDecoration(
-            labelText: 'Class', prefixIcon: Icon(Icons.date_range)),
+        decoration:
+            InputDecoration(labelText: 'Class', prefixIcon: Icon(Icons.class_)),
         onChanged: (val) {
           selectedClass = val;
         },

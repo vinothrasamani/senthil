@@ -98,29 +98,23 @@ class AppController {
 
   static Widget animatedTitle(String val, bool isDark) {
     return ZoAnimatedGradientBorder(
-      gradientColor: [baseColor, headColor],
+      gradientColor: [headColor, baseColor],
       glowOpacity: 0.05,
-      borderThickness: 2,
+      borderThickness: 5,
       duration: Duration(seconds: 2),
-      borderRadius: 10,
+      borderRadius: 5,
       child: Container(
         width: double.infinity,
         alignment: Alignment.center,
-        padding: EdgeInsets.all(8),
-        decoration: BoxDecoration(),
+        padding: EdgeInsets.symmetric(vertical: 5),
+        decoration: BoxDecoration(
+          color: headColor,
+          borderRadius: BorderRadius.circular(5),
+        ),
         child: Text(
           val,
           style: TextStyle(
-            fontSize: 30,
-            color: isDark ? lightBlue : baseColor,
-            fontWeight: FontWeight.bold,
-            shadows: [
-              Shadow(
-                  color: isDark ? baseColor : Colors.grey.withAlpha(200),
-                  blurRadius: 4,
-                  offset: Offset(3, 4))
-            ],
-          ),
+              fontSize: 22, color: Colors.white, fontWeight: FontWeight.bold),
         ),
       ),
     );

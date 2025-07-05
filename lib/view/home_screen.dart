@@ -82,7 +82,7 @@ class HomeScreen extends ConsumerWidget {
                           });
 
                           return TweenAnimationBuilder<int>(
-                              duration: Duration(seconds: 3),
+                              duration: Duration(seconds: 2),
                               tween: IntTween(
                                   begin: amt > 50 ? amt - 50 : amt, end: amt),
                               builder: (context, value, child) {

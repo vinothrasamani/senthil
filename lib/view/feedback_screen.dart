@@ -5,6 +5,7 @@ import 'package:senthil/controller/feedback_controller.dart';
 import 'package:senthil/controller/theme_controller.dart';
 import 'package:senthil/shimmer/search_shimmer.dart';
 import 'package:senthil/widgets/feedback_view/feedback_details.dart';
+import 'package:senthil/widgets/feedback_view/optional_feedback.dart';
 
 class FeedbackScreen extends ConsumerStatefulWidget {
   const FeedbackScreen({super.key, required this.index, required this.userId});
@@ -231,16 +232,7 @@ class _FeedbackScreenState extends ConsumerState<FeedbackScreen> {
                                 child: TabBarView(
                                   children: [
                                     FeedbackDetails(snap: snap, isDark: isDark),
-                                    Builder(builder: (context) {
-                                      return Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          SizedBox(height: 10),
-                                        ],
-                                      );
-                                    }),
+                                    OptionalFeedback(isDark: isDark, snap: snap)
                                   ],
                                 ),
                               ),

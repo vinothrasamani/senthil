@@ -6,9 +6,7 @@ class StaffDetailsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Staff Details'),
-      ),
+      appBar: AppBar(title: Text('Staff Details')),
     );
   }
 }

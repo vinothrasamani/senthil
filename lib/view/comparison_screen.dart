@@ -113,7 +113,14 @@ class _ComparisonScreen extends ConsumerState<ComparisonScreen> {
         items: ref
             .watch(ComparisonController.exams)
             .map((e) => DropdownMenuItem<String>(
-                value: e ?? '', child: Text(e ?? 'None')))
+                value: e ?? '',
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(maxWidth: 250),
+                  child: Text(
+                    e ?? 'None',
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                )))
             .toList(),
         decoration: InputDecoration(
             labelText: 'Exam', prefixIcon: Icon(Icons.insert_drive_file)),
@@ -298,9 +305,8 @@ class _ComparisonScreen extends ConsumerState<ComparisonScreen> {
                               minWidth:
                                   size.width * searchData.data.subjects.length,
                               headingRowColor: WidgetStatePropertyAll(
-                                  const Color.fromARGB(43, 255, 214, 64)),
-                              fixedColumnsColor:
-                                  const Color.fromARGB(40, 255, 214, 64),
+                                  AppController.tableColor),
+                              fixedColumnsColor: AppController.tableColor,
                               fixedLeftColumns: 1,
                               fixedTopRows: 1,
                               columns: [
