@@ -125,7 +125,6 @@ class _QuestionScreenState extends ConsumerState<QuestionScreen> {
               Form(
                 key: formKey,
                 child: ExpansionTileItem.outlined(
-                  initiallyExpanded: true,
                   expansionKey: cardKey,
                   title: AppController.heading(
                       'Search', isDark, TablerIcons.search),

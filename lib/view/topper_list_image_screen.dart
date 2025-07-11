@@ -244,7 +244,6 @@ class _TopperListImageScreenState extends ConsumerState<TopperListImageScreen> {
                   expansionKey: cardKey,
                   title: AppController.heading(
                       'Search', isDark, TablerIcons.search),
-                  initiallyExpanded: true,
                   children: [
                     Wrap(
                       spacing: 5,

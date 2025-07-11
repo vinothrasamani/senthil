@@ -187,7 +187,6 @@ class _FeedbackScreenState extends ConsumerState<FeedbackScreen> {
               Form(
                 key: formKey,
                 child: ExpansionTileItem.outlined(
-                  initiallyExpanded: true,
                   expansionKey: cardKey,
                   title: AppController.heading(
                       'Search', isDark, TablerIcons.search),

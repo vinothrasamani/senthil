@@ -12,7 +12,7 @@ import 'package:senthil/view/consistency_screen.dart';
 import 'package:senthil/view/exam_upload_details_screen.dart';
 import 'package:senthil/view/feedback_screen.dart';
 import 'package:senthil/view/question_screen.dart';
-import 'package:senthil/view/staff_details_screen.dart';
+import 'package:senthil/view/staff_details/staff_details_screen.dart';
 import 'package:senthil/view/topper_list_image_screen.dart';
 import 'package:senthil/view/topper_list_screen.dart';
 import 'package:senthil/view/web_view_screen.dart';

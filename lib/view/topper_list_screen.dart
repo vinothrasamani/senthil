@@ -217,7 +217,6 @@ class _TopperListScreenState extends ConsumerState<TopperListScreen> {
                 child: ExpansionTileItem.outlined(
                   title: AppController.heading(
                       'Search', isDark, TablerIcons.search),
-                  initiallyExpanded: true,
                   expansionKey: cardKey,
                   children: [
                     Wrap(

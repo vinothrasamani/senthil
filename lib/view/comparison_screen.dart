@@ -242,7 +242,6 @@ class _ComparisonScreen extends ConsumerState<ComparisonScreen> {
               Form(
                 key: formkey,
                 child: ExpansionTileItem.outlined(
-                  initiallyExpanded: true,
                   expansionKey: cardKey,
                   title: AppController.heading(
                       'Search', isDark, TablerIcons.search),

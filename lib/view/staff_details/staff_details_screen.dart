@@ -21,6 +21,7 @@ class StaffDetailsScreen extends ConsumerStatefulWidget {
 class _StaffDetailsScreenState extends ConsumerState<StaffDetailsScreen> {
   final formKey = GlobalKey<FormState>();
   final cardKey = GlobalKey<ExpansionTileCoreState>();
+  ScrollController scrollController = ScrollController();
   String? selectedSchool, selectedCategory, selectedDepartment;
   String? staffCode, staffName;
   Object? data;
@@ -46,6 +47,12 @@ class _StaffDetailsScreenState extends ConsumerState<StaffDetailsScreen> {
       AppController.toastMessage('Required!', 'Please select school');
     }
     cardKey.currentState?.collapse();
+  }
+
+  @override
+  void dispose() {
+    scrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -152,11 +159,21 @@ class _StaffDetailsScreenState extends ConsumerState<StaffDetailsScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Staff Details'),
-        actions: [],
+        actions: [
+          IconButton(
+            onPressed: () {
+              scrollController.animateTo(5,
+                  duration: Duration(seconds: 1), curve: Curves.easeInOut);
+            },
+            icon: Icon(TablerIcons.search),
+          ),
+          SizedBox(width: 6)
+        ],
       ),
       body: SafeArea(
         child: ListView(
           shrinkWrap: true,
+          controller: scrollController,
           padding: EdgeInsets.all(10),
           children: [
             if (ref.watch(StaffController.schools).isNotEmpty)
@@ -170,7 +187,6 @@ class _StaffDetailsScreenState extends ConsumerState<StaffDetailsScreen> {
                   expansionKey: cardKey,
                   title: AppController.heading(
                       'Search', isDark, TablerIcons.search),
-                  initiallyExpanded: true,
                   children: [
                     Wrap(
                       spacing: 5,

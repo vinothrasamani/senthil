@@ -205,7 +205,6 @@ class _ConsistencyScreenState extends ConsumerState<ConsistencyScreen> {
                   expansionKey: cardKey,
                   title: AppController.heading(
                       'Search', isDark, TablerIcons.search),
-                  initiallyExpanded: true,
                   children: [
                     Wrap(
                       spacing: 5,
