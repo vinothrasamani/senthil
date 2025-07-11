@@ -15,6 +15,7 @@ import 'package:senthil/view/question_screen.dart';
 import 'package:senthil/view/staff_details_screen.dart';
 import 'package:senthil/view/topper_list_image_screen.dart';
 import 'package:senthil/view/topper_list_screen.dart';
+import 'package:senthil/view/web_view_screen.dart';
 
 class AppDrawer extends ConsumerWidget {
   const AppDrawer({super.key});
@@ -153,6 +154,16 @@ class AppDrawer extends ConsumerWidget {
             onTap: () {
               Get.back();
               Get.to(() => AppSettings());
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.privacy_tip_outlined),
+            title: Text('Privacy Policy'),
+            onTap: () {
+              Get.back();
+              Get.to(() => WebViewScreen(
+                    link: 'https://google.com',
+                  ));
             },
           ),
         ],

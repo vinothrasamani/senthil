@@ -1,9 +1,12 @@
+import 'package:expansion_tile_group/expansion_tile_group.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:senthil/controller/app_controller.dart';
 import 'package:senthil/controller/staff_controller.dart';
 import 'package:senthil/controller/theme_controller.dart';
 import 'package:senthil/shimmer/search_shimmer.dart';
+import 'package:senthil/widgets/staff_detail_card.dart';
 
 class StaffDetailsScreen extends ConsumerStatefulWidget {
   const StaffDetailsScreen(
@@ -17,6 +20,7 @@ class StaffDetailsScreen extends ConsumerStatefulWidget {
 
 class _StaffDetailsScreenState extends ConsumerState<StaffDetailsScreen> {
   final formKey = GlobalKey<FormState>();
+  final cardKey = GlobalKey<ExpansionTileCoreState>();
   String? selectedSchool, selectedCategory, selectedDepartment;
   String? staffCode, staffName;
   Object? data;
@@ -28,15 +32,20 @@ class _StaffDetailsScreenState extends ConsumerState<StaffDetailsScreen> {
   }
 
   void search() async {
-    ref.read(StaffController.searching.notifier).state = true;
-    data = {
-      "index": widget.index,
-      "school": selectedSchool,
-      "cat": selectedCategory,
-      "code": staffCode,
-      "name": staffName,
-      "dept": selectedDepartment
-    };
+    if (selectedSchool != null) {
+      ref.read(StaffController.searching.notifier).state = true;
+      data = {
+        "index": widget.index,
+        "school": selectedSchool,
+        "cat": selectedCategory,
+        "code": staffCode,
+        "name": staffName,
+        "dept": selectedDepartment
+      };
+    } else {
+      AppController.toastMessage('Required!', 'Please select school');
+    }
+    cardKey.currentState?.collapse();
   }
 
   @override
@@ -56,7 +65,11 @@ class _StaffDetailsScreenState extends ConsumerState<StaffDetailsScreen> {
                 value: e ?? '', child: Text(e ?? 'None')))
             .toList(),
         decoration: InputDecoration(
-            labelText: 'School', prefixIcon: Icon(Icons.school)),
+            labelText: 'School',
+            prefixIcon: Icon(
+              TablerIcons.school,
+              color: Colors.grey,
+            )),
         onChanged: (val) {
           selectedSchool = val;
           selectedCategory = null;
@@ -73,11 +86,15 @@ class _StaffDetailsScreenState extends ConsumerState<StaffDetailsScreen> {
                 value: e ?? '', child: Text(e ?? 'None')))
             .toList(),
         decoration: InputDecoration(
-            labelText: 'Category', prefixIcon: Icon(Icons.category)),
+            labelText: 'Category',
+            prefixIcon: Icon(
+              TablerIcons.category,
+              color: Colors.grey,
+            )),
         onChanged: (val) {
           selectedCategory = val;
           selectedDepartment = null;
-          StaffController.setData(ref, 'staff-categories',
+          StaffController.setData(ref, 'staff-dept',
               {'index': widget.index, 'school': selectedSchool, 'cat': val});
         },
       ),
@@ -89,15 +106,54 @@ class _StaffDetailsScreenState extends ConsumerState<StaffDetailsScreen> {
                 value: e ?? '', child: Text(e ?? 'None')))
             .toList(),
         decoration: InputDecoration(
-            labelText: 'Department', prefixIcon: Icon(Icons.class_)),
+            labelText: 'Department',
+            prefixIcon: Icon(
+              TablerIcons.building_store,
+              color: Colors.grey,
+            )),
         onChanged: (val) {
           selectedDepartment = val;
         },
       ),
+      TextField(
+        decoration: InputDecoration(
+            labelText: 'Staff Code',
+            prefixIcon: Icon(
+              TablerIcons.message_code,
+              color: Colors.grey,
+            )),
+        onChanged: (val) {
+          staffCode = val;
+        },
+      ),
+      TextField(
+        decoration: InputDecoration(
+            labelText: 'Staff Name',
+            prefixIcon: Icon(
+              TablerIcons.user,
+              color: Colors.grey,
+            )),
+        onChanged: (val) {
+          staffName = val;
+        },
+      ),
+      Builder(builder: (context) {
+        bool searching = ref.watch(StaffController.searching);
+        return SizedBox(
+          width: double.infinity,
+          child: FilledButton(
+            onPressed: searching ? null : search,
+            child: Text(searching ? 'Searching...' : 'Search'),
+          ),
+        );
+      }),
     ];
 
     return Scaffold(
-      appBar: AppBar(title: Text('Staff Details')),
+      appBar: AppBar(
+        title: Text('Staff Details'),
+        actions: [],
+      ),
       body: SafeArea(
         child: ListView(
           shrinkWrap: true,
@@ -110,12 +166,12 @@ class _StaffDetailsScreenState extends ConsumerState<StaffDetailsScreen> {
             if (ref.watch(StaffController.schools).isNotEmpty)
               Form(
                 key: formKey,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                child: ExpansionTileItem.outlined(
+                  expansionKey: cardKey,
+                  title: AppController.heading(
+                      'Search', isDark, TablerIcons.search),
+                  initiallyExpanded: true,
                   children: [
-                    AppController.heading('search', isDark),
-                    SizedBox(height: 10),
                     Wrap(
                       spacing: 5,
                       runSpacing: 10,
@@ -124,8 +180,8 @@ class _StaffDetailsScreenState extends ConsumerState<StaffDetailsScreen> {
                                 width: size.width < 500
                                     ? null
                                     : size.width < 1020
-                                        ? (size.width / 2) - 15
-                                        : (size.width / 3) - 15,
+                                        ? (size.width / 2) - 30
+                                        : (size.width / 3) - 30,
                                 child: child,
                               ))
                           .toList(),
@@ -136,6 +192,41 @@ class _StaffDetailsScreenState extends ConsumerState<StaffDetailsScreen> {
             else
               SearchShimmer(isDark: isDark),
             SizedBox(height: 20),
+            if (ref.watch(StaffController.schools).isNotEmpty)
+              listener == null
+                  ? SizedBox(
+                      height: 200,
+                      child: Center(child: Text('Search to get staff List!')),
+                    )
+                  : listener.when(
+                      data: (snap) {
+                        return Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            AppController.heading(
+                                'Staff List', isDark, TablerIcons.list),
+                            SizedBox(height: 10),
+                            if (snap.data.isNotEmpty)
+                              for (var i = 0; i < snap.data.length; i++)
+                                Builder(
+                                  builder: (context) {
+                                    final staff = snap.data[i];
+                                    return StaffDetailCard(staff: staff);
+                                  },
+                                ),
+                          ],
+                        );
+                      },
+                      error: (e, _) => SizedBox(
+                        height: 200,
+                        child: Center(child: Text('Something went wrong! $e')),
+                      ),
+                      loading: () => SizedBox(
+                        height: 200,
+                        child: Center(child: CircularProgressIndicator()),
+                      ),
+                    )
           ],
         ),
       ),

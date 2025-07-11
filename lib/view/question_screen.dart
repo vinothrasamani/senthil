@@ -1,5 +1,7 @@
+import 'package:expansion_tile_group/expansion_tile_group.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:senthil/controller/app_controller.dart';
 import 'package:senthil/controller/question_controller.dart';
 import 'package:senthil/controller/theme_controller.dart';
@@ -19,6 +21,7 @@ class _QuestionScreenState extends ConsumerState<QuestionScreen> {
   final formKey = GlobalKey<FormState>();
   String? selectedClass, selectedYear, selectedExam;
   Object? data;
+  final cardKey = GlobalKey<ExpansionTileCoreState>();
 
   @override
   void initState() {
@@ -35,6 +38,7 @@ class _QuestionScreenState extends ConsumerState<QuestionScreen> {
       "className": selectedClass,
       "exam": selectedExam,
     };
+    cardKey.currentState?.collapse();
   }
 
   @override
@@ -54,7 +58,11 @@ class _QuestionScreenState extends ConsumerState<QuestionScreen> {
                 value: e ?? '', child: Text(e ?? 'None')))
             .toList(),
         decoration: InputDecoration(
-            labelText: 'Year', prefixIcon: Icon(Icons.date_range)),
+            labelText: 'Year',
+            prefixIcon: Icon(
+              TablerIcons.calendar_smile,
+              color: Colors.grey,
+            )),
         onChanged: (val) {
           selectedYear = val;
           selectedClass = null;
@@ -69,7 +77,8 @@ class _QuestionScreenState extends ConsumerState<QuestionScreen> {
                 value: e ?? '', child: Text(e ?? 'None')))
             .toList(),
         decoration: InputDecoration(
-            labelText: 'Exam', prefixIcon: Icon(Icons.insert_drive_file)),
+            labelText: 'Exam',
+            prefixIcon: Icon(TablerIcons.file_text, color: Colors.grey)),
         onChanged: (val) {
           selectedExam = val;
           selectedClass = null;
@@ -82,8 +91,9 @@ class _QuestionScreenState extends ConsumerState<QuestionScreen> {
             .map((e) => DropdownMenuItem<String>(
                 value: e ?? '', child: Text(e ?? 'None')))
             .toList(),
-        decoration:
-            InputDecoration(labelText: 'Class', prefixIcon: Icon(Icons.class_)),
+        decoration: InputDecoration(
+            labelText: 'Class',
+            prefixIcon: Icon(TablerIcons.chalkboard, color: Colors.grey)),
         onChanged: (val) {
           selectedClass = val;
         },
@@ -114,12 +124,12 @@ class _QuestionScreenState extends ConsumerState<QuestionScreen> {
             if (ref.watch(QuestionController.quesYears).isNotEmpty)
               Form(
                 key: formKey,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                child: ExpansionTileItem.outlined(
+                  initiallyExpanded: true,
+                  expansionKey: cardKey,
+                  title: AppController.heading(
+                      'Search', isDark, TablerIcons.search),
                   children: [
-                    AppController.heading('search', isDark),
-                    SizedBox(height: 10),
                     Wrap(
                       spacing: 5,
                       runSpacing: 10,
@@ -128,8 +138,8 @@ class _QuestionScreenState extends ConsumerState<QuestionScreen> {
                                 width: size.width < 500
                                     ? null
                                     : size.width < 1020
-                                        ? (size.width / 2) - 15
-                                        : (size.width / 3) - 15,
+                                        ? (size.width / 2) - 30
+                                        : (size.width / 3) - 30,
                                 child: child,
                               ))
                           .toList(),
@@ -140,7 +150,6 @@ class _QuestionScreenState extends ConsumerState<QuestionScreen> {
             else
               SearchShimmer(isDark: isDark),
             SizedBox(height: 20),
-            Divider(),
             if (ref.watch(QuestionController.quesYears).isNotEmpty)
               listener == null
                   ? SizedBox(
@@ -206,7 +215,8 @@ class _QuestionScreenState extends ConsumerState<QuestionScreen> {
                                             SizedBox(height: 10),
                                             AppController.heading(
                                                 'Exam Question Paper & Marketing Scheme - ${item.school}',
-                                                isDark),
+                                                isDark,
+                                                TablerIcons.flag_question),
                                             SizedBox(height: 10),
                                             commonText(item.school),
                                             SizedBox(height: 10),

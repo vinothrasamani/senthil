@@ -1,6 +1,8 @@
 import 'package:data_table_2/data_table_2.dart';
+import 'package:expansion_tile_group/expansion_tile_group.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:senthil/controller/app_controller.dart';
 import 'package:senthil/controller/comparison_controller.dart';
 import 'package:senthil/controller/theme_controller.dart';
@@ -21,6 +23,7 @@ class _ComparisonScreen extends ConsumerState<ComparisonScreen> {
   String? selectedClass, selectedYear, selectedCourse, selectedCrGroup;
   String? selectedExam, selectedStmGroup, selectedRefGroup;
   Object? data;
+  final cardKey = GlobalKey<ExpansionTileCoreState>();
 
   @override
   void initState() {
@@ -45,6 +48,7 @@ class _ComparisonScreen extends ConsumerState<ComparisonScreen> {
       "index": widget.index,
       "userId": widget.userId
     };
+    cardKey.currentState?.collapse();
   }
 
   @override
@@ -64,7 +68,8 @@ class _ComparisonScreen extends ConsumerState<ComparisonScreen> {
                 value: e ?? '', child: Text(e ?? 'None')))
             .toList(),
         decoration: InputDecoration(
-            labelText: 'Year', prefixIcon: Icon(Icons.date_range)),
+            labelText: 'Year',
+            prefixIcon: Icon(TablerIcons.calendar_smile, color: Colors.grey)),
         onChanged: (val) {
           selectedYear = val;
           selectedClass = null;
@@ -84,8 +89,9 @@ class _ComparisonScreen extends ConsumerState<ComparisonScreen> {
             .map((e) => DropdownMenuItem<String>(
                 value: e ?? '', child: Text(e ?? 'None')))
             .toList(),
-        decoration:
-            InputDecoration(labelText: 'Class', prefixIcon: Icon(Icons.class_)),
+        decoration: InputDecoration(
+            labelText: 'Class',
+            prefixIcon: Icon(TablerIcons.chalkboard, color: Colors.grey)),
         onChanged: (val) {
           selectedClass = val;
           selectedCourse = null;
@@ -115,15 +121,16 @@ class _ComparisonScreen extends ConsumerState<ComparisonScreen> {
             .map((e) => DropdownMenuItem<String>(
                 value: e ?? '',
                 child: ConstrainedBox(
-                  constraints: BoxConstraints(maxWidth: 250),
+                  constraints: BoxConstraints(maxWidth: 220),
                   child: Text(
                     e ?? 'None',
-                    overflow: TextOverflow.ellipsis,
+                    overflow: TextOverflow.clip,
                   ),
                 )))
             .toList(),
         decoration: InputDecoration(
-            labelText: 'Exam', prefixIcon: Icon(Icons.insert_drive_file)),
+            labelText: 'Exam',
+            prefixIcon: Icon(TablerIcons.file_text, color: Colors.grey)),
         onChanged: (val) {
           selectedExam = val;
           selectedStmGroup = null;
@@ -159,7 +166,8 @@ class _ComparisonScreen extends ConsumerState<ComparisonScreen> {
                   value: e ?? '', child: Text(e ?? 'None')))
               .toList(),
           decoration: InputDecoration(
-              labelText: 'Course Group', prefixIcon: Icon(Icons.group)),
+              labelText: 'Course Group',
+              prefixIcon: Icon(Icons.group, color: Colors.grey)),
           onChanged: (val) {
             selectedCrGroup = val;
           },
@@ -172,7 +180,8 @@ class _ComparisonScreen extends ConsumerState<ComparisonScreen> {
                   value: e ?? '', child: Text(e ?? 'None')))
               .toList(),
           decoration: InputDecoration(
-              labelText: 'stream group', prefixIcon: Icon(Icons.group)),
+              labelText: 'stream group',
+              prefixIcon: Icon(Icons.group, color: Colors.grey)),
           onChanged: (val) {
             selectedStmGroup = val;
           },
@@ -185,7 +194,8 @@ class _ComparisonScreen extends ConsumerState<ComparisonScreen> {
                   value: e ?? '', child: Text(e ?? 'None')))
               .toList(),
           decoration: InputDecoration(
-              labelText: 'Ref Group', prefixIcon: Icon(Icons.group)),
+              labelText: 'Ref Group',
+              prefixIcon: Icon(Icons.group, color: Colors.grey)),
           onChanged: (val) {
             selectedRefGroup = val;
           },
@@ -199,7 +209,8 @@ class _ComparisonScreen extends ConsumerState<ComparisonScreen> {
                 value: e ?? '', child: Text(e ?? 'None')))
             .toList(),
         decoration: InputDecoration(
-            labelText: 'Course', prefixIcon: Icon(Icons.golf_course)),
+            labelText: 'Course',
+            prefixIcon: Icon(Icons.golf_course, color: Colors.grey)),
         onChanged: (val) {
           selectedCourse = val;
         },
@@ -230,12 +241,12 @@ class _ComparisonScreen extends ConsumerState<ComparisonScreen> {
             if (ref.watch(ComparisonController.years).isNotEmpty)
               Form(
                 key: formkey,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                child: ExpansionTileItem.outlined(
+                  initiallyExpanded: true,
+                  expansionKey: cardKey,
+                  title: AppController.heading(
+                      'Search', isDark, TablerIcons.search),
                   children: [
-                    AppController.heading('search', isDark),
-                    SizedBox(height: 10),
                     Wrap(
                       spacing: 5,
                       runSpacing: 10,
@@ -244,8 +255,8 @@ class _ComparisonScreen extends ConsumerState<ComparisonScreen> {
                                 width: size.width < 500
                                     ? null
                                     : size.width < 850
-                                        ? (size.width / 2) - 15
-                                        : (size.width / 3) - 15,
+                                        ? (size.width / 2) - 30
+                                        : (size.width / 3) - 30,
                                 child: child,
                               ))
                           .toList(),
@@ -255,9 +266,10 @@ class _ComparisonScreen extends ConsumerState<ComparisonScreen> {
               )
             else
               SearchShimmer(isDark: isDark),
-            SizedBox(height: 30),
+            SizedBox(height: 20),
             if (ref.watch(ComparisonController.years).isNotEmpty)
-              AppController.heading('Exam Result Comparison', isDark),
+              AppController.heading(
+                  'Exam Result Comparison', isDark, TablerIcons.chart_dots),
             SizedBox(height: 10),
             if (ref.watch(ComparisonController.years).isNotEmpty)
               if (listener != null)

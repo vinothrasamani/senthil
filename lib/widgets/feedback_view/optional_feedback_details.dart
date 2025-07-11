@@ -27,7 +27,7 @@ class OptionalFeedbackDetails extends StatelessWidget {
             children: [
               AppController.animatedTitle(sub.fullname, isDark),
               SizedBox(height: 10),
-              AppController.heading('Remarks', isDark),
+              AppController.heading('Remarks', isDark, Icons.comment),
               SizedBox(height: 10),
               Expanded(
                 child: ListView(

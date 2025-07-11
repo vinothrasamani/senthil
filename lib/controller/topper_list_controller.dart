@@ -102,7 +102,8 @@ class TopperListController {
       showDragHandle: true,
       builder: (ctx) => ListView(
         children: [
-          AppController.heading('Available Documents', isDark),
+          AppController.heading(
+              'Available Documents', isDark, TablerIcons.file),
           SizedBox(height: 10),
           for (var item in list)
             if (item.filename != null && item.filename.isNotEmpty)

@@ -19,6 +19,7 @@ class AppController {
   static final lightBlue = Colors.lightBlue;
   static final headColor = const Color.fromARGB(255, 219, 0, 183);
   static final darkGreen = const Color.fromARGB(255, 4, 124, 0);
+  static final lightGreen = const Color.fromARGB(255, 32, 248, 24);
   static final yellow = const Color.fromARGB(255, 243, 188, 8);
   static final red = const Color.fromARGB(255, 199, 31, 1);
   static final tableColor = headColor.withAlpha(40);
@@ -88,19 +89,36 @@ class AppController {
     return formatter.format(amt);
   }
 
-  static Widget heading(String text, bool isDark) => Text(
-        text,
-        style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 18,
-            color: isDark ? Colors.blue : baseColor),
+  static Widget heading(String text, bool isDark, IconData icon) => Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            icon,
+            color: isDark ? Colors.blue : baseColor,
+            size: text == 'Search' ? 18 : 20,
+            shadows: [
+              Shadow(
+                offset: Offset(0, 1),
+                color: isDark ? Colors.blue : baseColor,
+              ),
+            ],
+          ),
+          SizedBox(width: 6),
+          Text(
+            text,
+            style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
+                color: isDark ? Colors.blue : baseColor),
+          ),
+        ],
       );
 
   static Widget animatedTitle(String val, bool isDark) {
     return ZoAnimatedGradientBorder(
-      gradientColor: [headColor, baseColor],
+      gradientColor: [baseColor, headColor],
       glowOpacity: 0.05,
-      borderThickness: 5,
+      borderThickness: 3,
       duration: Duration(seconds: 2),
       borderRadius: 5,
       child: Container(
@@ -108,13 +126,13 @@ class AppController {
         alignment: Alignment.center,
         padding: EdgeInsets.symmetric(vertical: 5),
         decoration: BoxDecoration(
-          color: headColor,
+          color: baseColor,
           borderRadius: BorderRadius.circular(5),
         ),
         child: Text(
-          val,
+          '<<  $val  >>',
           style: TextStyle(
-              fontSize: 22, color: Colors.white, fontWeight: FontWeight.bold),
+              fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold),
         ),
       ),
     );

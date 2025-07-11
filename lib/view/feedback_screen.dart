@@ -1,5 +1,7 @@
+import 'package:expansion_tile_group/expansion_tile_group.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:senthil/controller/app_controller.dart';
 import 'package:senthil/controller/feedback_controller.dart';
 import 'package:senthil/controller/theme_controller.dart';
@@ -20,6 +22,7 @@ class _FeedbackScreenState extends ConsumerState<FeedbackScreen> {
   final formKey = GlobalKey<FormState>();
   String? selectedYear, selectedClass, selectedSession;
   String? selectedsection, selectedSchool;
+  final cardKey = GlobalKey<ExpansionTileCoreState>();
   int? selectedRefGroup;
   Object? data;
 
@@ -41,6 +44,7 @@ class _FeedbackScreenState extends ConsumerState<FeedbackScreen> {
       "section": selectedsection,
       "refGroup": selectedRefGroup
     };
+    cardKey.currentState?.collapse();
   }
 
   @override
@@ -60,7 +64,11 @@ class _FeedbackScreenState extends ConsumerState<FeedbackScreen> {
                 value: e ?? '', child: Text(e ?? 'None')))
             .toList(),
         decoration: InputDecoration(
-            labelText: 'Year', prefixIcon: Icon(Icons.date_range)),
+            labelText: 'Year',
+            prefixIcon: Icon(
+              TablerIcons.calendar_smile,
+              color: Colors.grey,
+            )),
         onChanged: (val) {
           selectedYear = val;
         },
@@ -71,7 +79,11 @@ class _FeedbackScreenState extends ConsumerState<FeedbackScreen> {
             .map((e) => DropdownMenuItem<String>(value: e, child: Text(e)))
             .toList(),
         decoration: InputDecoration(
-            labelText: 'Session', prefixIcon: Icon(Icons.timer)),
+            labelText: 'Session',
+            prefixIcon: Icon(
+              Icons.timer,
+              color: Colors.grey,
+            )),
         onChanged: (val) {
           selectedSession = val;
         },
@@ -84,7 +96,8 @@ class _FeedbackScreenState extends ConsumerState<FeedbackScreen> {
                 value: e ?? '', child: Text(e ?? 'None')))
             .toList(),
         decoration: InputDecoration(
-            labelText: 'School', prefixIcon: Icon(Icons.school)),
+            labelText: 'School',
+            prefixIcon: Icon(TablerIcons.school, color: Colors.grey)),
         onChanged: (val) {
           selectedSchool = val;
           selectedClass = null;
@@ -104,8 +117,9 @@ class _FeedbackScreenState extends ConsumerState<FeedbackScreen> {
             .map((e) => DropdownMenuItem<String>(
                 value: e ?? '', child: Text(e ?? 'None')))
             .toList(),
-        decoration:
-            InputDecoration(labelText: 'Class', prefixIcon: Icon(Icons.class_)),
+        decoration: InputDecoration(
+            labelText: 'Class',
+            prefixIcon: Icon(TablerIcons.chalkboard, color: Colors.grey)),
         onChanged: (val) {
           selectedClass = val;
           selectedsection = null;
@@ -124,8 +138,9 @@ class _FeedbackScreenState extends ConsumerState<FeedbackScreen> {
             .map((e) => DropdownMenuItem<String>(
                 value: e ?? '', child: Text(e ?? 'None')))
             .toList(),
-        decoration:
-            InputDecoration(labelText: 'Section', prefixIcon: Icon(Icons.book)),
+        decoration: InputDecoration(
+            labelText: 'Section',
+            prefixIcon: Icon(Icons.book, color: Colors.grey)),
         onChanged: (val) {
           selectedsection = val;
         },
@@ -139,7 +154,8 @@ class _FeedbackScreenState extends ConsumerState<FeedbackScreen> {
                 child: Text(e['refgroup_name'] ?? 'None')))
             .toList(),
         decoration: InputDecoration(
-            labelText: 'Ref group', prefixIcon: Icon(Icons.group)),
+            labelText: 'Ref group',
+            prefixIcon: Icon(Icons.group, color: Colors.grey)),
         onChanged: (val) {
           selectedRefGroup = val;
         },
@@ -170,12 +186,12 @@ class _FeedbackScreenState extends ConsumerState<FeedbackScreen> {
             if (ref.watch(FeedbackController.years).isNotEmpty)
               Form(
                 key: formKey,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                child: ExpansionTileItem.outlined(
+                  initiallyExpanded: true,
+                  expansionKey: cardKey,
+                  title: AppController.heading(
+                      'Search', isDark, TablerIcons.search),
                   children: [
-                    AppController.heading('search', isDark),
-                    SizedBox(height: 10),
                     Wrap(
                       spacing: 5,
                       runSpacing: 10,
@@ -184,8 +200,8 @@ class _FeedbackScreenState extends ConsumerState<FeedbackScreen> {
                                 width: size.width < 500
                                     ? null
                                     : size.width < 1020
-                                        ? (size.width / 2) - 15
-                                        : (size.width / 3) - 15,
+                                        ? (size.width / 2) - 30
+                                        : (size.width / 3) - 30,
                                 child: child,
                               ))
                           .toList(),
@@ -196,8 +212,6 @@ class _FeedbackScreenState extends ConsumerState<FeedbackScreen> {
             else
               SearchShimmer(isDark: isDark),
             SizedBox(height: 20),
-            Divider(),
-            SizedBox(height: 10),
             if (ref.watch(FeedbackController.years).isNotEmpty)
               listener == null
                   ? SizedBox(
@@ -214,7 +228,8 @@ class _FeedbackScreenState extends ConsumerState<FeedbackScreen> {
                             children: [
                               AppController.heading(
                                   'Student FeedBack ( General ) / $selectedSchool / $selectedClass / $selectedsection / ${snap.data.feedbackStudents.isEmpty ? "Feedback is not available!" : ""}',
-                                  isDark),
+                                  isDark,
+                                  Icons.feedback),
                               SizedBox(height: 10),
                               TabBar(
                                 labelStyle: TextStyle(

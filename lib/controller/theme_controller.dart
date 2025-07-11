@@ -37,6 +37,14 @@ class ThemeController {
     foregroundColor: Colors.white,
   );
 
+  static IconButtonThemeData iconButtonThemeData = IconButtonThemeData(
+    style: IconButton.styleFrom(
+      foregroundColor: Colors.white,
+      backgroundColor: baseColor,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+    ),
+  );
+
   static ThemeData lightTheme = ThemeData(
     colorScheme: ColorScheme.fromSeed(
         seedColor: baseColor, brightness: Brightness.light),
@@ -47,6 +55,7 @@ class ThemeController {
     appBarTheme: appBarTheme,
     outlinedButtonTheme: outlinedButtonThemeData,
     inputDecorationTheme: InputDecorationTheme(border: OutlineInputBorder()),
+    iconButtonTheme: iconButtonThemeData,
   );
 
   static ThemeData darkTheme = ThemeData(
@@ -59,6 +68,7 @@ class ThemeController {
     appBarTheme: appBarTheme,
     outlinedButtonTheme: outlinedButtonThemeData,
     inputDecorationTheme: InputDecorationTheme(border: OutlineInputBorder()),
+    iconButtonTheme: iconButtonThemeData,
   );
 
   static final themeMode = StateProvider<ThemeMode>((ref) => ThemeMode.light);

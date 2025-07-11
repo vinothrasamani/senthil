@@ -12,7 +12,7 @@ String staffDetailsModelToJson(StaffDetailsModel data) =>
 
 class StaffDetailsModel {
   bool success;
-  List<Datum> data;
+  List<StaffDetail> data;
   String message;
 
   StaffDetailsModel({
@@ -24,7 +24,8 @@ class StaffDetailsModel {
   factory StaffDetailsModel.fromJson(Map<String, dynamic> json) =>
       StaffDetailsModel(
         success: json["success"],
-        data: List<Datum>.from(json["data"].map((x) => Datum.fromJson(x))),
+        data: List<StaffDetail>.from(
+            json["data"].map((x) => StaffDetail.fromJson(x))),
         message: json["message"],
       );
 
@@ -35,25 +36,25 @@ class StaffDetailsModel {
       };
 }
 
-class Datum {
+class StaffDetail {
   int id;
-  String staffName;
-  String code;
-  String gender;
-  String designation;
-  String qualification;
+  String? staffName;
+  String? code;
+  String? gender;
+  String? designation;
+  String? qualification;
   DateTime dob;
-  String blood;
-  String religion;
-  String community;
-  String caste;
+  String? blood;
+  String? religion;
+  String? community;
+  String? caste;
   String? toSpeak;
   String? toRead;
   String? toWrite;
   String? homeTown;
-  String contact;
+  String? contact;
   String? landline;
-  String email;
+  String? email;
   String? address;
   String? distance;
   String? spouse;
@@ -71,10 +72,10 @@ class Datum {
   String? catPres;
   String? yeSchool;
   String? yeOverall;
-  String handSub;
+  String? handSub;
   String? handClass;
-  String handSec;
-  String handNoCs;
+  String? handSec;
+  String? handNoCs;
   dynamic pyAvg;
   dynamic pyHigh;
   dynamic pylow;
@@ -93,17 +94,17 @@ class Datum {
   dynamic feed2;
   dynamic feed3;
   dynamic appraisal;
-  String oid;
-  String department;
+  String? oid;
+  String? department;
   String? status;
   DateTime createdAt;
   DateTime updatedAt;
   int showhide;
-  String photo;
-  String school;
-  String schooltype;
+  String? photo;
+  String? school;
+  String? schooltype;
 
-  Datum({
+  StaffDetail({
     required this.id,
     required this.staffName,
     required this.code,
@@ -172,7 +173,7 @@ class Datum {
     required this.schooltype,
   });
 
-  factory Datum.fromJson(Map<String, dynamic> json) => Datum(
+  factory StaffDetail.fromJson(Map<String, dynamic> json) => StaffDetail(
         id: json["id"],
         staffName: json["StaffName"],
         code: json["Code"],

@@ -1,5 +1,7 @@
+import 'package:expansion_tile_group/expansion_tile_group.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:senthil/controller/app_controller.dart';
 import 'package:senthil/controller/theme_controller.dart';
 import 'package:senthil/controller/topper_list_controller.dart';
@@ -22,6 +24,7 @@ class _TopperListImageScreenState extends ConsumerState<TopperListImageScreen> {
   final formKey = GlobalKey<FormState>();
   String? selectedClass, selectedYear, selectedCourse, selectedRefGroup;
   String? selectedExam, selectedStmGroup, selectedCrGroup;
+  final cardKey = GlobalKey<ExpansionTileCoreState>();
   Object? data;
 
   @override
@@ -45,6 +48,7 @@ class _TopperListImageScreenState extends ConsumerState<TopperListImageScreen> {
       "stream": selectedStmGroup,
       "ref": selectedRefGroup
     };
+    cardKey.currentState?.collapse();
   }
 
   @override
@@ -65,7 +69,11 @@ class _TopperListImageScreenState extends ConsumerState<TopperListImageScreen> {
                 value: e ?? '', child: Text(e ?? 'None')))
             .toList(),
         decoration: InputDecoration(
-            labelText: 'Year', prefixIcon: Icon(Icons.date_range)),
+            labelText: 'Year',
+            prefixIcon: Icon(
+              TablerIcons.calendar_smile,
+              color: Colors.grey,
+            )),
         onChanged: (val) {
           selectedYear = val;
           selectedClass = null;
@@ -84,8 +92,9 @@ class _TopperListImageScreenState extends ConsumerState<TopperListImageScreen> {
             .map((e) => DropdownMenuItem<String>(
                 value: e ?? '', child: Text(e ?? 'None')))
             .toList(),
-        decoration:
-            InputDecoration(labelText: 'Class', prefixIcon: Icon(Icons.class_)),
+        decoration: InputDecoration(
+            labelText: 'Class',
+            prefixIcon: Icon(TablerIcons.chalkboard, color: Colors.grey)),
         onChanged: (val) {
           selectedClass = val;
           selectedCourse = null;
@@ -112,10 +121,14 @@ class _TopperListImageScreenState extends ConsumerState<TopperListImageScreen> {
         items: ref
             .watch(TopperListController.examsTop)
             .map((e) => DropdownMenuItem<String>(
-                value: e ?? '', child: Text(e ?? 'None')))
+                value: e ?? '',
+                child: ConstrainedBox(
+                    constraints: BoxConstraints(maxWidth: 220),
+                    child: Text(e ?? 'None'))))
             .toList(),
         decoration: InputDecoration(
-            labelText: 'Exam', prefixIcon: Icon(Icons.insert_drive_file)),
+            labelText: 'Exam',
+            prefixIcon: Icon(TablerIcons.file_text, color: Colors.grey)),
         onChanged: (val) {
           selectedExam = val;
           selectedStmGroup = null;
@@ -150,7 +163,8 @@ class _TopperListImageScreenState extends ConsumerState<TopperListImageScreen> {
                   value: e ?? '', child: Text(e ?? 'None')))
               .toList(),
           decoration: InputDecoration(
-              labelText: 'Course Group', prefixIcon: Icon(Icons.group)),
+              labelText: 'Course Group',
+              prefixIcon: Icon(Icons.group, color: Colors.grey)),
           onChanged: (val) {
             selectedCrGroup = val;
           },
@@ -163,7 +177,8 @@ class _TopperListImageScreenState extends ConsumerState<TopperListImageScreen> {
                   value: e ?? '', child: Text(e ?? 'None')))
               .toList(),
           decoration: InputDecoration(
-              labelText: 'stream group', prefixIcon: Icon(Icons.group)),
+              labelText: 'stream group',
+              prefixIcon: Icon(Icons.group, color: Colors.grey)),
           onChanged: (val) {
             selectedStmGroup = val;
           },
@@ -176,7 +191,8 @@ class _TopperListImageScreenState extends ConsumerState<TopperListImageScreen> {
                   value: e ?? '', child: Text(e ?? 'None')))
               .toList(),
           decoration: InputDecoration(
-              labelText: 'Ref Group', prefixIcon: Icon(Icons.group)),
+              labelText: 'Ref Group',
+              prefixIcon: Icon(Icons.group, color: Colors.grey)),
           onChanged: (val) {
             selectedRefGroup = val;
           },
@@ -190,7 +206,8 @@ class _TopperListImageScreenState extends ConsumerState<TopperListImageScreen> {
                 value: e ?? '', child: Text(e ?? 'None')))
             .toList(),
         decoration: InputDecoration(
-            labelText: 'Course', prefixIcon: Icon(Icons.golf_course)),
+            labelText: 'Course',
+            prefixIcon: Icon(Icons.golf_course, color: Colors.grey)),
         onChanged: (val) {
           selectedCourse = val;
         },
@@ -223,12 +240,12 @@ class _TopperListImageScreenState extends ConsumerState<TopperListImageScreen> {
             if (ref.watch(TopperListController.yearsTop).isNotEmpty)
               Form(
                 key: formKey,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                child: ExpansionTileItem.outlined(
+                  expansionKey: cardKey,
+                  title: AppController.heading(
+                      'Search', isDark, TablerIcons.search),
+                  initiallyExpanded: true,
                   children: [
-                    AppController.heading('search', isDark),
-                    SizedBox(height: 10),
                     Wrap(
                       spacing: 5,
                       runSpacing: 10,
@@ -237,8 +254,8 @@ class _TopperListImageScreenState extends ConsumerState<TopperListImageScreen> {
                                 width: size.width < 500
                                     ? null
                                     : size.width < 1020
-                                        ? (size.width / 2) - 15
-                                        : (size.width / 3) - 15,
+                                        ? (size.width / 2) - 30
+                                        : (size.width / 3) - 30,
                                 child: child,
                               ))
                           .toList(),
@@ -248,9 +265,10 @@ class _TopperListImageScreenState extends ConsumerState<TopperListImageScreen> {
               )
             else
               SearchShimmer(isDark: isDark),
-            SizedBox(height: 30),
+            SizedBox(height: 20),
             if (ref.watch(TopperListController.yearsTop).isNotEmpty)
-              AppController.heading('Class Topper List', isDark),
+              AppController.heading(
+                  'Class Topper List', isDark, TablerIcons.list),
             SizedBox(height: 10),
             if (ref.watch(TopperListController.yearsTop).isNotEmpty)
               listener == null
@@ -325,8 +343,8 @@ class _TopperListImageScreenState extends ConsumerState<TopperListImageScreen> {
                               commonText,
                             ClassTopperImageCard(snap: snap, isDark: isDark),
                             SizedBox(height: 20),
-                            AppController.heading(
-                                'Subject Wise Topper List', isDark),
+                            AppController.heading('Subject Wise Topper List',
+                                isDark, TablerIcons.list),
                             SizedBox(height: 10),
                             commonText,
                             SizedBox(height: 10),
