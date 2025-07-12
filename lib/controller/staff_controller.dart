@@ -6,9 +6,11 @@ import 'package:senthil/model/staff_details_model.dart';
 
 class StaffController {
   static final schools = StateProvider.autoDispose<List>((ref) => []);
+  static final status = StateProvider.autoDispose<List>((ref) => []);
   static final categories = StateProvider.autoDispose<List>((ref) => []);
   static final departments = StateProvider.autoDispose<List>((ref) => []);
   static final searching = StateProvider.autoDispose((ref) => false);
+  static final canExpand = StateProvider.autoDispose((ref) => false);
 
   static void setData(WidgetRef ref, String url, Object object) async {
     final res = await AppController.send(url, object);

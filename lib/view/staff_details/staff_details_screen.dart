@@ -6,7 +6,8 @@ import 'package:senthil/controller/app_controller.dart';
 import 'package:senthil/controller/staff_controller.dart';
 import 'package:senthil/controller/theme_controller.dart';
 import 'package:senthil/shimmer/search_shimmer.dart';
-import 'package:senthil/widgets/staff_detail_card.dart';
+import 'package:senthil/widgets/staff_details/downloaded_pdfs.dart';
+import 'package:senthil/widgets/staff_details/staff_detail_card.dart';
 
 class StaffDetailsScreen extends ConsumerStatefulWidget {
   const StaffDetailsScreen(
@@ -47,6 +48,19 @@ class _StaffDetailsScreenState extends ConsumerState<StaffDetailsScreen> {
       AppController.toastMessage('Required!', 'Please select school');
     }
     cardKey.currentState?.collapse();
+  }
+
+  void openDownloads() async {
+    await showModalBottomSheet(
+      context: context,
+      useSafeArea: true,
+      showDragHandle: true,
+      isScrollControlled: true,
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.of(context).size.height * 0.9,
+      ),
+      builder: (ctx) => DownloadedPdfs(),
+    );
   }
 
   @override
@@ -161,13 +175,18 @@ class _StaffDetailsScreenState extends ConsumerState<StaffDetailsScreen> {
         title: Text('Staff Details'),
         actions: [
           IconButton(
+            onPressed: openDownloads,
+            icon: Icon(TablerIcons.download),
+          ),
+          IconButton(
             onPressed: () {
               scrollController.animateTo(5,
                   duration: Duration(seconds: 1), curve: Curves.easeInOut);
+              cardKey.currentState?.expand();
             },
             icon: Icon(TablerIcons.search),
           ),
-          SizedBox(width: 6)
+          SizedBox(width: 6),
         ],
       ),
       body: SafeArea(
@@ -228,7 +247,8 @@ class _StaffDetailsScreenState extends ConsumerState<StaffDetailsScreen> {
                                 Builder(
                                   builder: (context) {
                                     final staff = snap.data[i];
-                                    return StaffDetailCard(staff: staff);
+                                    return StaffDetailCard(
+                                        staff: staff, isDark: isDark);
                                   },
                                 ),
                           ],

@@ -13,19 +13,24 @@ class LoginController {
 
   static Future<void> login(
       String username, String password, WidgetRef ref) async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    final res = await AppController.send(
-        'login', {'username': username, 'password': password});
-    final result = loginModelFromJson(res);
-    if (result.success) {
-      await preferences.setString('user', res);
-      ref.read(userProvider.notifier).state = result;
-      Get.offAll(() => HomeScreen(), transition: Transition.zoom);
-      AppController.toastMessage(
-          'Login Successfully!', 'Welcome back ${result.data.fullname}.');
-    } else {
-      AppController.toastMessage(
-          'User not found!', 'Please verify your login credentials.',
+    try {
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+      final res = await AppController.send(
+          'login', {'username': username, 'password': password});
+      final result = loginModelFromJson(res);
+      if (result.success) {
+        await preferences.setString('user', res);
+        ref.read(userProvider.notifier).state = result;
+        Get.offAll(() => HomeScreen(), transition: Transition.zoom);
+        AppController.toastMessage(
+            'Login Successfully!', 'Welcome back ${result.data.fullname}.');
+      } else {
+        AppController.toastMessage(
+            'User not found!', 'Please verify your login credentials.',
+            purpose: Purpose.fail);
+      }
+    } catch (e) {
+      AppController.toastMessage('Error!', 'Something went wrong!',
           purpose: Purpose.fail);
     }
   }

@@ -92,7 +92,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         decoration: InputDecoration(
                             border: OutlineInputBorder(),
                             labelText: 'Username',
-                            prefixIcon: Icon(TablerIcons.user)),
+                            prefixIcon: Icon(
+                              TablerIcons.user,
+                              color: Colors.grey,
+                            )),
                         onChanged: (value) => username = value,
                         validator: (value) => value == null || value.isEmpty
                             ? 'Please enter username!'
@@ -104,7 +107,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         decoration: InputDecoration(
                             border: OutlineInputBorder(),
                             labelText: 'Password',
-                            prefixIcon: Icon(TablerIcons.lock),
+                            prefixIcon:
+                                Icon(TablerIcons.lock, color: Colors.grey),
                             suffixIcon: GestureDetector(
                               onTap: () {
                                 ref
@@ -112,9 +116,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                         .canShowPassword.notifier)
                                     .state = !canShow;
                               },
-                              child: Icon(canShow
-                                  ? Icons.visibility
-                                  : Icons.visibility_off),
+                              child: Icon(
+                                  canShow
+                                      ? Icons.visibility
+                                      : Icons.visibility_off,
+                                  color: Colors.grey),
                             )),
                         obscureText: !canShow,
                         validator: (value) => value == null || value.isEmpty

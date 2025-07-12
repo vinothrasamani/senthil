@@ -1,28 +1,74 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:get/get.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:senthil/controller/app_controller.dart';
+import 'package:senthil/controller/dio_services.dart';
 import 'package:senthil/model/staff_details_model.dart';
+import 'package:senthil/view/pdf_viewer_screen.dart';
 import 'package:senthil/view/staff_details/staff_info_screen.dart';
 
 class StaffDetailCard extends StatefulWidget {
-  const StaffDetailCard({super.key, required this.staff});
+  const StaffDetailCard({super.key, required this.staff, required this.isDark});
 
   final StaffDetail staff;
+  final bool isDark;
 
   @override
   State<StaffDetailCard> createState() => _StaffDetailCardState();
 }
 
 class _StaffDetailCardState extends State<StaffDetailCard> {
-  bool isLoading = false;
+  bool isLoading = false, downloading = false, downloaded = false;
+  double progress = 0.0;
+  String name = '', path = '';
+
+  @override
+  void initState() {
+    name =
+        '${widget.staff.school}_${widget.staff.schooltype}_${widget.staff.code}_StaffDetail.pdf';
+    checkDownloads();
+    super.initState();
+  }
+
+  void checkDownloads() async {
+    final dir = await getApplicationDocumentsDirectory();
+    final folder = Directory('${dir.path}/downloads');
+    if (folder.existsSync()) {
+      final file = File('${folder.path}/$name');
+      if (file.existsSync()) {
+        path = file.path;
+        setState(() => downloaded = true);
+      }
+    }
+  }
+
+  void downloadPDF() async {
+    setState(() => downloading = true);
+    await DioServices.download(
+      '${AppController.baseApiUrl}/staff-details-download/${widget.staff.id}',
+      name,
+      onProgress: (p) => setState(() {
+        progress = p;
+      }),
+    );
+    setState(() => downloading = false);
+    checkDownloads();
+  }
+
+  void openFile() async {
+    Get.to(() => PdfViewerScreen(fileName: path, isLocal: true),
+        transition: Transition.zoom);
+  }
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () => Get.to(() => StaffInfoScreen(staff: widget.staff),
+      onTap: () => Get.to(
+          () => StaffInfoScreen(staff: widget.staff, file: path),
           transition: Transition.zoom),
       child: Container(
         padding: EdgeInsets.all(8),
@@ -44,7 +90,9 @@ class _StaffDetailCardState extends State<StaffDetailCard> {
                     child: CircularProgressIndicator(strokeWidth: 2),
                   ),
                 Checkbox(
-                  activeColor: AppController.lightGreen,
+                  activeColor: widget.isDark
+                      ? AppController.lightGreen
+                      : AppController.darkGreen,
                   value: widget.staff.showhide == 1,
                   onChanged: (val) async {
                     setState(() {
@@ -72,10 +120,27 @@ class _StaffDetailCardState extends State<StaffDetailCard> {
                   ),
                 ),
                 SizedBox(width: 6),
-                IconButton(
-                  onPressed: () {},
-                  icon: Icon(Icons.download),
-                ),
+                downloading
+                    ? Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          CircularProgressIndicator(
+                            value: progress,
+                            backgroundColor: Colors.grey.withAlpha(50),
+                            color: AppController.headColor,
+                          ),
+                          Text(
+                            '${(progress * 100).toInt()}%',
+                            style: TextStyle(fontSize: 10),
+                          ),
+                        ],
+                      )
+                    : IconButton(
+                        onPressed: downloaded ? openFile : downloadPDF,
+                        icon: Icon(downloaded
+                            ? TablerIcons.file_text
+                            : TablerIcons.download),
+                      ),
               ],
             ),
             Wrap(
