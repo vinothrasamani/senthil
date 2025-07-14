@@ -24,7 +24,7 @@ class AppDrawer extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.read(LoginController.userProvider);
     final isDark = ref.watch(ThemeController.themeMode) == ThemeMode.dark;
-    final schools = ['Public School', 'Metric School'];
+    final schools = ['Public School', 'Matric School'];
     final menuItems = [
       'Comparison',
       'Topper List',
@@ -137,7 +137,9 @@ class AppDrawer extends ConsumerWidget {
                                   transition: Transition.zoom);
                               break;
                             case 7:
-                              Get.to(() => ExamUploadDetailsScreen(),
+                              Get.to(
+                                  () => ExamUploadDetailsScreen(
+                                      index: schoolIndex),
                                   transition: Transition.zoom);
                               break;
                             default:

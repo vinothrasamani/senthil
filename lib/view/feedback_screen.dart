@@ -242,7 +242,7 @@ class _FeedbackScreenState extends ConsumerState<FeedbackScreen> {
                                 ],
                               ),
                               SizedBox(
-                                height: size.height * 0.8,
+                                height: size.height * 0.7,
                                 child: TabBarView(
                                   children: [
                                     FeedbackDetails(snap: snap, isDark: isDark),

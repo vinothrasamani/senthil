@@ -86,7 +86,7 @@ class TopperListController {
             SizedBox(
               width: double.infinity,
               child: FilledButton(
-                  onPressed: () => Get.back(), child: Text('Cloase')),
+                  onPressed: () => Get.back(), child: Text('Close')),
             ),
           ],
         ),

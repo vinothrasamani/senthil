@@ -26,6 +26,7 @@ class _TopperListImageScreenState extends ConsumerState<TopperListImageScreen> {
   String? selectedExam, selectedStmGroup, selectedCrGroup;
   final cardKey = GlobalKey<ExpansionTileCoreState>();
   Object? data;
+  final ScrollController scrollController = ScrollController();
 
   @override
   void initState() {
@@ -49,6 +50,12 @@ class _TopperListImageScreenState extends ConsumerState<TopperListImageScreen> {
       "ref": selectedRefGroup
     };
     cardKey.currentState?.collapse();
+  }
+
+  @override
+  void dispose() {
+    scrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -227,9 +234,29 @@ class _TopperListImageScreenState extends ConsumerState<TopperListImageScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Topper List Image'),
+        actions: [
+          IconButton(
+            onPressed: () {
+              scrollController.animateTo(100,
+                  duration: Duration(milliseconds: 400),
+                  curve: Curves.easeInOut);
+            },
+            icon: Icon(Icons.arrow_upward),
+          ),
+          IconButton(
+            onPressed: () {
+              scrollController.animateTo(
+                  scrollController.position.maxScrollExtent,
+                  duration: Duration(milliseconds: 400),
+                  curve: Curves.easeInOut);
+            },
+            icon: Icon(Icons.arrow_downward),
+          ),
+        ],
       ),
       body: SafeArea(
         child: ListView(
+          controller: scrollController,
           shrinkWrap: true,
           padding: EdgeInsets.all(10),
           children: [

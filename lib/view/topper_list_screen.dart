@@ -24,6 +24,7 @@ class _TopperListScreenState extends ConsumerState<TopperListScreen> {
   String? selectedClass, selectedYear, selectedCourse, selectedRefGroup;
   String? selectedExam, selectedStmGroup, selectedCrGroup;
   Object? data;
+  final ScrollController scrollController = ScrollController();
   final cardKey = GlobalKey<ExpansionTileCoreState>();
 
   @override
@@ -47,6 +48,12 @@ class _TopperListScreenState extends ConsumerState<TopperListScreen> {
       "ref": selectedRefGroup
     };
     cardKey.currentState?.collapse();
+  }
+
+  @override
+  void dispose() {
+    scrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -119,7 +126,10 @@ class _TopperListScreenState extends ConsumerState<TopperListScreen> {
         items: ref
             .watch(TopperListController.examsTop)
             .map((e) => DropdownMenuItem<String>(
-                value: e ?? '', child: Text(e ?? 'None')))
+                value: e ?? '',
+                child: ConstrainedBox(
+                    constraints: BoxConstraints(maxWidth: 220),
+                    child: Text(e ?? 'None'))))
             .toList(),
         decoration: InputDecoration(
             labelText: 'Exam',
@@ -201,9 +211,31 @@ class _TopperListScreenState extends ConsumerState<TopperListScreen> {
     ];
 
     return Scaffold(
-      appBar: AppBar(title: Text('Topper List')),
+      appBar: AppBar(
+        title: Text('Topper List'),
+        actions: [
+          IconButton(
+            onPressed: () {
+              scrollController.animateTo(100,
+                  duration: Duration(milliseconds: 400),
+                  curve: Curves.easeInOut);
+            },
+            icon: Icon(Icons.arrow_upward),
+          ),
+          IconButton(
+            onPressed: () {
+              scrollController.animateTo(
+                  scrollController.position.maxScrollExtent,
+                  duration: Duration(milliseconds: 400),
+                  curve: Curves.easeInOut);
+            },
+            icon: Icon(Icons.arrow_downward),
+          ),
+        ],
+      ),
       body: SafeArea(
         child: ListView(
+          controller: scrollController,
           shrinkWrap: true,
           padding: EdgeInsets.all(10),
           children: [
@@ -240,10 +272,6 @@ class _TopperListScreenState extends ConsumerState<TopperListScreen> {
               SearchShimmer(isDark: isDark),
             SizedBox(height: 20),
             if (ref.watch(TopperListController.yearsTop).isNotEmpty)
-              AppController.heading(
-                  'Class Topper List', isDark, TablerIcons.list),
-            SizedBox(height: 10),
-            if (ref.watch(TopperListController.yearsTop).isNotEmpty)
               listener == null
                   ? SizedBox(
                       height: 200,
@@ -278,6 +306,9 @@ class _TopperListScreenState extends ConsumerState<TopperListScreen> {
                           mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+                            AppController.heading(
+                                'Class Topper List', isDark, TablerIcons.list),
+                            SizedBox(height: 10),
                             if (isTheOne)
                               Column(
                                 mainAxisSize: MainAxisSize.min,

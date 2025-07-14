@@ -105,12 +105,15 @@ class AppController {
             ],
           ),
           SizedBox(width: 6),
-          Text(
-            text,
-            style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
-                color: isDark ? Colors.blue : baseColor),
+          Expanded(
+            child: Text(
+              text,
+              style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                  color: isDark ? Colors.blue : baseColor),
+              overflow: TextOverflow.clip,
+            ),
           ),
         ],
       );

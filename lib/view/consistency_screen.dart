@@ -49,6 +49,56 @@ class _ConsistencyScreenState extends ConsumerState<ConsistencyScreen> {
     cardKey.currentState?.collapse();
   }
 
+  Widget desc(bool isDark) => Row(
+        children: [
+          Chip(
+            label: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text('Admission No. :'),
+                SizedBox(width: 8),
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  decoration: BoxDecoration(
+                      border: Border.all(
+                          color: isDark ? AppController.lightBlue : baseColor),
+                      borderRadius: BorderRadius.circular(5)),
+                  child: Text(
+                    '123456',
+                    style: TextStyle(fontSize: 10),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(width: 8),
+          Chip(
+            label: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text('Section : '),
+                SizedBox(width: 8),
+                Container(
+                  width: 18,
+                  height: 18,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(5),
+                      color: AppController.darkGreen),
+                  child: Text(
+                    'A',
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                        fontSize: 12),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      );
+
   @override
   Widget build(BuildContext context) {
     bool isDark = ref.watch(ThemeController.themeMode) == ThemeMode.dark;
@@ -274,7 +324,7 @@ class _ConsistencyScreenState extends ConsumerState<ConsistencyScreen> {
                                 ],
                               ),
                               SizedBox(
-                                height: size.height * 0.8,
+                                height: size.height,
                                 child: TabBarView(
                                   children: [
                                     for (var item in snap.data.schools)
@@ -293,6 +343,8 @@ class _ConsistencyScreenState extends ConsumerState<ConsistencyScreen> {
                                                 TablerIcons.chart_donut),
                                             SizedBox(height: 10),
                                             commonText(item.school),
+                                            SizedBox(height: 10),
+                                            desc(isDark),
                                             SizedBox(height: 10),
                                             ConsistencyTable(
                                                 snap: snap,

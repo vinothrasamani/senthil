@@ -83,10 +83,11 @@ class ClassTopperCard extends StatelessWidget {
                   ],
                 ),
                 SizedBox(
-                  height: size.height * 0.7,
+                  height: size.height * 0.65,
                   child: TabBarView(children: [
                     for (var topper in snap.data.clsToppers)
                       ListView(
+                        shrinkWrap: true,
                         children: [
                           Wrap(
                             spacing: 5,

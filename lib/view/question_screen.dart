@@ -74,7 +74,10 @@ class _QuestionScreenState extends ConsumerState<QuestionScreen> {
         items: ref
             .watch(QuestionController.quesExams)
             .map((e) => DropdownMenuItem<String>(
-                value: e ?? '', child: Text(e ?? 'None')))
+                value: e ?? '',
+                child: ConstrainedBox(
+                    constraints: BoxConstraints(maxWidth: 220),
+                    child: Text(e ?? 'None'))))
             .toList(),
         decoration: InputDecoration(
             labelText: 'Exam',
@@ -215,7 +218,7 @@ class _QuestionScreenState extends ConsumerState<QuestionScreen> {
                                             AppController.heading(
                                                 'Exam Question Paper & Marketing Scheme - ${item.school}',
                                                 isDark,
-                                                TablerIcons.flag_question),
+                                                TablerIcons.file_text_spark),
                                             SizedBox(height: 10),
                                             commonText(item.school),
                                             SizedBox(height: 10),
