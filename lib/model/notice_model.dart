@@ -7,7 +7,7 @@ String noticeModelToJson(NoticeModel data) => json.encode(data.toJson());
 
 class NoticeModel {
   bool success;
-  Data data;
+  NoticeData data;
   String message;
 
   NoticeModel({
@@ -18,7 +18,7 @@ class NoticeModel {
 
   factory NoticeModel.fromJson(Map<String, dynamic> json) => NoticeModel(
         success: json["success"],
-        data: Data.fromJson(json["data"]),
+        data: NoticeData.fromJson(json["data"]),
         message: json["message"],
       );
 
@@ -29,7 +29,7 @@ class NoticeModel {
       };
 }
 
-class Data {
+class NoticeData {
   int id;
   String noticetext;
   String noticeby;
@@ -49,8 +49,9 @@ class Data {
   dynamic dpimStaffcode;
   dynamic kgicStaffcode;
   dynamic kgimStaffcode;
+  int dash;
 
-  Data({
+  NoticeData({
     required this.id,
     required this.noticetext,
     required this.noticeby,
@@ -70,9 +71,10 @@ class Data {
     required this.dpimStaffcode,
     required this.kgicStaffcode,
     required this.kgimStaffcode,
+    required this.dash,
   });
 
-  factory Data.fromJson(Map<String, dynamic> json) => Data(
+  factory NoticeData.fromJson(Map<String, dynamic> json) => NoticeData(
         id: json["id"],
         noticetext: json["noticetext"],
         noticeby: json["noticeby"],
@@ -92,6 +94,7 @@ class Data {
         dpimStaffcode: json["dpim_staffcode"],
         kgicStaffcode: json["kgic_staffcode"],
         kgimStaffcode: json["kgim_staffcode"],
+        dash: json["dash"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -114,5 +117,6 @@ class Data {
         "dpim_staffcode": dpimStaffcode,
         "kgic_staffcode": kgicStaffcode,
         "kgim_staffcode": kgimStaffcode,
+        "dash": dash,
       };
 }

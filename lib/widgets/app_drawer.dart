@@ -11,6 +11,7 @@ import 'package:senthil/view/comparison_screen.dart';
 import 'package:senthil/view/consistency_screen.dart';
 import 'package:senthil/view/exam_upload_details_screen.dart';
 import 'package:senthil/view/feedback_screen.dart';
+import 'package:senthil/view/notice_screen.dart';
 import 'package:senthil/view/question_screen.dart';
 import 'package:senthil/view/staff_details/staff_details_screen.dart';
 import 'package:senthil/view/topper_list_image_screen.dart';
@@ -46,6 +47,17 @@ class AppDrawer extends ConsumerWidget {
       Icons.question_answer
     ];
 
+    Widget menuItem(IconData icon, String title, Widget screen) {
+      return ListTile(
+        leading: Icon(icon),
+        title: Text(title),
+        onTap: () {
+          Get.back();
+          Get.to(() => screen, transition: Transition.zoom);
+        },
+      );
+    }
+
     return Drawer(
       child: ListView(
         children: [
@@ -75,7 +87,6 @@ class AppDrawer extends ConsumerWidget {
           for (var school in schools)
             Builder(builder: (context) {
               final schoolIndex = schools.indexOf(school);
-
               return ExpansionTile(
                 leading: Text(school[0].toUpperCase(),
                     style: GoogleFonts.poppins(
@@ -150,6 +161,14 @@ class AppDrawer extends ConsumerWidget {
                 ],
               );
             }),
+          ExpansionTile(
+            leading: Icon(Icons.admin_panel_settings_outlined),
+            title: Text('Additional'),
+            textColor: AppController.headColor,
+            children: [
+              menuItem(TablerIcons.message, 'Notice', NoticeScreen()),
+            ],
+          ),
           ListTile(
             leading: Icon(TablerIcons.settings),
             title: Text('Settings'),

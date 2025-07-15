@@ -57,8 +57,8 @@ class ComparisonController {
     }
   }
 
-  static final tableData =
-      FutureProvider.family<SearchComparisonModel, Object>((ref, data) async {
+  static final tableData = FutureProvider.family
+      .autoDispose<SearchComparisonModel, Object>((ref, data) async {
     final res = await AppController.send('comparison-search', data);
     ref.read(searching.notifier).state = false;
     return searchComparisonModelFromJson(res);

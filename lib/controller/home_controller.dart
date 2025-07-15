@@ -5,7 +5,7 @@ import 'package:senthil/model/dashboard_model.dart';
 
 class HomeController {
   static final noticeData =
-      FutureProvider.family<NoticeModel, int>((ref, id) async {
+      FutureProvider.family.autoDispose<NoticeModel, int>((ref, id) async {
     final res = await AppController.fetch('notice/$id');
     return noticeModelFromJson(res);
   });

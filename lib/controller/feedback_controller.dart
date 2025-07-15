@@ -30,8 +30,8 @@ class FeedbackController {
     }
   }
 
-  static final searchData =
-      FutureProvider.family<FeedbackViewModel, Object>((ref, data) async {
+  static final searchData = FutureProvider.family
+      .autoDispose<FeedbackViewModel, Object>((ref, data) async {
     final res = await AppController.send('search-feedback', data);
     ref.read(searching.notifier).state = false;
     return feedbackViewModelFromJson(res);

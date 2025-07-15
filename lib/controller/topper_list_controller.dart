@@ -59,8 +59,8 @@ class TopperListController {
     }
   }
 
-  static final classTopperData =
-      FutureProvider.family<TopperListModel, Object>((ref, data) async {
+  static final classTopperData = FutureProvider.family
+      .autoDispose<TopperListModel, Object>((ref, data) async {
     final res = await AppController.send('topper-list-search', data);
     ref.read(searchingTop.notifier).state = false;
     return topperListModelFromJson(res);
@@ -166,8 +166,8 @@ class TopperListController {
     }
   }
 
-  static final classTopperImageData =
-      FutureProvider.family<TopperListImageModel, Object>((ref, data) async {
+  static final classTopperImageData = FutureProvider.family
+      .autoDispose<TopperListImageModel, Object>((ref, data) async {
     final res = await AppController.send('top-list-img-search', data);
     ref.read(searchingTop.notifier).state = false;
     return topperListImageModelFromJson(res);

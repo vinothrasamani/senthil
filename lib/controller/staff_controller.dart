@@ -31,7 +31,8 @@ class StaffController {
     }
   }
 
-  static final staffDetails = FutureProvider.family((ref, Object object) async {
+  static final staffDetails =
+      FutureProvider.family.autoDispose((ref, Object object) async {
     final res = await AppController.send('staff-details-search', object);
     ref.read(searching.notifier).state = false;
     return staffDetailsModelFromJson(res);

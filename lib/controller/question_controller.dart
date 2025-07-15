@@ -21,8 +21,8 @@ class QuestionController {
     ref.read(quesExams.notifier).state = decrypted['data']['exams'];
   }
 
-  static final questionData =
-      FutureProvider.family<QuestionModel, Object>((ref, data) async {
+  static final questionData = FutureProvider.family
+      .autoDispose<QuestionModel, Object>((ref, data) async {
     final res = await AppController.send('search-question', data);
     ref.read(searchingTop.notifier).state = false;
     return questionModelFromJson(res);

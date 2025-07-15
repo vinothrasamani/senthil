@@ -47,8 +47,8 @@ class ConsistencyController {
     }
   }
 
-  static final conData =
-      FutureProvider.family<ConsistencyModel, Object>((ref, data) async {
+  static final conData = FutureProvider.family
+      .autoDispose<ConsistencyModel, Object>((ref, data) async {
     final res = await AppController.send('consistency-search', data);
     ref.read(searchingTop.notifier).state = false;
     return consistencyModelFromJson(res);
