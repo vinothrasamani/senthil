@@ -1,5 +1,7 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_windowmanager_plus/flutter_windowmanager_plus.dart';
 import 'package:get/get.dart';
 import 'package:senthil/controller/theme_controller.dart';
 import 'package:senthil/view/splash_screen.dart';
@@ -28,6 +30,10 @@ class _MyAppState extends ConsumerState<MyApp> {
     final isDark = preferences.getBool('isDark') ?? false;
     ref.read(ThemeController.themeMode.notifier).state =
         isDark ? ThemeMode.dark : ThemeMode.light;
+    if (!kIsWeb) {
+      await FlutterWindowManagerPlus.addFlags(
+          FlutterWindowManagerPlus.FLAG_SECURE);
+    }
   }
 
   @override

@@ -64,8 +64,8 @@ class _ComparisonScreen extends ConsumerState<ComparisonScreen> {
         value: selectedYear,
         items: ref
             .watch(ComparisonController.years)
-            .map((e) => DropdownMenuItem<String>(
-                value: e ?? '', child: Text(e ?? 'None')))
+            .map((e) =>
+                DropdownMenuItem<String>(value: e ?? '', child: Text(e ?? '')))
             .toList(),
         decoration: InputDecoration(
             labelText: 'Year',
@@ -86,8 +86,8 @@ class _ComparisonScreen extends ConsumerState<ComparisonScreen> {
         value: selectedClass,
         items: ref
             .watch(ComparisonController.classes)
-            .map((e) => DropdownMenuItem<String>(
-                value: e ?? '', child: Text(e ?? 'None')))
+            .map((e) =>
+                DropdownMenuItem<String>(value: e ?? '', child: Text(e ?? '')))
             .toList(),
         decoration: InputDecoration(
             labelText: 'Class',
@@ -123,7 +123,7 @@ class _ComparisonScreen extends ConsumerState<ComparisonScreen> {
                 child: ConstrainedBox(
                   constraints: BoxConstraints(maxWidth: 220),
                   child: Text(
-                    e ?? 'None',
+                    e ?? '',
                     overflow: TextOverflow.clip,
                   ),
                 )))
@@ -163,7 +163,7 @@ class _ComparisonScreen extends ConsumerState<ComparisonScreen> {
           items: ref
               .watch(ComparisonController.coursegroups)
               .map((e) => DropdownMenuItem<String>(
-                  value: e ?? '', child: Text(e ?? 'None')))
+                  value: e ?? '', child: Text(e ?? '')))
               .toList(),
           decoration: InputDecoration(
               labelText: 'Course Group',
@@ -177,7 +177,7 @@ class _ComparisonScreen extends ConsumerState<ComparisonScreen> {
           items: ref
               .watch(ComparisonController.streamgroups)
               .map((e) => DropdownMenuItem<String>(
-                  value: e ?? '', child: Text(e ?? 'None')))
+                  value: e ?? '', child: Text(e ?? '')))
               .toList(),
           decoration: InputDecoration(
               labelText: 'stream group',
@@ -191,7 +191,7 @@ class _ComparisonScreen extends ConsumerState<ComparisonScreen> {
           items: ref
               .watch(ComparisonController.refgroups)
               .map((e) => DropdownMenuItem<String>(
-                  value: e ?? '', child: Text(e ?? 'None')))
+                  value: e ?? '', child: Text(e ?? '')))
               .toList(),
           decoration: InputDecoration(
               labelText: 'Ref Group',
@@ -205,8 +205,8 @@ class _ComparisonScreen extends ConsumerState<ComparisonScreen> {
         value: selectedCourse,
         items: ref
             .watch(ComparisonController.courses)
-            .map((e) => DropdownMenuItem<String>(
-                value: e ?? '', child: Text(e ?? 'None')))
+            .map((e) =>
+                DropdownMenuItem<String>(value: e ?? '', child: Text(e ?? '')))
             .toList(),
         decoration: InputDecoration(
             labelText: 'Course',

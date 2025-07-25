@@ -21,7 +21,6 @@ class ComparisonController {
   static void setData(WidgetRef ref, String url, Object object) async {
     final res = await AppController.send(url, object);
     final decrypted = jsonDecode(res);
-    print(decrypted);
     switch (url) {
       case 'years':
         ref.read(years.notifier).state = decrypted['data'];

@@ -16,6 +16,7 @@ import 'package:senthil/view/question_screen.dart';
 import 'package:senthil/view/staff_details/staff_details_screen.dart';
 import 'package:senthil/view/topper_list_image_screen.dart';
 import 'package:senthil/view/topper_list_screen.dart';
+import 'package:senthil/view/user_list_screen.dart';
 import 'package:senthil/view/web_view_screen.dart';
 
 class AppDrawer extends ConsumerWidget {
@@ -167,6 +168,7 @@ class AppDrawer extends ConsumerWidget {
             textColor: AppController.headColor,
             children: [
               menuItem(TablerIcons.message, 'Notice', NoticeScreen()),
+              menuItem(TablerIcons.users_group, 'User List', UserListScreen()),
             ],
           ),
           ListTile(
