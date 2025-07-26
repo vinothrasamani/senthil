@@ -10,6 +10,7 @@ import 'package:senthil/view/app_settings.dart';
 import 'package:senthil/view/comparison_screen.dart';
 import 'package:senthil/view/consistency_screen.dart';
 import 'package:senthil/view/exam_upload_details_screen.dart';
+import 'package:senthil/view/feedback_list_screen.dart';
 import 'package:senthil/view/feedback_screen.dart';
 import 'package:senthil/view/notice_screen.dart';
 import 'package:senthil/view/question_screen.dart';
@@ -169,6 +170,8 @@ class AppDrawer extends ConsumerWidget {
             children: [
               menuItem(TablerIcons.message, 'Notice', NoticeScreen()),
               menuItem(TablerIcons.users_group, 'User List', UserListScreen()),
+              menuItem(
+                  Icons.feedback_outlined, 'Feedback', FeedbackListScreen()),
             ],
           ),
           ListTile(

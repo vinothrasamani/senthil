@@ -39,8 +39,6 @@ class ThemeController {
 
   static IconButtonThemeData iconButtonThemeData = IconButtonThemeData(
     style: IconButton.styleFrom(
-      foregroundColor: Colors.white,
-      backgroundColor: baseColor,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
     ),
   );

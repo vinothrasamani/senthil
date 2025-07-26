@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 
-class UserListShimmer extends StatelessWidget {
-  const UserListShimmer({super.key, required this.isDark});
+class FeedbackShimmer extends StatelessWidget {
+  const FeedbackShimmer({super.key, required this.isDark});
   final bool isDark;
 
   Widget shimmer(double h, double? w, [double p = 0]) {
@@ -38,29 +38,34 @@ class UserListShimmer extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        shimmer(50, 50),
+                        shimmer(20, 20),
                         SizedBox(width: 10),
                         Expanded(
-                            child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            shimmer(30, null),
-                            SizedBox(height: 5),
-                            shimmer(18, size.width * 0.3),
-                          ],
-                        )),
-                        SizedBox(width: 10),
-                        shimmer(25, 25),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              for (var k = 0; k < 2; k++) shimmer(18, null, 8),
+                              SizedBox(height: 5),
+                              shimmer(18, size.width * 0.3),
+                            ],
+                          ),
+                        ),
                       ],
                     ),
                     SizedBox(height: 10),
-                    shimmer(20, size.width * 0.6),
-                    SizedBox(height: 10),
-                    shimmer(20, size.width * 0.4),
-                    SizedBox(height: 10),
-                    shimmer(20, null),
+                    Row(
+                      children: [
+                        shimmer(20, 80),
+                        SizedBox(width: 5),
+                        shimmer(20, 100),
+                        SizedBox(width: 5),
+                        Spacer(),
+                        shimmer(30, 30),
+                      ],
+                    ),
                   ],
                 ),
               ),

@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
+import 'package:get/get.dart';
 import 'package:senthil/controller/app_controller.dart';
 import 'package:senthil/controller/theme_controller.dart';
 import 'package:senthil/controller/user_list_controller.dart';
 import 'package:senthil/model/user_list_model.dart';
 import 'package:senthil/shimmer/user_list_shimmer.dart';
+import 'package:senthil/widgets/edit_user.dart';
 
 class UserListScreen extends ConsumerStatefulWidget {
   const UserListScreen({super.key});
@@ -15,7 +17,7 @@ class UserListScreen extends ConsumerStatefulWidget {
 }
 
 class _UserListScreenState extends ConsumerState<UserListScreen> {
-  bool initial = true;
+  bool initial = true, canLoad = true;
   Widget leading = Container(
     padding: EdgeInsets.all(2),
     decoration: BoxDecoration(borderRadius: BorderRadius.circular(5)),
@@ -38,8 +40,9 @@ class _UserListScreenState extends ConsumerState<UserListScreen> {
                 padding: EdgeInsets.all(5),
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    color: AppController.lightBlue.withAlpha(60)),
+                  borderRadius: BorderRadius.circular(10),
+                  color: AppController.lightBlue.withAlpha(60),
+                ),
                 child: Icon(Icons.person, color: AppController.lightBlue),
               ),
               contentPadding: EdgeInsets.symmetric(horizontal: 0),
@@ -53,7 +56,7 @@ class _UserListScreenState extends ConsumerState<UserListScreen> {
                   Container(
                     padding: EdgeInsets.symmetric(vertical: 2, horizontal: 6),
                     decoration: BoxDecoration(
-                      color: baseColor.withAlpha(50),
+                      color: baseColor.withAlpha(30),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
@@ -66,9 +69,28 @@ class _UserListScreenState extends ConsumerState<UserListScreen> {
                   ),
                 ],
               ),
-              trailing: user.mobile == null
-                  ? null
-                  : Icon(TablerIcons.phone, color: AppController.darkGreen),
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (user.mobile == null)
+                    Icon(TablerIcons.phone, color: AppController.darkGreen),
+                  IconButton(
+                    onPressed: () {
+                      Get.to(() => EditUser(user: user),
+                          transition: Transition.rightToLeft);
+                    },
+                    color: AppController.yellow,
+                    icon: Icon(TablerIcons.edit),
+                  ),
+                  IconButton(
+                    onPressed: () async {
+                      UserListController.confirm(user.id, ref);
+                    },
+                    color: AppController.red,
+                    icon: Icon(TablerIcons.trash),
+                  ),
+                ],
+              ),
             ),
             Wrap(
               spacing: 5,
@@ -97,7 +119,7 @@ class _UserListScreenState extends ConsumerState<UserListScreen> {
                       label: Text(user.className!),
                       avatar: Icon(
                         TablerIcons.chalkboard,
-                        color: AppController.yellow,
+                        color: baseColor,
                       ),
                     ),
                   ),
@@ -121,6 +143,7 @@ class _UserListScreenState extends ConsumerState<UserListScreen> {
                   WidgetsBinding.instance.addPostFrameCallback((_) {
                     ref.read(UserListController.filteredUsers.notifier).state =
                         snap;
+                    canLoad = false;
                   });
                   initial = false;
                 }
@@ -142,14 +165,16 @@ class _UserListScreenState extends ConsumerState<UserListScreen> {
                       Expanded(
                         child: filtered.isEmpty
                             ? Center(
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Icon(Icons.filter_list_off, size: 30),
-                                    SizedBox(height: 10),
-                                    Text('User List Empty!'),
-                                  ],
-                                ),
+                                child: canLoad
+                                    ? CircularProgressIndicator()
+                                    : Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Icon(Icons.filter_list_off, size: 30),
+                                          SizedBox(height: 10),
+                                          Text('User List Empty!'),
+                                        ],
+                                      ),
                               )
                             : ListView(
                                 children: [

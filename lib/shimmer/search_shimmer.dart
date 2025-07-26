@@ -23,18 +23,37 @@ class SearchShimmer extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          shimmer(20, 160),
+          shimmer(50, null),
           SizedBox(height: 10),
-          for (var i = 0; i < 4; i++) shimmer(50, null, 5),
-          SizedBox(height: 10),
-          shimmer(30, null),
-          SizedBox(height: 50),
-          shimmer(20, 120),
-          SizedBox(height: 30),
-          Column(
-            children: [
-              for (var i = 0; i < 4; i++) shimmer(15, null, 4),
-            ],
+          Container(
+            padding: EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: Colors.grey),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  children: [
+                    shimmer(25, 120),
+                    Spacer(),
+                    shimmer(25, 25),
+                  ],
+                ),
+                SizedBox(height: 5),
+                for (var i = 0; i < 4; i++) shimmer(50, null, 5),
+              ],
+            ),
+          ),
+          SizedBox(height: 15),
+          shimmer(25, 220),
+          SizedBox(
+            height: 300,
+            child: Center(
+              child: shimmer(20, 200),
+            ),
           ),
         ],
       ),
