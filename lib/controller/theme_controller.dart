@@ -37,6 +37,9 @@ class ThemeController {
     foregroundColor: Colors.white,
   );
 
+  static FloatingActionButtonThemeData floatingActionButtonThemeData =
+      FloatingActionButtonThemeData(
+          foregroundColor: Colors.white, backgroundColor: baseColor);
   static IconButtonThemeData iconButtonThemeData = IconButtonThemeData(
     style: IconButton.styleFrom(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
@@ -54,6 +57,7 @@ class ThemeController {
     outlinedButtonTheme: outlinedButtonThemeData,
     inputDecorationTheme: InputDecorationTheme(border: OutlineInputBorder()),
     iconButtonTheme: iconButtonThemeData,
+    floatingActionButtonTheme: floatingActionButtonThemeData,
   );
 
   static ThemeData darkTheme = ThemeData(
@@ -67,6 +71,7 @@ class ThemeController {
     outlinedButtonTheme: outlinedButtonThemeData,
     inputDecorationTheme: InputDecorationTheme(border: OutlineInputBorder()),
     iconButtonTheme: iconButtonThemeData,
+    floatingActionButtonTheme: floatingActionButtonThemeData,
   );
 
   static final themeMode = StateProvider<ThemeMode>((ref) => ThemeMode.light);

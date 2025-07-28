@@ -40,7 +40,7 @@ class FeedbackItem {
   int show;
   DateTime updatedAt;
   DateTime createdAt;
-  int ord;
+  int? ord;
 
   FeedbackItem({
     required this.id,
@@ -50,7 +50,7 @@ class FeedbackItem {
     required this.show,
     required this.updatedAt,
     required this.createdAt,
-    required this.ord,
+    this.ord,
   });
 
   factory FeedbackItem.fromJson(Map<String, dynamic> json) => FeedbackItem(
@@ -61,7 +61,7 @@ class FeedbackItem {
         show: json["show"],
         updatedAt: DateTime.parse(json["updated_at"]),
         createdAt: DateTime.parse(json["created_at"]),
-        ord: json["ord"],
+        ord: json["ord"] ?? 0,
       );
 
   Map<String, dynamic> toJson() => {
@@ -72,6 +72,6 @@ class FeedbackItem {
         "show": show,
         "updated_at": updatedAt.toIso8601String(),
         "created_at": createdAt.toIso8601String(),
-        "ord": ord,
+        "ord": ord ?? 0,
       };
 }
