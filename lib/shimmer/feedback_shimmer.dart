@@ -47,8 +47,8 @@ class FeedbackShimmer extends StatelessWidget {
                             mainAxisSize: MainAxisSize.min,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              for (var k = 0; k < 2; k++) shimmer(18, null, 8),
-                              SizedBox(height: 5),
+                              for (var k = 0; k < 2; k++) shimmer(18, null, 2),
+                              SizedBox(height: 2),
                               shimmer(18, size.width * 0.3),
                             ],
                           ),

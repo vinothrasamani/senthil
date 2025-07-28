@@ -5,14 +5,20 @@ import 'package:senthil/controller/app_controller.dart';
 import 'package:senthil/controller/feedback_list_controller.dart';
 import 'package:senthil/controller/theme_controller.dart';
 import 'package:senthil/shimmer/feedback_shimmer.dart';
+import 'package:senthil/widgets/feedback/feedback_enabler.dart';
 
-class FeedbackListScreen extends ConsumerWidget {
+class FeedbackListScreen extends ConsumerStatefulWidget {
   const FeedbackListScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ConsumerStatefulWidget> createState() =>
+      _FeedbackListScreenState();
+}
+
+class _FeedbackListScreenState extends ConsumerState<ConsumerStatefulWidget> {
+  @override
+  Widget build(BuildContext context) {
     bool isDark = ref.watch(ThemeController.themeMode) == ThemeMode.dark;
-    Size size = MediaQuery.of(context).size;
 
     Widget myChip(String value, Color color) {
       return Container(
@@ -24,10 +30,7 @@ class FeedbackListScreen extends ConsumerWidget {
         child: Text(
           value,
           style: TextStyle(
-            color: color,
-            fontSize: 12,
-            fontWeight: FontWeight.bold,
-          ),
+              color: color, fontSize: 12, fontWeight: FontWeight.bold),
         ),
       );
     }
@@ -64,8 +67,9 @@ class FeedbackListScreen extends ConsumerWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              FeebackEnabler(
+                              FeedbackEnabler(
                                 isDark: isDark,
+                                id: feedback.id,
                                 value: feedback.show == 1,
                                 ques:
                                     '${snap.data.indexOf(feedback) + 1}. ${feedback.subject}',
@@ -80,7 +84,13 @@ class FeedbackListScreen extends ConsumerWidget {
                                       AppController.lightBlue),
                                   Spacer(),
                                   IconButton(
-                                    onPressed: () async {},
+                                    onPressed: () =>
+                                        FeedbackListController.openEditSheet(
+                                            context, feedback, (q) {
+                                      snap.data[snap.data.indexOf(feedback)] =
+                                          q;
+                                      setState(() {});
+                                    }),
                                     color: AppController.yellow,
                                     icon: Icon(TablerIcons.edit),
                                   ),
@@ -105,62 +115,6 @@ class FeedbackListScreen extends ConsumerWidget {
                 ),
                 loading: () => FeedbackShimmer(isDark: isDark),
               )),
-    );
-  }
-}
-
-class FeebackEnabler extends StatefulWidget {
-  const FeebackEnabler(
-      {super.key,
-      required this.isDark,
-      required this.value,
-      required this.ques});
-  final bool value;
-  final bool isDark;
-  final String ques;
-
-  @override
-  State<FeebackEnabler> createState() => _FeebackEnablerState();
-}
-
-class _FeebackEnablerState extends State<FeebackEnabler> {
-  bool enable = false;
-
-  @override
-  void initState() {
-    enable = widget.value;
-    setState(() {});
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          enable = !enable;
-        });
-      },
-      child: Row(
-        children: [
-          Checkbox(
-            value: enable,
-            activeColor: widget.isDark
-                ? AppController.lightGreen
-                : AppController.darkGreen,
-            onChanged: (val) {
-              enable = val!;
-              setState(() {});
-            },
-          ),
-          Expanded(
-            child: Text(
-              widget.ques,
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-          ),
-        ],
-      ),
     );
   }
 }
