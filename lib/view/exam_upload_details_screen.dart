@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:senthil/controller/app_controller.dart';
 import 'package:senthil/controller/exam_upload_controller.dart';
 import 'package:senthil/controller/theme_controller.dart';
+import 'package:senthil/shimmer/table_shimmer.dart';
 
 class ExamUploadDetailsScreen extends ConsumerStatefulWidget {
   const ExamUploadDetailsScreen({super.key, required this.index});
@@ -177,10 +178,8 @@ class _ExamUploadDetailsScreenState
             height: 200,
             child: Center(child: Text('Something went wrong!')),
           ),
-          loading: () => SizedBox(
-            height: 200,
-            child: Center(child: CircularProgressIndicator()),
-          ),
+          loading: () =>
+              SingleChildScrollView(child: TableShimmer(isDark: isDark)),
         ),
       ),
     );

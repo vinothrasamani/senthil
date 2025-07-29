@@ -6,6 +6,7 @@ import 'package:senthil/controller/app_controller.dart';
 import 'package:senthil/controller/question_controller.dart';
 import 'package:senthil/controller/theme_controller.dart';
 import 'package:senthil/shimmer/search_shimmer.dart';
+import 'package:senthil/shimmer/table_shimmer.dart';
 import 'package:senthil/widgets/question_table.dart';
 
 class QuestionScreen extends ConsumerStatefulWidget {
@@ -240,10 +241,7 @@ class _QuestionScreenState extends ConsumerState<QuestionScreen> {
                         height: 200,
                         child: Center(child: Text('Something went wrong!')),
                       ),
-                      loading: () => SizedBox(
-                        height: 200,
-                        child: Center(child: CircularProgressIndicator()),
-                      ),
+                      loading: () => TableShimmer(isDark: isDark),
                     ),
           ],
         ),

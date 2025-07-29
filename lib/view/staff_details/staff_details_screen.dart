@@ -6,6 +6,7 @@ import 'package:senthil/controller/app_controller.dart';
 import 'package:senthil/controller/staff_controller.dart';
 import 'package:senthil/controller/theme_controller.dart';
 import 'package:senthil/shimmer/search_shimmer.dart';
+import 'package:senthil/shimmer/staff_screen_shimmer.dart';
 import 'package:senthil/widgets/staff_details/downloaded_pdfs.dart';
 import 'package:senthil/widgets/staff_details/staff_detail_card.dart';
 
@@ -258,10 +259,7 @@ class _StaffDetailsScreenState extends ConsumerState<StaffDetailsScreen> {
                         height: 200,
                         child: Center(child: Text('Something went wrong! $e')),
                       ),
-                      loading: () => SizedBox(
-                        height: 200,
-                        child: Center(child: CircularProgressIndicator()),
-                      ),
+                      loading: () => StaffScreenShimmer(isDark: isDark),
                     )
           ],
         ),

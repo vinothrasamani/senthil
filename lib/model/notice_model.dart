@@ -49,7 +49,7 @@ class NoticeData {
   dynamic dpimStaffcode;
   dynamic kgicStaffcode;
   dynamic kgimStaffcode;
-  int dash;
+  int? dash;
 
   NoticeData({
     required this.id,

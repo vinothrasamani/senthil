@@ -53,6 +53,17 @@ class FeedbackItem {
     this.ord,
   });
 
+  FeedbackItem copyWith(bool s) {
+    return FeedbackItem(
+        id: id,
+        subject: subject,
+        questype: questype,
+        board: board,
+        show: s ? 1 : 0,
+        updatedAt: updatedAt,
+        createdAt: createdAt);
+  }
+
   factory FeedbackItem.fromJson(Map<String, dynamic> json) => FeedbackItem(
         id: json["id"],
         subject: json["subject"],

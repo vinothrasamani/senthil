@@ -71,7 +71,7 @@ class StaffInfoScreen extends ConsumerWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Senthil ${staff.schooltype == 'CBSE' ? 'Public' : 'Metric'} School',
+                            'Senthil ${staff.schooltype == 'CBSE' ? 'Public' : 'Matric'} School',
                             style: TextStyle(
                                 fontWeight: FontWeight.bold, fontSize: 16),
                           ),

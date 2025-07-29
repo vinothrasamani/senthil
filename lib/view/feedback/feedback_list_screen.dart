@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
+import 'package:get/get.dart';
 import 'package:senthil/controller/app_controller.dart';
 import 'package:senthil/controller/feedback_list_controller.dart';
 import 'package:senthil/controller/theme_controller.dart';
 import 'package:senthil/model/feedback_items_model.dart';
 import 'package:senthil/shimmer/feedback_shimmer.dart';
+import 'package:senthil/view/feedback/feedback_setting_screen.dart';
 import 'package:senthil/widgets/feedback/feedback_enabler.dart';
 
 class FeedbackListScreen extends ConsumerStatefulWidget {
@@ -17,6 +19,8 @@ class FeedbackListScreen extends ConsumerStatefulWidget {
 }
 
 class _FeedbackListScreenState extends ConsumerState<ConsumerStatefulWidget> {
+  String? selectedType = 'All';
+
   Widget radioButton(bool v, String value, bool isE) {
     return RadioListTile(
       value: v,
@@ -61,10 +65,19 @@ class _FeedbackListScreenState extends ConsumerState<ConsumerStatefulWidget> {
       );
     }
 
-    print(isEnabled);
-
     return Scaffold(
-      appBar: AppBar(title: Text('Feedback')),
+      appBar: AppBar(
+        title: Text('Feedback'),
+        actions: [
+          IconButton(
+            onPressed: () {
+              Get.to(() => FeedbackSettingScreen(),
+                  transition: Transition.rightToLeft);
+            },
+            icon: Icon(TablerIcons.settings),
+          ),
+        ],
+      ),
       body: SafeArea(
         child: isLoading
             ? FeedbackShimmer(isDark: isDark)
@@ -82,16 +95,70 @@ class _FeedbackListScreenState extends ConsumerState<ConsumerStatefulWidget> {
                   )
                 : Column(
                     children: [
-                      Wrap(
+                      Row(
                         children: [
-                          radioButton(true, 'Enable', isEnabled),
-                          radioButton(false, 'Disable', isEnabled),
+                          Expanded(
+                              child: radioButton(true, 'Enable', isEnabled)),
+                          Expanded(
+                              child: radioButton(false, 'Disable', isEnabled)),
                         ],
                       ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: DropdownButtonFormField<String>(
+                                value: selectedType,
+                                isDense: true,
+                                decoration: InputDecoration(
+                                  contentPadding: EdgeInsets.symmetric(
+                                      vertical: 0, horizontal: 12),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                ),
+                                hint: Text('choose..'),
+                                items: ['All', 'Common', 'Staff']
+                                    .map((e) => DropdownMenuItem(
+                                          value: e,
+                                          child: Text(e),
+                                        ))
+                                    .toList(),
+                                onChanged: (v) {
+                                  selectedType = v!;
+                                },
+                              ),
+                            ),
+                            SizedBox(width: 6),
+                            Expanded(
+                              child: FilledButton(
+                                onPressed: () {
+                                  ref
+                                      .read(feedbackListProvider.notifier)
+                                      .updateShow(selectedType!, ref);
+                                },
+                                child: Text('Update'),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Divider(),
                       Expanded(
                         child: ListView(
                           shrinkWrap: true,
                           children: [
+                            SizedBox(height: 5),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 10),
+                              child: Text(
+                                'Questions',
+                                style: TextStyle(
+                                    fontSize: 17, fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                            SizedBox(height: 5),
                             for (var feedback in snap)
                               Container(
                                 margin: EdgeInsets.symmetric(vertical: 5),

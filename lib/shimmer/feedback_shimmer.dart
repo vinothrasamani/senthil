@@ -22,14 +22,18 @@ class FeedbackShimmer extends StatelessWidget {
       baseColor: Colors.grey[isDark ? 800 : 300]!,
       highlightColor: Colors.grey[isDark ? 700 : 100]!,
       child: SingleChildScrollView(
+        padding: EdgeInsets.all(15),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            shimmer(40, null, 5),
+            shimmer(40, null, 5),
+            shimmer(20, 150, 5),
             for (var i = 0; i < 15; i++)
               Container(
                 padding: EdgeInsets.all(10),
-                margin: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                margin: EdgeInsets.symmetric(vertical: 10),
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(5),
                     border: Border.all(color: Colors.grey)),

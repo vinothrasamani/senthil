@@ -52,7 +52,9 @@ class FeedbackDetails extends StatelessWidget {
                 ),
               ),
               size: ColumnSize.L,
-              fixedWidth: sideWidth * 4),
+              fixedWidth: snap.data.feedbackSubjects.isEmpty
+                  ? size.width
+                  : sideWidth * 4),
           for (var sub in snap.data.feedbackSubjects)
             DataColumn2(
                 label: Padding(
@@ -82,10 +84,10 @@ class FeedbackDetails extends StatelessWidget {
         ],
         dataTextStyle: TextStyle(
             fontWeight: FontWeight.bold,
-            fontSize: 12,
+            fontSize: 13,
             color: isDark ? Colors.white : Colors.black),
         headingTextStyle: TextStyle(
-            fontSize: 12.5,
+            fontSize: 13.5,
             fontWeight: FontWeight.bold,
             color: isDark ? Colors.white : Colors.black),
         rows: [

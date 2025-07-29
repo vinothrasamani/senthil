@@ -8,8 +8,13 @@ import 'package:senthil/widgets/feedback/edit_feedback.dart';
 
 class FeedbackListController extends StateNotifier<List<FeedbackItem>> {
   FeedbackListController() : super([]);
-  static final isLoading = StateProvider((ref) => true);
-  static final isEnabled = StateProvider((ref) => true);
+  static final isLoading = StateProvider.autoDispose((ref) => true);
+  static final isEnabled = StateProvider.autoDispose((ref) => true);
+  static final fStaff = StateProvider.autoDispose((ref) => false);
+  static final fAnim = StateProvider.autoDispose((ref) => false);
+  static final years = StateProvider.autoDispose((ref) => []);
+  static final feedLoading = StateProvider.autoDispose((ref) => true);
+  static final updating = StateProvider.autoDispose((ref) => false);
 
   Future<void> loadItems() async {
     final str = await AppController.fetch('feedback-list');
@@ -46,6 +51,36 @@ class FeedbackListController extends StateNotifier<List<FeedbackItem>> {
       showDragHandle: true,
       builder: (ctx) => EditFeedback(feedback: feedback),
     );
+  }
+
+  void updateShow(String valFor, WidgetRef ref) async {
+    final value = ref.read(isEnabled);
+    ref.read(isLoading.notifier).state = true;
+    final str = await AppController.send(
+        'update-feedback-show', {'value': value ? 1 : 0, 'valFor': valFor});
+    if (jsonDecode(str)['success']) {
+      AppController.toastMessage('Updated!', 'Questions updated!');
+      if (valFor == 'All') {
+        state = state.map((e) => e.copyWith(value)).toList();
+      } else {
+        state = state.map((e) {
+          if (e.questype == valFor) {
+            return e.copyWith(value);
+          } else {
+            return e;
+          }
+        }).toList();
+      }
+    }
+    ref.read(isLoading.notifier).state = false;
+  }
+
+  static Future<void> updateNotice(Object object) async {
+    final res = await AppController.send('feedback-settings-save', object);
+    if (jsonDecode(res)['success']) {
+      AppController.toastMessage(
+          'Updated!', 'Feedback notice updated successfully!');
+    }
   }
 }
 

@@ -7,6 +7,7 @@ import 'package:senthil/controller/app_controller.dart';
 import 'package:senthil/controller/comparison_controller.dart';
 import 'package:senthil/controller/theme_controller.dart';
 import 'package:senthil/shimmer/search_shimmer.dart';
+import 'package:senthil/shimmer/table_shimmer.dart';
 
 class ComparisonScreen extends ConsumerStatefulWidget {
   const ComparisonScreen(
@@ -411,10 +412,7 @@ class _ComparisonScreen extends ConsumerState<ComparisonScreen> {
                     child: Center(
                         child: Text('Failed to fetch. Try again Later!')),
                   ),
-                  loading: () => SizedBox(
-                    height: 200,
-                    child: Center(child: CircularProgressIndicator()),
-                  ),
+                  loading: () => TableShimmer(isDark: isDark),
                 )
               else
                 SizedBox(

@@ -10,7 +10,7 @@ import 'package:senthil/view/app_settings.dart';
 import 'package:senthil/view/comparison_screen.dart';
 import 'package:senthil/view/consistency_screen.dart';
 import 'package:senthil/view/exam_upload_details_screen.dart';
-import 'package:senthil/view/feedback_list_screen.dart';
+import 'package:senthil/view/feedback/feedback_list_screen.dart';
 import 'package:senthil/view/feedback_screen.dart';
 import 'package:senthil/view/notice_screen.dart';
 import 'package:senthil/view/question_screen.dart';

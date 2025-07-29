@@ -6,6 +6,7 @@ import 'package:senthil/controller/app_controller.dart';
 import 'package:senthil/controller/theme_controller.dart';
 import 'package:senthil/controller/topper_list_controller.dart';
 import 'package:senthil/shimmer/search_shimmer.dart';
+import 'package:senthil/shimmer/topper_list_shimmer.dart';
 import 'package:senthil/widgets/topper_list-image/class_topper_image_card.dart';
 import 'package:senthil/widgets/topper_list-image/subject_topper_image_table.dart';
 
@@ -382,10 +383,7 @@ class _TopperListImageScreenState extends ConsumerState<TopperListImageScreen> {
                         height: 200,
                         child: Center(child: Text('Something went wrong!')),
                       ),
-                      loading: () => SizedBox(
-                        height: 200,
-                        child: Center(child: CircularProgressIndicator()),
-                      ),
+                      loading: () => TopperListShimmer(isDark: isDark),
                     ),
           ],
         ),

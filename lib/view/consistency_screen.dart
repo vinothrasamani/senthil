@@ -5,6 +5,7 @@ import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:senthil/controller/app_controller.dart';
 import 'package:senthil/controller/consistency_controller.dart';
 import 'package:senthil/controller/theme_controller.dart';
+import 'package:senthil/shimmer/consistency_shimmer.dart';
 import 'package:senthil/shimmer/search_shimmer.dart';
 import 'package:senthil/widgets/consistency_table.dart';
 
@@ -364,10 +365,7 @@ class _ConsistencyScreenState extends ConsumerState<ConsistencyScreen> {
                         height: 200,
                         child: Center(child: Text('Something went wrong!')),
                       ),
-                      loading: () => SizedBox(
-                        height: 200,
-                        child: Center(child: CircularProgressIndicator()),
-                      ),
+                      loading: () => ConsistencyShimmer(isDark: isDark),
                     ),
           ],
         ),

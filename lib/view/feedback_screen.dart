@@ -6,6 +6,7 @@ import 'package:senthil/controller/app_controller.dart';
 import 'package:senthil/controller/feedback_controller.dart';
 import 'package:senthil/controller/theme_controller.dart';
 import 'package:senthil/shimmer/search_shimmer.dart';
+import 'package:senthil/shimmer/table_shimmer.dart';
 import 'package:senthil/widgets/feedback_view/feedback_details.dart';
 import 'package:senthil/widgets/feedback_view/optional_feedback.dart';
 
@@ -258,10 +259,7 @@ class _FeedbackScreenState extends ConsumerState<FeedbackScreen> {
                         height: 200,
                         child: Center(child: Text('Something went wrong!')),
                       ),
-                      loading: () => SizedBox(
-                        height: 200,
-                        child: Center(child: CircularProgressIndicator()),
-                      ),
+                      loading: () => TableShimmer(isDark: isDark),
                     )
           ],
         ),
