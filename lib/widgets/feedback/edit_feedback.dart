@@ -102,7 +102,7 @@ class _EditFeedbackState extends ConsumerState<EditFeedback> {
   Widget build(BuildContext context) {
     bool isDark = ref.watch(ThemeController.themeMode) == ThemeMode.dark;
 
-    return Padding(
+    return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 16),
       child: Form(
         child: Column(

@@ -6,7 +6,7 @@ import 'package:senthil/controller/app_controller.dart';
 import 'package:senthil/controller/theme_controller.dart';
 import 'package:senthil/controller/user_list_controller.dart';
 import 'package:senthil/model/user_list_model.dart';
-import 'package:senthil/shimmer/user_list_shimmer.dart';
+import 'package:senthil/shimmer/list_shimmer.dart';
 import 'package:senthil/widgets/edit_user.dart';
 
 class UserListScreen extends ConsumerStatefulWidget {
@@ -198,7 +198,7 @@ class _UserListScreenState extends ConsumerState<UserListScreen> {
                   ],
                 ),
               ),
-              loading: () => UserListShimmer(isDark: isDark),
+              loading: () => ListShimmer(isDark: isDark),
             ),
       ),
     );

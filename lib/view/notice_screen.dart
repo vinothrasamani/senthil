@@ -4,6 +4,7 @@ import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:senthil/controller/app_controller.dart';
 import 'package:senthil/controller/notice_controller.dart';
 import 'package:senthil/controller/theme_controller.dart';
+import 'package:senthil/shimmer/notice_shimmer.dart';
 
 class NoticeScreen extends ConsumerStatefulWidget {
   const NoticeScreen({super.key});
@@ -119,9 +120,7 @@ class _NoticeScreenState extends ConsumerState<NoticeScreen> {
           error: (error, _) {
             return Center(child: Text('Something went wrong'));
           },
-          loading: () => Center(
-            child: CircularProgressIndicator(),
-          ),
+          loading: () => NoticeShimmer(isDark: isDark),
         ),
       ),
       bottomNavigationBar: Container(

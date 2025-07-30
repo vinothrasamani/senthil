@@ -65,6 +65,40 @@ class _FeedbackListScreenState extends ConsumerState<ConsumerStatefulWidget> {
       );
     }
 
+    Widget listCard(FeedbackItem feedback) => Container(
+          margin: EdgeInsets.symmetric(vertical: 5),
+          padding: EdgeInsets.symmetric(vertical: 8, horizontal: 15),
+          color: isDark ? Colors.grey.withAlpha(100) : Colors.white,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              FeedbackEnabler(
+                isDark: isDark,
+                id: feedback.id,
+                value: feedback.show == 1,
+                ques: '${feedback.ord}. ${feedback.subject}',
+              ),
+              Row(
+                children: [
+                  SizedBox(width: 5),
+                  myChip(feedback.board, AppController.headColor),
+                  SizedBox(width: 5),
+                  myChip('${feedback.questype} type', AppController.lightBlue),
+                  SizedBox(width: 5),
+                  Spacer(),
+                  IconButton(
+                    onPressed: () {
+                      FeedbackListController.openEditSheet(context, feedback);
+                    },
+                    color: AppController.yellow,
+                    icon: Icon(TablerIcons.edit),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Feedback'),
@@ -159,46 +193,7 @@ class _FeedbackListScreenState extends ConsumerState<ConsumerStatefulWidget> {
                               ),
                             ),
                             SizedBox(height: 5),
-                            for (var feedback in snap)
-                              Container(
-                                margin: EdgeInsets.symmetric(vertical: 5),
-                                padding: EdgeInsets.symmetric(
-                                    vertical: 8, horizontal: 15),
-                                color: isDark
-                                    ? Colors.grey.withAlpha(100)
-                                    : Colors.white,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    FeedbackEnabler(
-                                      isDark: isDark,
-                                      id: feedback.id,
-                                      value: feedback.show == 1,
-                                      ques:
-                                          '${snap.indexOf(feedback) + 1}. ${feedback.subject}',
-                                    ),
-                                    Row(
-                                      children: [
-                                        myChip(feedback.board,
-                                            AppController.headColor),
-                                        SizedBox(width: 5),
-                                        myChip('${feedback.questype} type',
-                                            AppController.lightBlue),
-                                        Spacer(),
-                                        IconButton(
-                                          onPressed: () {
-                                            FeedbackListController
-                                                .openEditSheet(
-                                                    context, feedback);
-                                          },
-                                          color: AppController.yellow,
-                                          icon: Icon(TablerIcons.edit),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
+                            for (var feedback in snap) listCard(feedback),
                             SizedBox(height: 80),
                           ],
                         ),

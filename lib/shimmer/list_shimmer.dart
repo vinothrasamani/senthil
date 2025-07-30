@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 
-class UserListShimmer extends StatelessWidget {
-  const UserListShimmer({super.key, required this.isDark});
+class ListShimmer extends StatelessWidget {
+  const ListShimmer({super.key, required this.isDark});
   final bool isDark;
 
   Widget shimmer(double h, double? w, [double p = 0]) {
