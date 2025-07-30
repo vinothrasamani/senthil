@@ -43,6 +43,12 @@ class _QuestionScreenState extends ConsumerState<QuestionScreen> {
   }
 
   @override
+  void dispose() {
+    cardKey.currentState?.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     bool isDark = ref.watch(ThemeController.themeMode) == ThemeMode.dark;
     final size = MediaQuery.of(context).size;

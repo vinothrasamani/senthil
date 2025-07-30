@@ -36,7 +36,7 @@ class Data {
   List<FeedbackSubject> feedbackSubjects;
   FeedbackTab1 feedbackTab1;
   FeedbackTab2 feedbackTab2;
-  String generalnote;
+  dynamic generalnote;
 
   Data({
     required this.feedbackStudents,
@@ -71,7 +71,7 @@ class FeedbackSubject {
   String fullname;
   String shortname;
   int shortShow;
-  String oid;
+  dynamic oid;
   String staffName;
 
   FeedbackSubject({
@@ -141,7 +141,7 @@ class FeedbackTab1 {
 
 class FeedbackCount {
   Feedback feedback;
-  List<String> feedbackValues;
+  List<dynamic> feedbackValues;
 
   FeedbackCount({
     required this.feedback,
@@ -162,8 +162,8 @@ class FeedbackCount {
 
 class Feedback {
   int id;
-  String subject;
-  String questype;
+  dynamic subject;
+  dynamic questype;
   int show;
 
   Feedback({
@@ -210,7 +210,7 @@ class FeedbackTotal {
 }
 
 class FeedbackTab2 {
-  List<int> feedRemCounts;
+  List<dynamic> feedRemCounts;
   List<Remark> remarks;
 
   FeedbackTab2({
@@ -248,7 +248,7 @@ class Remark {
 }
 
 class Feedrem {
-  String remark;
+  dynamic remark;
 
   Feedrem({
     required this.remark,

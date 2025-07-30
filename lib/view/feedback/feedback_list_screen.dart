@@ -9,6 +9,7 @@ import 'package:senthil/model/feedback_items_model.dart';
 import 'package:senthil/shimmer/feedback_shimmer.dart';
 import 'package:senthil/view/feedback/feedback_setting_screen.dart';
 import 'package:senthil/widgets/feedback/feedback_enabler.dart';
+import 'package:senthil/widgets/my_chip.dart';
 
 class FeedbackListScreen extends ConsumerStatefulWidget {
   const FeedbackListScreen({super.key});
@@ -50,21 +51,6 @@ class _FeedbackListScreenState extends ConsumerState<ConsumerStatefulWidget> {
     bool isEnabled = ref.watch(FeedbackListController.isEnabled);
     List<FeedbackItem> snap = ref.watch(feedbackListProvider);
 
-    Widget myChip(String value, Color color) {
-      return Container(
-        padding: EdgeInsets.symmetric(vertical: 3, horizontal: 8),
-        decoration: BoxDecoration(
-          color: color.withAlpha(20),
-          borderRadius: BorderRadius.circular(30),
-        ),
-        child: Text(
-          value,
-          style: TextStyle(
-              color: color, fontSize: 12, fontWeight: FontWeight.bold),
-        ),
-      );
-    }
-
     Widget listCard(FeedbackItem feedback) => Container(
           margin: EdgeInsets.symmetric(vertical: 5),
           padding: EdgeInsets.symmetric(vertical: 8, horizontal: 15),
@@ -81,9 +67,9 @@ class _FeedbackListScreenState extends ConsumerState<ConsumerStatefulWidget> {
               Row(
                 children: [
                   SizedBox(width: 5),
-                  myChip(feedback.board, AppController.headColor),
+                  MyChip(feedback.board, AppController.headColor),
                   SizedBox(width: 5),
-                  myChip('${feedback.questype} type', AppController.lightBlue),
+                  MyChip('${feedback.questype} type', AppController.lightBlue),
                   SizedBox(width: 5),
                   Spacer(),
                   IconButton(

@@ -1,12 +1,18 @@
+import 'package:contextmenu/contextmenu.dart';
 import 'package:expansion_tile_group/expansion_tile_group.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
+import 'package:get/get.dart';
 import 'package:senthil/controller/app_controller.dart';
 import 'package:senthil/controller/feedback_entry_controller.dart';
+import 'package:senthil/controller/login_controller.dart';
 import 'package:senthil/controller/theme_controller.dart';
+import 'package:senthil/model/feedback_entry_model.dart';
 import 'package:senthil/shimmer/list_shimmer.dart';
 import 'package:senthil/shimmer/search_shimmer.dart';
+import 'package:senthil/view/feedback_screen.dart';
+import 'package:senthil/widgets/my_chip.dart';
 
 class FeedbackEntryScreen extends ConsumerStatefulWidget {
   const FeedbackEntryScreen({super.key});
@@ -19,9 +25,11 @@ class FeedbackEntryScreen extends ConsumerStatefulWidget {
 class _FeebackEntryScreenState extends ConsumerState<FeedbackEntryScreen> {
   String? selectedType, selectedYear, selectedSchool, selectedSession;
   Object? data;
+  bool isDark = false;
   final formKey = GlobalKey<FormState>();
   final controller = FeedbackEntryController();
   final cardKey = GlobalKey<ExpansionTileCoreState>();
+  final scroll = ScrollController();
 
   @override
   void initState() {
@@ -41,8 +49,15 @@ class _FeebackEntryScreenState extends ConsumerState<FeedbackEntryScreen> {
   }
 
   @override
+  void dispose() {
+    scroll.dispose();
+    cardKey.currentState?.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    bool isDark = ref.watch(ThemeController.themeMode) == ThemeMode.dark;
+    isDark = ref.watch(ThemeController.themeMode) == ThemeMode.dark;
     Size size = MediaQuery.of(context).size;
 
     final listener =
@@ -128,10 +143,21 @@ class _FeebackEntryScreenState extends ConsumerState<FeedbackEntryScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Feedback Entry'),
+        actions: [
+          IconButton(
+            onPressed: () {
+              scroll.animateTo(0,
+                  duration: Duration(seconds: 1), curve: Curves.easeIn);
+              cardKey.currentState?.expand();
+            },
+            icon: Icon(Icons.search),
+          ),
+        ],
       ),
       body: SafeArea(
         child: ListView(
           shrinkWrap: true,
+          controller: scroll,
           padding: EdgeInsets.all(10),
           children: [
             if (ref.watch(controller.years).isNotEmpty)
@@ -172,7 +198,16 @@ class _FeebackEntryScreenState extends ConsumerState<FeedbackEntryScreen> {
                   : listener.when(
                       data: (snap) {
                         return Column(
-                          children: [],
+                          children: [
+                            AppController.heading('Feedback Entry List', isDark,
+                                TablerIcons.message_2_check),
+                            SizedBox(height: 10),
+                            for (var item in snap)
+                              Builder(builder: (context) {
+                                final index = snap.indexOf(item) + 1;
+                                return myCard(item, index);
+                              }),
+                          ],
                         );
                       },
                       error: (e, _) => SizedBox(
@@ -184,6 +219,129 @@ class _FeebackEntryScreenState extends ConsumerState<FeedbackEntryScreen> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget myCard(FeedbackEntry item, int index) {
+    return Container(
+      padding: EdgeInsets.all(10),
+      margin: EdgeInsets.symmetric(vertical: 3),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: Colors.grey.withAlpha(100), width: 1),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              CircleAvatar(
+                radius: 15,
+                backgroundColor: AppController.lightBlue,
+                child: Text(
+                  '$index',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              MyChip(item.entryDate.toIso8601String().split('T')[0],
+                  AppController.darkGreen),
+              Chip(
+                avatar: Icon(TablerIcons.id),
+                label: Text('${item.id}'),
+                padding: EdgeInsets.all(0),
+              )
+            ],
+          ),
+          Wrap(
+            spacing: 15,
+            children: [
+              myRow('Class Name', '${item.classname},'),
+              myRow('Section', '${item.section},'),
+              myRow('Ref Group', item.refgroup.toString()),
+            ],
+          ),
+          Row(
+            children: [
+              Row(
+                children: [
+                  Text('Count : '),
+                  GestureDetector(
+                    onTapDown: (details) {
+                      showContextMenu(
+                        details.globalPosition,
+                        context,
+                        (ctx) => [
+                          for (var l in item.feed.list)
+                            ListTile(title: Text(l ?? '-')),
+                        ],
+                        40.0,
+                        200.0,
+                      );
+                    },
+                    child: Chip(
+                      label: Text(
+                        '${item.feed.fCount} - ${item.feed.eCount < 10 ? '0${item.feed.eCount}' : item.feed.eCount}',
+                      ),
+                      padding: EdgeInsets.all(0),
+                    ),
+                  ),
+                ],
+              ),
+              Spacer(),
+              myButton(
+                TablerIcons.eye,
+                AppController.headColor,
+                ontap: () {
+                  Get.to(
+                    () => FeedbackScreen(
+                      index: item.schooltype == "CBSE" ? 0 : 1,
+                      userId: ref.read(LoginController.userProvider)!.data.id,
+                      feedback: item,
+                    ),
+                  );
+                },
+              ),
+              myButton(TablerIcons.trash, AppController.red),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget myRow(String myKey, String val) {
+    return Text.rich(
+      TextSpan(
+        text: '$myKey ',
+        style: TextStyle(color: Colors.grey),
+        children: [
+          TextSpan(
+            text: ': $val',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: isDark ? Colors.white : Colors.black,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget myButton(IconData icon, Color color, {Function()? ontap}) {
+    return IconButton(
+      onPressed: ontap,
+      style: ButtonStyle(
+        backgroundColor: WidgetStatePropertyAll(
+          color.withAlpha(20),
+        ),
+      ),
+      icon: Icon(icon, color: color),
     );
   }
 }

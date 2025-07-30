@@ -10,6 +10,7 @@ class FeedbackController {
   static final refGroups = StateProvider.autoDispose<List>((ref) => []);
   static final sections = StateProvider.autoDispose<List>((ref) => []);
   static final searching = StateProvider.autoDispose((ref) => false);
+  static final feedAvail = StateProvider.autoDispose((ref) => false);
 
   static void loadinitials(WidgetRef ref, String url, Object object) async {
     final res = await AppController.send(url, object);

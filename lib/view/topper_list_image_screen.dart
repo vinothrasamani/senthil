@@ -56,6 +56,7 @@ class _TopperListImageScreenState extends ConsumerState<TopperListImageScreen> {
   @override
   void dispose() {
     scrollController.dispose();
+    cardKey.currentState?.dispose();
     super.dispose();
   }
 

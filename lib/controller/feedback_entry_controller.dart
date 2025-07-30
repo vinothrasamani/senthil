@@ -25,7 +25,7 @@ class FeedbackEntryController {
       case 'feedback-entry-schl':
         final res = await AppController.send(url, object);
         final decrypted = jsonDecode(res);
-        if (decrypted['sucess']) {
+        if (decrypted['success']) {
           ref.read(schools.notifier).state = decrypted['data'];
         }
         break;

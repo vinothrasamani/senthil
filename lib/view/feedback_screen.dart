@@ -5,15 +5,18 @@ import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:senthil/controller/app_controller.dart';
 import 'package:senthil/controller/feedback_controller.dart';
 import 'package:senthil/controller/theme_controller.dart';
+import 'package:senthil/model/feedback_entry_model.dart';
 import 'package:senthil/shimmer/search_shimmer.dart';
 import 'package:senthil/shimmer/table_shimmer.dart';
 import 'package:senthil/widgets/feedback_view/feedback_details.dart';
 import 'package:senthil/widgets/feedback_view/optional_feedback.dart';
 
 class FeedbackScreen extends ConsumerStatefulWidget {
-  const FeedbackScreen({super.key, required this.index, required this.userId});
+  const FeedbackScreen(
+      {super.key, required this.index, required this.userId, this.feedback});
   final int index;
   final int userId;
+  final FeedbackEntry? feedback;
 
   @override
   ConsumerState<FeedbackScreen> createState() => _FeedbackScreenState();
@@ -29,8 +32,21 @@ class _FeedbackScreenState extends ConsumerState<FeedbackScreen> {
 
   @override
   void initState() {
-    FeedbackController.loadinitials(
-        ref, 'feedback-initials', {'index': widget.index, 'id': widget.userId});
+    if (widget.feedback == null) {
+      FeedbackController.loadinitials(ref, 'feedback-initials',
+          {'index': widget.index, 'id': widget.userId});
+    } else {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        selectedYear = widget.feedback!.feedbackyear;
+        selectedClass = widget.feedback!.classname;
+        selectedSession = widget.feedback!.feedbacksession;
+        selectedsection = widget.feedback!.section;
+        selectedSchool = widget.feedback!.school;
+        selectedRefGroup = widget.feedback!.refgroup;
+        ref.watch(FeedbackController.feedAvail.notifier).state = true;
+        search();
+      });
+    }
     super.initState();
   }
 
@@ -46,6 +62,12 @@ class _FeedbackScreenState extends ConsumerState<FeedbackScreen> {
       "refGroup": selectedRefGroup
     };
     cardKey.currentState?.collapse();
+  }
+
+  @override
+  void dispose() {
+    cardKey.currentState?.dispose();
+    super.dispose();
   }
 
   @override
@@ -184,35 +206,37 @@ class _FeedbackScreenState extends ConsumerState<FeedbackScreen> {
               AppController.animatedTitle(
                   '${widget.index == 0 ? 'CBSE' : "Metric"} School', isDark),
             SizedBox(height: 10),
-            if (ref.watch(FeedbackController.years).isNotEmpty)
-              Form(
-                key: formKey,
-                child: ExpansionTileItem.outlined(
-                  expansionKey: cardKey,
-                  title: AppController.heading(
-                      'Search', isDark, TablerIcons.search),
-                  children: [
-                    Wrap(
-                      spacing: 5,
-                      runSpacing: 10,
-                      children: dropdownList
-                          .map((child) => SizedBox(
-                                width: size.width < 500
-                                    ? null
-                                    : size.width < 1020
-                                        ? (size.width / 2) - 30
-                                        : (size.width / 3) - 30,
-                                child: child,
-                              ))
-                          .toList(),
-                    ),
-                  ],
-                ),
-              )
-            else
-              SearchShimmer(isDark: isDark),
+            if (widget.feedback == null)
+              if (ref.watch(FeedbackController.years).isNotEmpty)
+                Form(
+                  key: formKey,
+                  child: ExpansionTileItem.outlined(
+                    expansionKey: cardKey,
+                    title: AppController.heading(
+                        'Search', isDark, TablerIcons.search),
+                    children: [
+                      Wrap(
+                        spacing: 5,
+                        runSpacing: 10,
+                        children: dropdownList
+                            .map((child) => SizedBox(
+                                  width: size.width < 500
+                                      ? null
+                                      : size.width < 1020
+                                          ? (size.width / 2) - 30
+                                          : (size.width / 3) - 30,
+                                  child: child,
+                                ))
+                            .toList(),
+                      ),
+                    ],
+                  ),
+                )
+              else
+                SearchShimmer(isDark: isDark),
             SizedBox(height: 20),
-            if (ref.watch(FeedbackController.years).isNotEmpty)
+            if (ref.watch(FeedbackController.years).isNotEmpty ||
+                ref.watch(FeedbackController.feedAvail))
               listener == null
                   ? SizedBox(
                       height: 200,
