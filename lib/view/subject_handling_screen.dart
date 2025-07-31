@@ -1,51 +1,52 @@
-import 'package:contextmenu/contextmenu.dart';
 import 'package:expansion_tile_group/expansion_tile_group.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
-import 'package:get/get.dart';
 import 'package:senthil/controller/app_controller.dart';
-import 'package:senthil/controller/feedback_entry_controller.dart';
-import 'package:senthil/controller/login_controller.dart';
+import 'package:senthil/controller/subject_handling_controller.dart';
 import 'package:senthil/controller/theme_controller.dart';
-import 'package:senthil/model/feedback_entry_model.dart';
+import 'package:senthil/model/subject_handling_model.dart';
 import 'package:senthil/shimmer/list_shimmer.dart';
 import 'package:senthil/shimmer/search_shimmer.dart';
-import 'package:senthil/view/feedback_screen.dart';
 import 'package:senthil/widgets/my_chip.dart';
 
-class FeedbackEntryScreen extends ConsumerStatefulWidget {
-  const FeedbackEntryScreen({super.key});
+class SubjectHandlingScreen extends ConsumerStatefulWidget {
+  const SubjectHandlingScreen({super.key, required this.id});
+  final int id;
 
   @override
-  ConsumerState<FeedbackEntryScreen> createState() =>
-      _FeebackEntryScreenState();
+  ConsumerState<SubjectHandlingScreen> createState() =>
+      _SubjectHandlingScreenState();
 }
 
-class _FeebackEntryScreenState extends ConsumerState<FeedbackEntryScreen> {
-  String? selectedType, selectedYear, selectedSchool, selectedSession;
+class _SubjectHandlingScreenState extends ConsumerState<SubjectHandlingScreen> {
+  String? selectedType, selectedYear, selectedSchool;
+  String? selectedSection, selectedClass, staffCode, staffName;
   bool isDark = false;
   final formKey = GlobalKey<FormState>();
-  final controller = FeedbackEntryController();
+  final controller = SubjectHandlingController();
   final cardKey = GlobalKey<ExpansionTileCoreState>();
   final scroll = ScrollController();
 
   @override
   void initState() {
-    controller.setData(ref, 'feedback-entry-init', {});
+    controller.setData(ref, 'initiate-handling', {'id': widget.id});
     super.initState();
   }
 
   void search() async {
     ref.read(controller.searching.notifier).state = true;
     final data = {
-      "year": selectedYear,
       "type": selectedType,
       "school": selectedSchool,
-      "session": selectedSession,
+      "className": selectedClass ?? '',
+      "year": selectedYear,
+      "section": selectedSection ?? '',
+      "name": staffName ?? '',
+      "code": staffCode ?? '',
     };
     cardKey.currentState?.collapse();
-    await ref.read(feedbackEntryProvider.notifier).fetchData(data);
+    await ref.read(subjectHandlingProvider.notifier).fetchData(data);
     ref.read(controller.searching.notifier).state = false;
   }
 
@@ -61,7 +62,7 @@ class _FeebackEntryScreenState extends ConsumerState<FeedbackEntryScreen> {
     isDark = ref.watch(ThemeController.themeMode) == ThemeMode.dark;
     Size size = MediaQuery.of(context).size;
 
-    final snap = ref.watch(feedbackEntryProvider);
+    final snap = ref.watch(subjectHandlingProvider);
 
     List<Widget> dropdownList = [
       DropdownButtonFormField<String>(
@@ -93,40 +94,68 @@ class _FeebackEntryScreenState extends ConsumerState<FeedbackEntryScreen> {
             prefixIcon: Icon(TablerIcons.category, color: Colors.grey)),
         onChanged: (val) {
           selectedType = val;
-          controller.setData(
-            ref,
-            'feedback-entry-schl',
-            {'year': selectedYear, 'type': val},
-          );
+          selectedClass = null;
+          selectedSection = null;
+          selectedSchool = null;
+          controller.setData(ref, 'handling-schools', {'type': val});
         },
       ),
       DropdownButtonFormField<String>(
         value: selectedSchool,
         items: ref
             .watch(controller.schools)
-            .map((e) => DropdownMenuItem<String>(
-                value: e ?? '', child: Text(e ?? 'None')))
+            .map((e) =>
+                DropdownMenuItem<String>(value: e ?? '', child: Text(e ?? '')))
             .toList(),
         decoration: InputDecoration(
             labelText: 'School',
             prefixIcon: Icon(TablerIcons.school, color: Colors.grey)),
         onChanged: (val) {
           selectedSchool = val;
+          selectedClass = null;
+          selectedSection = null;
+          controller.setData(
+              ref, 'handling-classes', {'school': val, 'type': selectedType});
         },
       ),
       DropdownButtonFormField<String>(
-        value: selectedSession,
+        value: selectedClass,
         items: ref
-            .watch(controller.sessions)
-            .map((e) => DropdownMenuItem<String>(
-                value: e ?? '', child: Text(e ?? 'None')))
+            .watch(controller.classNames)
+            .map((e) =>
+                DropdownMenuItem<String>(value: e ?? '', child: Text(e ?? '')))
             .toList(),
         decoration: InputDecoration(
-            labelText: 'Session',
-            prefixIcon: Icon(TablerIcons.timeline, color: Colors.grey)),
+            labelText: 'Class Name',
+            prefixIcon: Icon(TablerIcons.chalkboard, color: Colors.grey)),
         onChanged: (val) {
-          selectedSession = val;
+          selectedClass = val;
+          selectedSection = null;
+          controller.setData(ref, 'handling-sections',
+              {'school': selectedSchool, 'type': selectedType, 'cName': val});
         },
+      ),
+      DropdownButtonFormField<String>(
+        value: selectedSection,
+        items: ref
+            .watch(controller.sections)
+            .map((e) =>
+                DropdownMenuItem<String>(value: e ?? '', child: Text(e ?? '')))
+            .toList(),
+        decoration: InputDecoration(
+            labelText: 'Section',
+            prefixIcon: Icon(TablerIcons.category_plus, color: Colors.grey)),
+        onChanged: (val) {
+          selectedSection = val;
+        },
+      ),
+      TextField(
+        decoration: InputDecoration(labelText: 'Staff Code'),
+        onChanged: (value) => staffCode = value,
+      ),
+      TextField(
+        decoration: InputDecoration(labelText: 'Staff Name'),
+        onChanged: (value) => staffName = value,
       ),
       Builder(builder: (context) {
         bool searching = ref.watch(controller.searching);
@@ -142,7 +171,7 @@ class _FeebackEntryScreenState extends ConsumerState<FeedbackEntryScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Feedback Entry'),
+        title: Text('Subject Handling'),
         actions: [
           IconButton(
             onPressed: () {
@@ -196,12 +225,12 @@ class _FeebackEntryScreenState extends ConsumerState<FeedbackEntryScreen> {
                           height: 200,
                           child: Center(
                               child:
-                                  Text('Search to Get feedback entry list!')),
+                                  Text('Search to Get subject handling list!')),
                         )
                       : Column(
                           children: [
-                            AppController.heading('Feedback Entry List', isDark,
-                                TablerIcons.message_2_check),
+                            AppController.heading(
+                                'Subject Handling', isDark, TablerIcons.book_2),
                             SizedBox(height: 10),
                             for (var item in snap)
                               Builder(builder: (context) {
@@ -216,7 +245,7 @@ class _FeebackEntryScreenState extends ConsumerState<FeedbackEntryScreen> {
     );
   }
 
-  Widget myCard(FeedbackEntry item, int index) {
+  Widget myCard(HandlingSubject item, int index) {
     return Container(
       padding: EdgeInsets.all(10),
       margin: EdgeInsets.symmetric(vertical: 3),
@@ -229,86 +258,46 @@ class _FeebackEntryScreenState extends ConsumerState<FeedbackEntryScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              CircleAvatar(
-                radius: 15,
-                backgroundColor: AppController.lightBlue,
-                child: Text(
-                  '$index',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                  ),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Row(
+                      children: [
+                        CircleAvatar(
+                          radius: 6,
+                          backgroundColor: AppController.darkGreen,
+                        ),
+                        SizedBox(width: 4),
+                        Expanded(
+                          child: Text(item.staffName,
+                              style: TextStyle(fontWeight: FontWeight.bold)),
+                        ),
+                      ],
+                    ),
+                    MyChip(item.code, AppController.lightBlue),
+                  ],
                 ),
               ),
-              MyChip(item.entryDate.toIso8601String().split('T')[0],
-                  AppController.darkGreen),
-              Chip(
-                avatar: Icon(TablerIcons.id),
-                label: Text('${item.id}'),
-                padding: EdgeInsets.all(0),
-              )
-            ],
-          ),
-          Wrap(
-            spacing: 15,
-            children: [
-              myRow('Class Name', '${item.classname},'),
-              myRow('Section', '${item.section},'),
-              myRow('Ref Group', item.refgroup.toString()),
-            ],
-          ),
-          Row(
-            children: [
-              Row(
-                children: [
-                  Text('Count : '),
-                  GestureDetector(
-                    onTapDown: (details) {
-                      showContextMenu(
-                        details.globalPosition,
-                        context,
-                        (ctx) => [
-                          for (var l in item.feed.list)
-                            ListTile(title: Text(l ?? '-')),
-                        ],
-                        40.0,
-                        200.0,
-                      );
-                    },
-                    child: Chip(
-                      label: Text(
-                        '${item.feed.fCount} - ${item.feed.eCount < 10 ? '0${item.feed.eCount}' : item.feed.eCount}',
-                      ),
-                      padding: EdgeInsets.all(0),
-                    ),
-                  ),
-                ],
-              ),
-              Spacer(),
-              myButton(
-                TablerIcons.eye,
-                AppController.headColor,
-                ontap: () {
-                  Get.to(
-                    () => FeedbackScreen(
-                      index: item.schooltype == "CBSE" ? 0 : 1,
-                      userId: ref.read(LoginController.userProvider)!.data.id,
-                      feedback: item,
-                    ),
-                  );
+              IconButton(
+                onPressed: () {
+                  ref.read(subjectHandlingProvider.notifier).onDelete(item.id);
                 },
-              ),
-              myButton(
-                TablerIcons.trash,
-                AppController.red,
-                ontap: () =>
-                    ref.read(feedbackEntryProvider.notifier).onDelete(item.id),
+                style: ButtonStyle(
+                  backgroundColor: WidgetStatePropertyAll(
+                    AppController.red.withAlpha(20),
+                  ),
+                ),
+                icon: Icon(TablerIcons.trash, color: AppController.red),
               ),
             ],
           ),
+          myRow('Class', '${item.classname},'),
+          myRow('Section', '${item.secname},'),
+          myRow('Department', '${item.department},'),
+          myRow('Subject', item.fullname),
         ],
       ),
     );
@@ -329,18 +318,6 @@ class _FeebackEntryScreenState extends ConsumerState<FeedbackEntryScreen> {
           ),
         ],
       ),
-    );
-  }
-
-  Widget myButton(IconData icon, Color color, {Function()? ontap}) {
-    return IconButton(
-      onPressed: ontap,
-      style: ButtonStyle(
-        backgroundColor: WidgetStatePropertyAll(
-          color.withAlpha(20),
-        ),
-      ),
-      icon: Icon(icon, color: color),
     );
   }
 }

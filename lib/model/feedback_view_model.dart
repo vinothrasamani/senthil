@@ -8,7 +8,7 @@ String feedbackViewModelToJson(FeedbackViewModel data) =>
 
 class FeedbackViewModel {
   bool success;
-  Data data;
+  MyFeedbackData data;
   String message;
 
   FeedbackViewModel({
@@ -20,7 +20,7 @@ class FeedbackViewModel {
   factory FeedbackViewModel.fromJson(Map<String, dynamic> json) =>
       FeedbackViewModel(
         success: json["success"],
-        data: Data.fromJson(json["data"]),
+        data: MyFeedbackData.fromJson(json["data"]),
         message: json["message"],
       );
 
@@ -31,14 +31,14 @@ class FeedbackViewModel {
       };
 }
 
-class Data {
+class MyFeedbackData {
   List<int> feedbackStudents;
   List<FeedbackSubject> feedbackSubjects;
   FeedbackTab1 feedbackTab1;
   FeedbackTab2 feedbackTab2;
-  dynamic generalnote;
+  String generalnote;
 
-  Data({
+  MyFeedbackData({
     required this.feedbackStudents,
     required this.feedbackSubjects,
     required this.feedbackTab1,
@@ -46,7 +46,7 @@ class Data {
     required this.generalnote,
   });
 
-  factory Data.fromJson(Map<String, dynamic> json) => Data(
+  factory MyFeedbackData.fromJson(Map<String, dynamic> json) => MyFeedbackData(
         feedbackStudents:
             List<int>.from(json["feedback_students"].map((x) => x)),
         feedbackSubjects: List<FeedbackSubject>.from(
@@ -71,7 +71,7 @@ class FeedbackSubject {
   String fullname;
   String shortname;
   int shortShow;
-  dynamic oid;
+  String oid;
   String staffName;
 
   FeedbackSubject({
@@ -140,7 +140,7 @@ class FeedbackTab1 {
 }
 
 class FeedbackCount {
-  Feedback feedback;
+  MyFeedback feedback;
   List<dynamic> feedbackValues;
 
   FeedbackCount({
@@ -149,9 +149,9 @@ class FeedbackCount {
   });
 
   factory FeedbackCount.fromJson(Map<String, dynamic> json) => FeedbackCount(
-        feedback: Feedback.fromJson(json["feedback"]),
+        feedback: MyFeedback.fromJson(json["feedback"]),
         feedbackValues:
-            List<String>.from(json["feedback_values"].map((x) => x)),
+            List<dynamic>.from(json["feedback_values"].map((x) => x)),
       );
 
   Map<String, dynamic> toJson() => {
@@ -160,20 +160,20 @@ class FeedbackCount {
       };
 }
 
-class Feedback {
+class MyFeedback {
   int id;
-  dynamic subject;
-  dynamic questype;
+  String subject;
+  String questype;
   int show;
 
-  Feedback({
+  MyFeedback({
     required this.id,
     required this.subject,
     required this.questype,
     required this.show,
   });
 
-  factory Feedback.fromJson(Map<String, dynamic> json) => Feedback(
+  factory MyFeedback.fromJson(Map<String, dynamic> json) => MyFeedback(
         id: json["id"],
         subject: json["subject"],
         questype: json["questype"],
@@ -210,8 +210,8 @@ class FeedbackTotal {
 }
 
 class FeedbackTab2 {
-  List<dynamic> feedRemCounts;
-  List<Remark> remarks;
+  List<int> feedRemCounts;
+  List<MyRemark> remarks;
 
   FeedbackTab2({
     required this.feedRemCounts,
@@ -220,8 +220,8 @@ class FeedbackTab2 {
 
   factory FeedbackTab2.fromJson(Map<String, dynamic> json) => FeedbackTab2(
         feedRemCounts: List<int>.from(json["feed_rem_counts"].map((x) => x)),
-        remarks:
-            List<Remark>.from(json["remarks"].map((x) => Remark.fromJson(x))),
+        remarks: List<MyRemark>.from(
+            json["remarks"].map((x) => MyRemark.fromJson(x))),
       );
 
   Map<String, dynamic> toJson() => {
@@ -230,14 +230,14 @@ class FeedbackTab2 {
       };
 }
 
-class Remark {
+class MyRemark {
   List<Feedrem> feedrem;
 
-  Remark({
+  MyRemark({
     required this.feedrem,
   });
 
-  factory Remark.fromJson(Map<String, dynamic> json) => Remark(
+  factory MyRemark.fromJson(Map<String, dynamic> json) => MyRemark(
         feedrem:
             List<Feedrem>.from(json["feedrem"].map((x) => Feedrem.fromJson(x))),
       );
@@ -248,7 +248,7 @@ class Remark {
 }
 
 class Feedrem {
-  dynamic remark;
+  String remark;
 
   Feedrem({
     required this.remark,

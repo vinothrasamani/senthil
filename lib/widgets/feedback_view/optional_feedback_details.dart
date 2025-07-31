@@ -12,7 +12,7 @@ class OptionalFeedbackDetails extends StatelessWidget {
   final FeedbackSubject sub;
   final int count;
   final bool isDark;
-  final Remark list;
+  final MyRemark list;
 
   @override
   Widget build(BuildContext context) {

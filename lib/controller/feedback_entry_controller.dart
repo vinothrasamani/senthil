@@ -1,10 +1,14 @@
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:get/get.dart';
 import 'package:senthil/controller/app_controller.dart';
 import 'package:senthil/model/feedback_entry_model.dart';
 
-class FeedbackEntryController {
+class FeedbackEntryController extends StateNotifier<List<FeedbackEntry>> {
+  FeedbackEntryController() : super([]);
+
   final years = StateProvider.autoDispose((ref) => []);
   final sessions = StateProvider.autoDispose((ref) => []);
   final schools = StateProvider.autoDispose((ref) => []);
@@ -33,13 +37,39 @@ class FeedbackEntryController {
     }
   }
 
-  final fetchData = FutureProvider.family
-      .autoDispose<List<FeedbackEntry>, Object>((ref, data) async {
+  Future<void> fetchData(Object data) async {
     final res = await AppController.send('feedback-entry-search', data);
     final result = feedbackEntryModelFromJson(res);
     if (result.success) {
-      return result.data;
+      state = result.data;
     }
-    return [];
-  });
+  }
+
+  void onDelete(int id) async {
+    await Get.defaultDialog(
+      title: 'Deleting..',
+      content: Text('Make sure do you wanna delete this feedback'),
+      actions: [
+        OutlinedButton(onPressed: () => Get.back(), child: Text('Cancel')),
+        FilledButton(
+          onPressed: () async {
+            Get.back();
+            final res =
+                await AppController.fetch('delete-feedback-entry?id=$id');
+            if (jsonDecode(res)['success']) {
+              state = state.where((e) => e.id != id).toList();
+            }
+            AppController.toastMessage(
+                'Deleted!', 'Feedback Deleted Successfully');
+          },
+          child: Text('Delete'),
+        ),
+      ],
+    );
+  }
 }
+
+final feedbackEntryProvider = StateNotifierProvider.autoDispose<
+    FeedbackEntryController, List<FeedbackEntry>>((ref) {
+  return FeedbackEntryController();
+});

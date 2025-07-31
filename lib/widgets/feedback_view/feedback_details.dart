@@ -101,7 +101,7 @@ class FeedbackDetails extends StatelessWidget {
                     DataCell(Center(child: Text('-')))
                 else
                   for (var val in feed.feedbackValues)
-                    DataCell(Center(child: Text(val))),
+                    DataCell(Center(child: Text('$val'))),
               ],
             ),
           DataRow(

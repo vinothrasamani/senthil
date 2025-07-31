@@ -284,7 +284,7 @@ class _FeedbackScreenState extends ConsumerState<FeedbackScreen> {
                         child: Center(child: Text('Something went wrong!')),
                       ),
                       loading: () => TableShimmer(isDark: isDark),
-                    )
+                    ),
           ],
         ),
       ),

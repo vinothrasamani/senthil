@@ -9,6 +9,7 @@ import 'package:senthil/controller/theme_controller.dart';
 import 'package:senthil/view/app_settings.dart';
 import 'package:senthil/view/comparison_screen.dart';
 import 'package:senthil/view/consistency_screen.dart';
+import 'package:senthil/view/exam_details_screen.dart';
 import 'package:senthil/view/exam_upload_details_screen.dart';
 import 'package:senthil/view/feedback/feedback_list_screen.dart';
 import 'package:senthil/view/feedback_entry_screen.dart';
@@ -16,6 +17,7 @@ import 'package:senthil/view/feedback_screen.dart';
 import 'package:senthil/view/notice_screen.dart';
 import 'package:senthil/view/question_screen.dart';
 import 'package:senthil/view/staff_details/staff_details_screen.dart';
+import 'package:senthil/view/subject_handling_screen.dart';
 import 'package:senthil/view/topper_list_image_screen.dart';
 import 'package:senthil/view/topper_list_screen.dart';
 import 'package:senthil/view/user_list_screen.dart';
@@ -175,6 +177,9 @@ class AppDrawer extends ConsumerWidget {
                   Icons.feedback_outlined, 'Feedback', FeedbackListScreen()),
               menuItem(TablerIcons.message_2_plus, 'Feedback Entry',
                   FeedbackEntryScreen()),
+              menuItem(TablerIcons.book_2, 'Subject Handling',
+                  SubjectHandlingScreen(id: user.data.id)),
+              menuItem(TablerIcons.book, 'Exam Details', ExamDetailsScreen()),
             ],
           ),
           ListTile(
