@@ -169,6 +169,8 @@ class _EditFeedbackState extends ConsumerState<EditFeedback> {
                 ),
               ],
             ),
+            SizedBox(height: 10),
+            SizedBox(height: MediaQuery.of(context).viewInsets.bottom),
           ],
         ),
       ),

@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:senthil/controller/app_controller.dart';
 import 'package:senthil/controller/exam_details_controller.dart';
 import 'package:senthil/controller/theme_controller.dart';
-import 'package:senthil/shimmer/list_shimmer.dart';
+import 'package:senthil/shimmer/simple_list_shimmer.dart';
 
 class ExamDetailsScreen extends ConsumerWidget {
   const ExamDetailsScreen({super.key});
@@ -24,6 +24,7 @@ class ExamDetailsScreen extends ConsumerWidget {
       body: SafeArea(
         child: listener.when(
           data: (snap) => ListView(
+            padding: EdgeInsets.only(bottom: 80),
             children: [
               for (var item in snap)
                 Column(
@@ -52,12 +53,14 @@ class ExamDetailsScreen extends ConsumerWidget {
                         ),
                         child: Text('${item.ord}', style: style),
                       ),
-                      onTap: () {},
+                      onTap: () {
+                        ExamDetailsController.openEditor(context, item);
+                      },
                     ),
                     Container(
                       margin: EdgeInsets.only(right: 10, left: 60),
                       height: 0.5,
-                      color: Colors.grey,
+                      color: Colors.grey.withAlpha(150),
                     ),
                   ],
                 ),
@@ -68,8 +71,14 @@ class ExamDetailsScreen extends ConsumerWidget {
               child: Text('Something went wrong!'),
             );
           },
-          loading: () => ListShimmer(isDark: isDark),
+          loading: () => SimpleListShimmer(isDark: isDark),
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          ExamDetailsController.openEditor(context);
+        },
+        child: Icon(Icons.add),
       ),
     );
   }

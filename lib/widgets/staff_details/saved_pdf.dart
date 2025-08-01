@@ -13,7 +13,7 @@ class SavedPdf extends StatefulWidget {
 }
 
 class _SavedPdfState extends State<SavedPdf> {
-  var myImage;
+  dynamic myImage;
 
   @override
   void initState() {

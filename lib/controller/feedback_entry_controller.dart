@@ -46,25 +46,30 @@ class FeedbackEntryController extends StateNotifier<List<FeedbackEntry>> {
   }
 
   void onDelete(int id) async {
-    await Get.defaultDialog(
-      title: 'Deleting..',
-      content: Text('Make sure do you wanna delete this feedback'),
-      actions: [
-        OutlinedButton(onPressed: () => Get.back(), child: Text('Cancel')),
-        FilledButton(
-          onPressed: () async {
-            Get.back();
-            final res =
-                await AppController.fetch('delete-feedback-entry?id=$id');
-            if (jsonDecode(res)['success']) {
-              state = state.where((e) => e.id != id).toList();
-            }
-            AppController.toastMessage(
-                'Deleted!', 'Feedback Deleted Successfully');
-          },
-          child: Text('Delete'),
+    await Get.dialog(
+      AlertDialog(
+        title: Text(
+          'Deleting..',
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
         ),
-      ],
+        content: Text('Make sure do you wanna delete this feedback'),
+        actions: [
+          OutlinedButton(onPressed: () => Get.back(), child: Text('Cancel')),
+          FilledButton(
+            onPressed: () async {
+              Get.back();
+              final res =
+                  await AppController.fetch('delete-feedback-entry?id=$id');
+              if (jsonDecode(res)['success']) {
+                state = state.where((e) => e.id != id).toList();
+              }
+              AppController.toastMessage(
+                  'Deleted!', 'Feedback Deleted Successfully');
+            },
+            child: Text('Delete'),
+          ),
+        ],
+      ),
     );
   }
 }
