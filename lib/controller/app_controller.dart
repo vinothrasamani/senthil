@@ -28,6 +28,7 @@ class AppController {
   static final String baseApiUrl = '$baseUrl/api';
   static final String basefileUrl = '$baseUrl/public/pdf';
   static final String baseImageUrl = '$baseUrl/public/images';
+  static final String baseResultImageUrl = '$baseUrl/public/img';
   static final String baseStaffImageUrl = '$baseUrl/public/uploads/staff';
 
   static Future<dynamic> fetch(String endPoint) async {

@@ -1,20 +1,39 @@
-import 'package:expansion_tile_group/expansion_tile_group.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:senthil/controller/app_controller.dart';
 import 'package:senthil/controller/home_controller.dart';
 import 'package:senthil/controller/login_controller.dart';
 import 'package:senthil/controller/theme_controller.dart';
-import 'package:senthil/model/dashboard_model.dart';
+import 'package:senthil/model/home/dashboard_model.dart';
+import 'package:senthil/model/home/exam_results_model.dart';
 import 'package:senthil/shimmer/home_shimme.dart';
 import 'package:senthil/widgets/app_drawer.dart';
+import 'package:senthil/widgets/home/collection_card.dart';
 import 'package:transparent_image/transparent_image.dart';
 
-class HomeScreen extends ConsumerWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends ConsumerState<HomeScreen> {
+  late Future<List<ExamResult>> future;
+
+  List<Widget> cardList(DashboardModel banner) =>
+      [for (var item in banner.data) CollectionCard(data: item, index: 3)];
+
+  @override
+  void initState() {
+    future = HomeController.fetchResults();
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     Column column = Column(mainAxisSize: MainAxisSize.min);
     final size = MediaQuery.of(context).size;
     Center center = const Center();
@@ -22,102 +41,6 @@ class HomeScreen extends ConsumerWidget {
     final isDark = ref.watch(ThemeController.themeMode) == ThemeMode.dark;
     final listenNotice = ref.watch(HomeController.noticeData(user!.data.id));
     final listenBanner = ref.watch(HomeController.bannerData);
-    final amounttitles = [
-      'Target',
-      'Concussion',
-      'Net',
-      'Paid',
-      'Refund',
-      'Balance'
-    ];
-
-    Widget amountCard(String title, TextStyle style, String amt) => Padding(
-          padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
-          child: Row(
-            children: [
-              Expanded(child: Text(title, style: style)),
-              SizedBox(width: 10),
-              Text(AppController.convertToCurrency(amt), style: style),
-            ],
-          ),
-        );
-
-    List<Widget> cardList(DashboardModel banner) => [
-          for (var item in banner.data)
-            Builder(builder: (context) {
-              final index = 3;
-              return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 5),
-                child: Builder(builder: (context) {
-                  TextStyle style =
-                      TextStyle(fontSize: 15, fontWeight: FontWeight.bold);
-                  return ExpansionTileItem.outlined(
-                    isHasTrailing: false,
-                    title: Column(
-                      children: [
-                        Row(
-                          children: [
-                            Expanded(child: Text(item.school.name)),
-                            SizedBox(width: 8),
-                            Icon(Icons.arrow_drop_down)
-                          ],
-                        ),
-                        SizedBox(height: 10),
-                      ],
-                    ),
-                    subtitle: Row(
-                      children: [
-                        Expanded(
-                            child: Text(amounttitles[index], style: style)),
-                        SizedBox(width: 10),
-                        Builder(builder: (context) {
-                          final amt = int.parse(switch (index) {
-                            0 => item.banner.targetamount.toString(),
-                            1 => item.banner.concussionamount.toString(),
-                            2 => item.banner.netamount.toString(),
-                            3 => item.banner.paidamount.toString(),
-                            4 => item.banner.exclusionamount.toString(),
-                            5 => item.banner.balanceamount.toString(),
-                            _ => '00',
-                          });
-
-                          return TweenAnimationBuilder<int>(
-                              duration: Duration(seconds: 2),
-                              tween: IntTween(
-                                  begin: amt > 50 ? amt - 50 : amt, end: amt),
-                              builder: (context, value, child) {
-                                return Text(
-                                    AppController.convertToCurrency('$value'),
-                                    style: style);
-                              });
-                        }),
-                      ],
-                    ),
-                    children: [
-                      if (index != 0)
-                        amountCard(amounttitles[0], style,
-                            item.banner.targetamount.toString()),
-                      if (index != 1)
-                        amountCard(amounttitles[1], style,
-                            item.banner.concussionamount.toString()),
-                      if (index != 2)
-                        amountCard(amounttitles[2], style,
-                            item.banner.netamount.toString()),
-                      if (index != 3)
-                        amountCard(amounttitles[3], style,
-                            item.banner.paidamount.toString()),
-                      if (index != 4)
-                        amountCard(amounttitles[4], style,
-                            item.banner.exclusionamount.toString()),
-                      if (index != 5)
-                        amountCard(amounttitles[5], style,
-                            item.banner.balanceamount.toString()),
-                    ],
-                  );
-                }),
-              );
-            }),
-        ];
 
     return Scaffold(
       appBar: AppBar(title: Text('Dashboard')),
@@ -199,56 +122,149 @@ class HomeScreen extends ConsumerWidget {
                 data: (banner) {
                   return Padding(
                     padding: const EdgeInsets.all(5.0),
-                    child: Card(
-                      color: isDark ? Colors.grey.withAlpha(50) : null,
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          SizedBox(height: 10),
-                          ListTile(
-                            leading: CircleAvatar(
-                              backgroundColor:
-                                  const Color.fromARGB(255, 216, 194, 0),
-                              child: Icon(Icons.attach_money,
-                                  color: Colors.white, size: 25),
-                            ),
-                            title: Text(
-                              'Collection Details',
-                              style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  color: isDark
-                                      ? AppController.lightBlue
-                                      : baseColor),
-                            ),
-                          ),
-                          if (size.width < 800)
-                            ...cardList(banner)
-                          else
-                            LayoutBuilder(builder: (context, cons) {
-                              return Wrap(
-                                spacing: 5,
-                                children: cardList(banner)
-                                    .map((card) => SizedBox(
-                                          width: (cons.maxWidth / 2) - 15,
-                                          child: card,
-                                        ))
-                                    .toList(),
-                              );
-                            }),
-                          SizedBox(height: 10),
-                        ],
-                      ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        SizedBox(height: 10),
+                        title(
+                            const Color.fromARGB(255, 216, 194, 0),
+                            Icons.attach_money,
+                            'Collection Details',
+                            isDark,
+                            banner.data[0].banner.academicYear),
+                        if (size.width < 800)
+                          ...cardList(banner)
+                        else
+                          LayoutBuilder(builder: (context, cons) {
+                            return Wrap(
+                              spacing: 5,
+                              children: cardList(banner)
+                                  .map((card) => SizedBox(
+                                        width: (cons.maxWidth / 2) - 15,
+                                        child: card,
+                                      ))
+                                  .toList(),
+                            );
+                          }),
+                        SizedBox(height: 10),
+                      ],
                     ),
                   );
                 },
                 error: (error, _) => SizedBox.shrink(),
                 loading: () => HomeShimmer(isDark: isDark, id: 2)),
             SizedBox(height: 10),
+            FutureBuilder(
+              future: future,
+              builder: (context, snap) {
+                if (snap.connectionState == ConnectionState.waiting) {
+                  return SizedBox.shrink();
+                }
+                if (snap.hasError) {
+                  return SizedBox.shrink();
+                }
+                return Container(
+                  margin: EdgeInsets.symmetric(vertical: 2, horizontal: 5),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      title(
+                          const Color.fromARGB(255, 216, 194, 0),
+                          TablerIcons.file_text,
+                          'Exam Results',
+                          isDark,
+                          snap.data?[0].year ?? 'Year'),
+                      SizedBox(height: 5),
+                      CarouselSlider.builder(
+                        itemCount: snap.data!.length,
+                        itemBuilder: (ctx, index, child) {
+                          return Container(
+                            margin: EdgeInsets.symmetric(horizontal: 5),
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(color: Colors.grey),
+                              boxShadow: [
+                                BoxShadow(
+                                  offset: Offset(0, 1),
+                                  blurRadius: 0.5,
+                                  spreadRadius: 1,
+                                ),
+                              ],
+                            ),
+                            clipBehavior: Clip.hardEdge,
+                            child: Column(
+                              children: [
+                                Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(10),
+                                      topRight: Radius.circular(10),
+                                    ),
+                                    color: Theme.of(context)
+                                        .appBarTheme
+                                        .backgroundColor,
+                                  ),
+                                  width: double.infinity,
+                                  alignment: Alignment.center,
+                                  padding: EdgeInsets.all(10),
+                                  child: Text(
+                                    snap.data![index].title,
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Image.network(
+                                    '${AppController.baseResultImageUrl}/${snap.data![index].image}',
+                                    fit: BoxFit.fill,
+                                    width: double.infinity,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                        options: CarouselOptions(
+                          autoPlay: true,
+                          height: size.height < size.width
+                              ? size.width * 0.75
+                              : size.height * 0.75,
+                          clipBehavior: Clip.hardEdge,
+                          viewportFraction: 1.0,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
           ],
         ),
       ),
       drawer: AppDrawer(),
+    );
+  }
+
+  Widget title(
+      Color color, IconData icon, String value, bool isDark, String subtitle) {
+    return ListTile(
+      leading: CircleAvatar(
+        backgroundColor: color,
+        child: Icon(icon, color: Colors.white, size: 25),
+      ),
+      dense: true,
+      contentPadding: EdgeInsets.symmetric(horizontal: 5),
+      title: Text(
+        value,
+        style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: isDark ? AppController.lightBlue : baseColor),
+      ),
+      subtitle: Text(subtitle),
     );
   }
 }
