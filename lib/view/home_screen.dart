@@ -211,9 +211,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                   child: Text(
                                     snap.data![index].title,
                                     style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                                        fontSize: 16,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold),
                                   ),
                                 ),
                                 Expanded(
@@ -241,6 +241,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 );
               },
             ),
+            SizedBox(height: 15),
           ],
         ),
       ),

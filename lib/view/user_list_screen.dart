@@ -7,6 +7,7 @@ import 'package:senthil/controller/theme_controller.dart';
 import 'package:senthil/controller/user_list_controller.dart';
 import 'package:senthil/model/user_list_model.dart';
 import 'package:senthil/shimmer/list_shimmer.dart';
+import 'package:senthil/view/chat_screen.dart';
 import 'package:senthil/widgets/edit_user.dart';
 
 class UserListScreen extends ConsumerStatefulWidget {
@@ -23,7 +24,7 @@ class _UserListScreenState extends ConsumerState<UserListScreen> {
     decoration: BoxDecoration(borderRadius: BorderRadius.circular(5)),
   );
 
-  Widget userCard(UserList user) => Container(
+  Widget userCard(UserList user, bool isDark) => Container(
         padding: EdgeInsets.all(10),
         margin: EdgeInsets.symmetric(vertical: 4),
         decoration: BoxDecoration(
@@ -62,7 +63,7 @@ class _UserListScreenState extends ConsumerState<UserListScreen> {
                     child: Text(
                       user.fullname ?? '🤷‍♀️',
                       style: TextStyle(
-                          color: baseColor,
+                          color: isDark ? AppController.lightBlue : baseColor,
                           fontSize: 10,
                           fontWeight: FontWeight.bold),
                     ),
@@ -91,6 +92,9 @@ class _UserListScreenState extends ConsumerState<UserListScreen> {
                   ),
                 ],
               ),
+              onTap: () {
+                Get.to(() => ChatScreen(user: user));
+              },
             ),
             Wrap(
               spacing: 5,
@@ -178,7 +182,8 @@ class _UserListScreenState extends ConsumerState<UserListScreen> {
                               )
                             : ListView(
                                 children: [
-                                  for (var user in filtered) userCard(user),
+                                  for (var user in filtered)
+                                    userCard(user, isDark),
                                 ],
                               ),
                       ),
