@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
 import 'package:senthil/controller/app_controller.dart';
+import 'package:senthil/controller/notification_controller.dart';
 import 'package:senthil/model/login_model.dart';
 import 'package:senthil/view/home_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -14,6 +15,8 @@ class LoginController {
   static Future<void> login(
       String username, String password, WidgetRef ref) async {
     try {
+      final token = await requestNotificationPermission();
+      print(token);
       SharedPreferences preferences = await SharedPreferences.getInstance();
       final res = await AppController.send(
           'login', {'username': username, 'password': password});
@@ -30,7 +33,7 @@ class LoginController {
             purpose: Purpose.fail);
       }
     } catch (e) {
-      AppController.toastMessage('Error!', 'Something went wrong!',
+      AppController.toastMessage('Error!', 'Something went wrong! $e',
           purpose: Purpose.fail);
     }
   }

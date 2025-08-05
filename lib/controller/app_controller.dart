@@ -28,6 +28,7 @@ class AppController {
   static final String baseApiUrl = '$baseUrl/api';
   static final String basefileUrl = '$baseUrl/public/pdf';
   static final String baseImageUrl = '$baseUrl/public/images';
+  static final String baseChatImgUrl = '$baseImageUrl/chat';
   static final String baseResultImageUrl = '$baseUrl/public/img';
   static final String baseStaffImageUrl = '$baseUrl/public/uploads/staff';
 
@@ -142,5 +143,30 @@ class AppController {
         ),
       ),
     );
+  }
+
+  static String formatToSmartDate(String utcDateString) {
+    try {
+      DateTime utcDate = DateTime.parse(utcDateString).toUtc();
+      DateTime localDate = utcDate.toLocal();
+
+      DateTime now = DateTime.now();
+      DateTime today = DateTime(now.year, now.month, now.day);
+      DateTime yesterday = today.subtract(Duration(days: 1));
+      DateTime inputDate =
+          DateTime(localDate.year, localDate.month, localDate.day);
+
+      if (inputDate == today) {
+        return DateFormat('h:mm a').format(localDate);
+      } else if (inputDate == yesterday) {
+        return "Yesterday";
+      } else if (localDate.year == now.year) {
+        return DateFormat('MMM d').format(localDate);
+      } else {
+        return DateFormat('MMM d, yyyy').format(localDate);
+      }
+    } catch (e) {
+      return "";
+    }
   }
 }

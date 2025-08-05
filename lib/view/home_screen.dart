@@ -5,6 +5,7 @@ import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:senthil/controller/app_controller.dart';
 import 'package:senthil/controller/home_controller.dart';
 import 'package:senthil/controller/login_controller.dart';
+import 'package:senthil/controller/notification_controller.dart';
 import 'package:senthil/controller/theme_controller.dart';
 import 'package:senthil/model/home/dashboard_model.dart';
 import 'package:senthil/model/home/exam_results_model.dart';
@@ -29,6 +30,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   void initState() {
     future = HomeController.fetchResults();
+    sendNotification('testing notification');
     super.initState();
   }
 

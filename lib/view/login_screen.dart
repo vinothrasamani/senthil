@@ -53,16 +53,16 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         : 10;
 
     return Scaffold(
-      body: SafeArea(
-        child: Container(
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-              gradient: SweepGradient(colors: [
-            baseColor,
-            const Color.fromARGB(255, 189, 0, 157),
-            const Color.fromARGB(255, 137, 0, 179),
-            baseColor
-          ])),
+      body: Container(
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+            gradient: SweepGradient(colors: [
+          baseColor,
+          const Color.fromARGB(255, 189, 0, 157),
+          const Color.fromARGB(255, 137, 0, 179),
+          baseColor
+        ])),
+        child: SafeArea(
           child: SingleChildScrollView(
             child: Card(
               margin: EdgeInsets.symmetric(vertical: 10, horizontal: flexWidth),
