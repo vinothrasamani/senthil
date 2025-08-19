@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "990197140327",
+    "project_id": "senthil-school",
+    "storage_bucket": "senthil-school.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:990197140327:android:3fae07a064803cb2427dc2",
+        "android_client_info": {
+          "package_name": "com.ijessi.senthil"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDAdGpidLYASWU7PJdD4zcUR3qmuDnkZ0w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

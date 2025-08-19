@@ -16,10 +16,9 @@ class LoginController {
       String username, String password, WidgetRef ref) async {
     try {
       final token = await requestNotificationPermission();
-      print(token);
       SharedPreferences preferences = await SharedPreferences.getInstance();
-      final res = await AppController.send(
-          'login', {'username': username, 'password': password});
+      final res = await AppController.send('login',
+          {'username': username, 'password': password, 'token': token});
       final result = loginModelFromJson(res);
       if (result.success) {
         await preferences.setString('user', res);

@@ -8,6 +8,7 @@ import 'package:flutter_windowmanager_plus/flutter_windowmanager_plus.dart';
 import 'package:get/get.dart';
 import 'package:senthil/controller/notification_controller.dart';
 import 'package:senthil/controller/theme_controller.dart';
+import 'package:senthil/firebase_options.dart';
 import 'package:senthil/view/splash_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -35,8 +36,9 @@ void initNotification() async {
   );
 }
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   loadFirebaseMessaging();
   runApp(ProviderScope(child: const MyApp()));
