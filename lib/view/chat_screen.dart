@@ -48,7 +48,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     preferences = await SharedPreferences.getInstance();
     final user1 = ref.read(LoginController.userProvider)!.data;
     sender = user1.id;
-    chatId = 'chat_${user1.id}.${widget.user.id}';
+    List<int> ids = [user1.id, widget.user.id];
+    ids.sort();
+    chatId = 'chat_${ids[0]}.${ids[1]}';
     await ref.read(chatsProvider.notifier).loadMessages({
       'offset': offset,
       'chat_id': chatId,
@@ -66,6 +68,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           'chat_id': chatId,
           'message': msg.text,
           'sender': sender,
+          'receiverId': widget.user.id,
           if (filePath != null) 'file': filePath,
         },
         onSendProgress: (p0, p1) {
@@ -96,6 +99,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final Size size = MediaQuery.of(context).size;
     bool isDark = ref.watch(ThemeController.themeMode) == ThemeMode.dark;
     bool isLoading = ref.watch(ChatController.isLoading);
     final messages = ref.watch(chatsProvider);
@@ -119,6 +123,24 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                     ? ListShimmer(isDark: isDark)
                     : Column(
                         children: [
+                          if (messages.isEmpty)
+                            SizedBox(
+                              height: size.height - 200,
+                              child: Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(Icons.filter_list_off,
+                                        size: 50, color: Colors.red),
+                                    SizedBox(height: 10),
+                                    Text(
+                                      'No messages found. Send new message!',
+                                      textAlign: TextAlign.center,
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ),
                           for (var i = 0; i < messages.length; i++)
                             Builder(builder: (context) {
                               final message = messages[i];
@@ -220,7 +242,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                         ),
                       ),
                       SizedBox(width: 2),
-                      ref.watch(ChatController.sending)
+                      ref.watch(ChatController.sending) && filePath != null
                           ? Builder(builder: (context) {
                               var progress = ref.watch(ChatController.progress);
                               return Padding(
@@ -238,7 +260,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                               );
                             })
                           : IconButton(
-                              onPressed: addNewMessage,
+                              onPressed: ref.watch(ChatController.sending)
+                                  ? null
+                                  : addNewMessage,
                               style: IconButton.styleFrom(
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(30),

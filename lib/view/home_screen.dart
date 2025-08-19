@@ -5,7 +5,7 @@ import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:senthil/controller/app_controller.dart';
 import 'package:senthil/controller/home_controller.dart';
 import 'package:senthil/controller/login_controller.dart';
-import 'package:senthil/controller/notification_controller.dart';
+import 'package:senthil/controller/settings_controller.dart';
 import 'package:senthil/controller/theme_controller.dart';
 import 'package:senthil/model/home/dashboard_model.dart';
 import 'package:senthil/model/home/exam_results_model.dart';
@@ -30,7 +30,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   void initState() {
     future = HomeController.fetchResults();
-    sendNotification('testing notification');
     super.initState();
   }
 
@@ -156,93 +155,94 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 error: (error, _) => SizedBox.shrink(),
                 loading: () => HomeShimmer(isDark: isDark, id: 2)),
             SizedBox(height: 10),
-            FutureBuilder(
-              future: future,
-              builder: (context, snap) {
-                if (snap.connectionState == ConnectionState.waiting) {
-                  return SizedBox.shrink();
-                }
-                if (snap.hasError) {
-                  return SizedBox.shrink();
-                }
-                return Container(
-                  margin: EdgeInsets.symmetric(vertical: 2, horizontal: 5),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      title(
-                          const Color.fromARGB(255, 216, 194, 0),
-                          TablerIcons.file_text,
-                          'Exam Results',
-                          isDark,
-                          snap.data?[0].year ?? 'Year'),
-                      SizedBox(height: 5),
-                      CarouselSlider.builder(
-                        itemCount: snap.data!.length,
-                        itemBuilder: (ctx, index, child) {
-                          return Container(
-                            margin: EdgeInsets.symmetric(horizontal: 5),
-                            width: double.infinity,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              border: Border.all(color: Colors.grey),
-                              boxShadow: [
-                                BoxShadow(
-                                  offset: Offset(0, 1),
-                                  blurRadius: 0.5,
-                                  spreadRadius: 1,
-                                ),
-                              ],
-                            ),
-                            clipBehavior: Clip.hardEdge,
-                            child: Column(
-                              children: [
-                                Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.only(
-                                      topLeft: Radius.circular(10),
-                                      topRight: Radius.circular(10),
+            if (ref.watch(SettingsController.canShowResult))
+              FutureBuilder(
+                future: future,
+                builder: (context, snap) {
+                  if (snap.connectionState == ConnectionState.waiting) {
+                    return SizedBox.shrink();
+                  }
+                  if (snap.hasError) {
+                    return SizedBox.shrink();
+                  }
+                  return Container(
+                    margin: EdgeInsets.symmetric(vertical: 2, horizontal: 5),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        title(
+                            const Color.fromARGB(255, 216, 194, 0),
+                            TablerIcons.file_text,
+                            'Exam Results',
+                            isDark,
+                            snap.data?[0].year ?? 'Year'),
+                        SizedBox(height: 5),
+                        CarouselSlider.builder(
+                          itemCount: snap.data!.length,
+                          itemBuilder: (ctx, index, child) {
+                            return Container(
+                              margin: EdgeInsets.symmetric(horizontal: 5),
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(color: Colors.grey),
+                                boxShadow: [
+                                  BoxShadow(
+                                    offset: Offset(0, 1),
+                                    blurRadius: 0.5,
+                                    spreadRadius: 1,
+                                  ),
+                                ],
+                              ),
+                              clipBehavior: Clip.hardEdge,
+                              child: Column(
+                                children: [
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(10),
+                                        topRight: Radius.circular(10),
+                                      ),
+                                      color: Theme.of(context)
+                                          .appBarTheme
+                                          .backgroundColor,
                                     ),
-                                    color: Theme.of(context)
-                                        .appBarTheme
-                                        .backgroundColor,
-                                  ),
-                                  width: double.infinity,
-                                  alignment: Alignment.center,
-                                  padding: EdgeInsets.all(10),
-                                  child: Text(
-                                    snap.data![index].title,
-                                    style: TextStyle(
-                                        fontSize: 16,
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ),
-                                Expanded(
-                                  child: Image.network(
-                                    '${AppController.baseResultImageUrl}/${snap.data![index].image}',
-                                    fit: BoxFit.fill,
                                     width: double.infinity,
+                                    alignment: Alignment.center,
+                                    padding: EdgeInsets.all(10),
+                                    child: Text(
+                                      snap.data![index].title,
+                                      style: TextStyle(
+                                          fontSize: 16,
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold),
+                                    ),
                                   ),
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                        options: CarouselOptions(
-                          autoPlay: true,
-                          height: size.height < size.width
-                              ? size.width * 0.75
-                              : size.height * 0.75,
-                          clipBehavior: Clip.hardEdge,
-                          viewportFraction: 1.0,
+                                  Expanded(
+                                    child: Image.network(
+                                      '${AppController.baseResultImageUrl}/${snap.data![index].image}',
+                                      fit: BoxFit.fill,
+                                      width: double.infinity,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                          options: CarouselOptions(
+                            autoPlay: true,
+                            height: size.height < size.width
+                                ? size.width * 0.75
+                                : size.height * 0.75,
+                            clipBehavior: Clip.hardEdge,
+                            viewportFraction: 1.0,
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                );
-              },
-            ),
+                      ],
+                    ),
+                  );
+                },
+              ),
             SizedBox(height: 15),
           ],
         ),

@@ -26,6 +26,29 @@ class AppSettings extends ConsumerWidget {
           shrinkWrap: true,
           children: [
             SizedBox(height: 10),
+            title('App Settings'),
+            Builder(builder: (context) {
+              final bool canShowResult =
+                  ref.watch(SettingsController.canShowResult);
+              return SwitchListTile(
+                thumbIcon: WidgetStatePropertyAll(
+                    Icon(canShowResult ? Icons.slideshow : Icons.hide_source)),
+                title: Row(
+                  children: [
+                    Icon(TablerIcons.slideshow),
+                    SizedBox(width: 10),
+                    Expanded(child: Text('Enable examination result slider')),
+                  ],
+                ),
+                value: canShowResult,
+                onChanged: (val) {
+                  ref.read(SettingsController.canShowResult.notifier).state =
+                      val;
+                  SettingsController.setResultAction(val);
+                },
+              );
+            }),
+            SizedBox(height: 10),
             title('Theme'),
             Builder(builder: (context) {
               bool isDark =

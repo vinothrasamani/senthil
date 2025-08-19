@@ -32,7 +32,7 @@ class LoginController {
             purpose: Purpose.fail);
       }
     } catch (e) {
-      AppController.toastMessage('Error!', 'Something went wrong! $e',
+      AppController.toastMessage('Error!', 'Something went wrong!',
           purpose: Purpose.fail);
     }
   }

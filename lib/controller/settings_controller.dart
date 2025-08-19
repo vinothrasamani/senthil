@@ -7,6 +7,13 @@ import 'package:senthil/view/login_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingsController {
+  static final canShowResult = StateProvider((ref) => false);
+
+  static void setResultAction(bool result) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    preferences.setBool('canShowResult', result);
+  }
+
   static void changeTheme(WidgetRef ref, bool isDark) async {
     final SharedPreferences preferences = await SharedPreferences.getInstance();
     await preferences.setBool('isDark', isDark);
@@ -33,8 +40,8 @@ class SettingsController {
               final SharedPreferences preferences =
                   await SharedPreferences.getInstance();
               await preferences.remove('user');
-              ref.read(LoginController.userProvider.notifier).state = null;
               Get.offAll(() => LoginScreen(), transition: Transition.zoom);
+              ref.read(LoginController.userProvider.notifier).state = null;
             },
             child: Text('Yes'),
           ),
