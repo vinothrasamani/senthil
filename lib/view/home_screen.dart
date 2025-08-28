@@ -24,12 +24,20 @@ class HomeScreen extends ConsumerStatefulWidget {
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   late Future<List<ExamResult>> future;
 
-  List<Widget> cardList(DashboardModel banner) =>
-      [for (var item in banner.data) CollectionCard(data: item, index: 3)];
+  List<Widget> cardList(DashboardModel banner) => [
+        for (var item in banner.data)
+          CollectionCard(
+            data: item,
+            index: ref.watch(SettingsController.defaultPayment),
+          ),
+      ];
 
   @override
   void initState() {
     future = HomeController.fetchResults();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      SettingsController.loadSettings(ref);
+    });
     super.initState();
   }
 

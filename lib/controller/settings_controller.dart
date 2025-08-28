@@ -8,10 +8,24 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingsController {
   static final canShowResult = StateProvider((ref) => false);
+  static final defaultPayment = StateProvider((ref) => 0);
 
   static void setResultAction(bool result) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     preferences.setBool('canShowResult', result);
+  }
+
+  static void loadSettings(WidgetRef ref) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    final c = preferences.getBool('canShowResult') ?? false;
+    ref.read(canShowResult.notifier).state = c;
+    final p = preferences.getInt('payment') ?? 0;
+    ref.read(defaultPayment.notifier).state = p;
+  }
+
+  static void setPayType(int result) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    preferences.setInt('payment', result);
   }
 
   static void changeTheme(WidgetRef ref, bool isDark) async {

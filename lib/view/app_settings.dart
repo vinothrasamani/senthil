@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
+import 'package:senthil/controller/app_controller.dart';
 import 'package:senthil/controller/settings_controller.dart';
 import 'package:senthil/controller/theme_controller.dart';
 
@@ -9,6 +10,15 @@ class AppSettings extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final amounttitles = [
+      'Target',
+      'Concussion',
+      'Net',
+      'Paid',
+      'Exclusion',
+      'Balance'
+    ];
+
     Widget title(String text) {
       return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -46,6 +56,55 @@ class AppSettings extends ConsumerWidget {
                       val;
                   SettingsController.setResultAction(val);
                 },
+              );
+            }),
+            Builder(builder: (context) {
+              final int currentAmt =
+                  ref.watch(SettingsController.defaultPayment);
+              return ListTile(
+                leading: Icon(TablerIcons.moneybag),
+                title: Text('Default payment type'),
+                trailing: PopupMenuButton(
+                  initialValue: currentAmt,
+                  itemBuilder: (ctx) => amounttitles
+                      .map(
+                        (amt) => PopupMenuItem(
+                          value: amounttitles.indexOf(amt),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              CircleAvatar(
+                                  radius: 5,
+                                  backgroundColor: AppController.lightBlue),
+                              SizedBox(width: 8),
+                              Text(amt),
+                            ],
+                          ),
+                        ),
+                      )
+                      .toList(),
+                  onSelected: (value) {
+                    SettingsController.setPayType(value);
+                    ref.read(SettingsController.defaultPayment.notifier).state =
+                        value;
+                  },
+                  child: Container(
+                    padding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(5),
+                      color: AppController.lightGreen.withAlpha(50),
+                      border: Border.all(
+                          color: AppController.lightGreen.withAlpha(70)),
+                    ),
+                    child: Text(
+                      amounttitles[currentAmt],
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ),
+                ),
               );
             }),
             SizedBox(height: 10),
