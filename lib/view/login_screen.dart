@@ -1,9 +1,13 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
+import 'package:get/get.dart';
 import 'package:senthil/controller/login_controller.dart';
 import 'package:senthil/controller/theme_controller.dart';
+import 'package:senthil/view/terms_screen.dart';
+import 'package:senthil/view/web_view_screen.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -145,12 +149,25 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             child: Text.rich(
                               TextSpan(text: 'I agreed to the ', children: [
                                 TextSpan(
-                                    text: 'Privacy Policy ',
-                                    style: TextStyle(color: Colors.blue)),
+                                  text: 'Privacy Policy ',
+                                  recognizer: TapGestureRecognizer()
+                                    ..onTap = () {
+                                      Get.to(() => WebViewScreen(
+                                          title: 'Privacy Policy',
+                                          link:
+                                              'https://stest.ijessi.com/api/privacy-policy'));
+                                    },
+                                  style: TextStyle(color: Colors.blue),
+                                ),
                                 TextSpan(text: 'and '),
                                 TextSpan(
-                                    text: 'Terms & Conditions.',
-                                    style: TextStyle(color: Colors.blue)),
+                                  text: 'Terms & Conditions.',
+                                  recognizer: TapGestureRecognizer()
+                                    ..onTap = () {
+                                      Get.to(() => TermsScreen());
+                                    },
+                                  style: TextStyle(color: Colors.blue),
+                                ),
                               ]),
                             ),
                           ),

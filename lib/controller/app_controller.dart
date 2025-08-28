@@ -35,7 +35,6 @@ class AppController {
   static Future<dynamic> fetch(String endPoint) async {
     final url = Uri.parse('$baseApiUrl/$endPoint');
     final res = await http.get(url);
-    print(res.body);
     if (res.statusCode == 200) {
       return res.body;
     } else {
@@ -48,7 +47,6 @@ class AppController {
     final res = await http.post(url,
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(object));
-    print(res.body);
     if (res.statusCode == 200) {
       return res.body;
     } else {

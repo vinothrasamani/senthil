@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class WebViewScreen extends StatefulWidget {
-  const WebViewScreen({super.key, required this.link});
+  const WebViewScreen({super.key, required this.link, required this.title});
   final String link;
+  final String title;
 
   @override
   State<WebViewScreen> createState() => _WebViewScreenState();
@@ -26,7 +27,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.link.split('/').last),
+        title: Text(widget.title),
       ),
       body: SafeArea(child: WebViewWidget(controller: controller)),
     );

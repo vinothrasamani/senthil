@@ -201,7 +201,8 @@ class AppDrawer extends ConsumerWidget {
             onTap: () {
               Get.back();
               Get.to(() => WebViewScreen(
-                    link: 'https://google.com',
+                    title: 'Privacy Policy',
+                    link: 'https://stest.ijessi.com/api/privacy-policy',
                   ));
             },
           ),
