@@ -165,21 +165,21 @@ class _TopperListScreenState extends ConsumerState<TopperListScreen> {
           });
         },
       ),
+      DropdownButtonFormField<String>(
+        value: selectedCrGroup,
+        items: ref
+            .watch(TopperListController.coursegroupsTop)
+            .map((e) => DropdownMenuItem<String>(
+                value: e ?? '', child: Text(e ?? 'None')))
+            .toList(),
+        decoration: InputDecoration(
+            labelText: 'Course Group',
+            prefixIcon: Icon(Icons.group, color: Colors.grey)),
+        onChanged: (val) {
+          selectedCrGroup = val;
+        },
+      ),
       if (ref.watch(TopperListController.canAddTop)) ...[
-        DropdownButtonFormField<String>(
-          value: selectedCrGroup,
-          items: ref
-              .watch(TopperListController.coursegroupsTop)
-              .map((e) => DropdownMenuItem<String>(
-                  value: e ?? '', child: Text(e ?? 'None')))
-              .toList(),
-          decoration: InputDecoration(
-              labelText: 'Course Group',
-              prefixIcon: Icon(Icons.group, color: Colors.grey)),
-          onChanged: (val) {
-            selectedCrGroup = val;
-          },
-        ),
         DropdownButtonFormField<String>(
           value: selectedStmGroup,
           items: ref
@@ -203,7 +203,7 @@ class _TopperListScreenState extends ConsumerState<TopperListScreen> {
                 value: e ?? '', child: Text(e ?? 'None')))
             .toList(),
         decoration: InputDecoration(
-            labelText: 'Course',
+            labelText: 'Main Course',
             prefixIcon: Icon(Icons.golf_course, color: Colors.grey)),
         onChanged: (val) {
           selectedCourse = val;

@@ -196,7 +196,7 @@ class _ComparisonScreen extends ConsumerState<ComparisonScreen> {
                 DropdownMenuItem<String>(value: e ?? '', child: Text(e ?? '')))
             .toList(),
         decoration: InputDecoration(
-            labelText: 'Course',
+            labelText: 'Main Course',
             prefixIcon: Icon(Icons.golf_course, color: Colors.grey)),
         onChanged: (val) {
           selectedCourse = val;

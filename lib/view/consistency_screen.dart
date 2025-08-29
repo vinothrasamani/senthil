@@ -239,7 +239,7 @@ class _ConsistencyScreenState extends ConsumerState<ConsistencyScreen> {
                 value: e ?? '', child: Text(e ?? 'None')))
             .toList(),
         decoration: InputDecoration(
-            labelText: 'Course',
+            labelText: 'Main Course',
             prefixIcon: Icon(Icons.golf_course, color: Colors.grey)),
         onChanged: (val) {
           selectedCourse = val;
