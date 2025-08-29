@@ -48,7 +48,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     Center center = const Center();
     final user = ref.watch(LoginController.userProvider);
     final isDark = ref.watch(ThemeController.themeMode) == ThemeMode.dark;
-    final listenNotice = ref.watch(HomeController.noticeData(user!.data.id));
+    final listenNotice = ref.watch(HomeController.noticeData(user!.data!.id));
     final listenBanner = ref.watch(HomeController.bannerData);
 
     return Scaffold(

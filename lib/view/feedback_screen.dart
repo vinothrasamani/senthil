@@ -204,7 +204,7 @@ class _FeedbackScreenState extends ConsumerState<FeedbackScreen> {
           children: [
             if (ref.watch(FeedbackController.years).isNotEmpty)
               AppController.animatedTitle(
-                  '${widget.index == 0 ? 'CBSE' : "Metric"} School', isDark),
+                  '${widget.index == 0 ? 'CBSE' : "Matric"} School', isDark),
             SizedBox(height: 10),
             if (widget.feedback == null)
               if (ref.watch(FeedbackController.years).isNotEmpty)

@@ -295,7 +295,7 @@ class _FeebackEntryScreenState extends ConsumerState<FeedbackEntryScreen> {
                   Get.to(
                     () => FeedbackScreen(
                       index: item.schooltype == "CBSE" ? 0 : 1,
-                      userId: ref.read(LoginController.userProvider)!.data.id,
+                      userId: ref.read(LoginController.userProvider)!.data!.id,
                       feedback: item,
                     ),
                   );

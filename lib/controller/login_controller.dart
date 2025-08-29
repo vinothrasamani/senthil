@@ -25,7 +25,7 @@ class LoginController {
         ref.read(userProvider.notifier).state = result;
         Get.offAll(() => HomeScreen(), transition: Transition.zoom);
         AppController.toastMessage(
-            'Login Successfully!', 'Welcome back ${result.data.fullname}.');
+            'Login Successfully!', 'Welcome back ${result.data!.fullname}.');
       } else {
         AppController.toastMessage(
             'User not found!', 'Please verify your login credentials.',

@@ -253,7 +253,7 @@ class _ConsistencyScreenState extends ConsumerState<ConsistencyScreen> {
           children: [
             if (ref.watch(ConsistencyController.conYears).isNotEmpty)
               AppController.animatedTitle(
-                  '${widget.index == 0 ? 'CBSE' : "Metric"} School', isDark),
+                  '${widget.index == 0 ? 'CBSE' : "Matric"} School', isDark),
             SizedBox(height: 10),
             if (ref.watch(ConsistencyController.conYears).isNotEmpty)
               Form(

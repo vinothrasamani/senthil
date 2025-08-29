@@ -243,7 +243,7 @@ class _TopperListScreenState extends ConsumerState<TopperListScreen> {
           children: [
             if (ref.watch(TopperListController.yearsTop).isNotEmpty)
               AppController.animatedTitle(
-                  '${widget.index == 0 ? 'CBSE' : "Metric"} School', isDark),
+                  '${widget.index == 0 ? 'CBSE' : "Matric"} School', isDark),
             SizedBox(height: 10),
             if (ref.watch(TopperListController.yearsTop).isNotEmpty)
               Form(

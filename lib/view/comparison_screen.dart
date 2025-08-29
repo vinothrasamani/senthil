@@ -164,21 +164,35 @@ class _ComparisonScreen extends ConsumerState<ComparisonScreen> {
           });
         },
       ),
+      DropdownButtonFormField<String>(
+        value: selectedCrGroup,
+        items: ref
+            .watch(ComparisonController.coursegroups)
+            .map((e) =>
+                DropdownMenuItem<String>(value: e ?? '', child: Text(e ?? '')))
+            .toList(),
+        decoration: InputDecoration(
+            labelText: 'Course Group',
+            prefixIcon: Icon(Icons.group, color: Colors.grey)),
+        onChanged: (val) {
+          selectedCrGroup = val;
+        },
+      ),
+      DropdownButtonFormField<String>(
+        value: selectedCourse,
+        items: ref
+            .watch(ComparisonController.courses)
+            .map((e) =>
+                DropdownMenuItem<String>(value: e ?? '', child: Text(e ?? '')))
+            .toList(),
+        decoration: InputDecoration(
+            labelText: 'Course',
+            prefixIcon: Icon(Icons.golf_course, color: Colors.grey)),
+        onChanged: (val) {
+          selectedCourse = val;
+        },
+      ),
       if (ref.watch(ComparisonController.canAdd)) ...[
-        DropdownButtonFormField<String>(
-          value: selectedCrGroup,
-          items: ref
-              .watch(ComparisonController.coursegroups)
-              .map((e) => DropdownMenuItem<String>(
-                  value: e ?? '', child: Text(e ?? '')))
-              .toList(),
-          decoration: InputDecoration(
-              labelText: 'Course Group',
-              prefixIcon: Icon(Icons.group, color: Colors.grey)),
-          onChanged: (val) {
-            selectedCrGroup = val;
-          },
-        ),
         DropdownButtonFormField<String>(
           value: selectedStmGroup,
           items: ref
@@ -208,20 +222,6 @@ class _ComparisonScreen extends ConsumerState<ComparisonScreen> {
           },
         ),
       ],
-      DropdownButtonFormField<String>(
-        value: selectedCourse,
-        items: ref
-            .watch(ComparisonController.courses)
-            .map((e) =>
-                DropdownMenuItem<String>(value: e ?? '', child: Text(e ?? '')))
-            .toList(),
-        decoration: InputDecoration(
-            labelText: 'Course',
-            prefixIcon: Icon(Icons.golf_course, color: Colors.grey)),
-        onChanged: (val) {
-          selectedCourse = val;
-        },
-      ),
       Builder(builder: (context) {
         bool searching = ref.watch(ComparisonController.searching);
         return SizedBox(
@@ -243,7 +243,7 @@ class _ComparisonScreen extends ConsumerState<ComparisonScreen> {
           children: [
             if (ref.watch(ComparisonController.years).isNotEmpty)
               AppController.animatedTitle(
-                  '${widget.index == 0 ? 'CBSE' : "Metric"} School', isDark),
+                  '${widget.index == 0 ? 'CBSE' : "Matric"} School', isDark),
             SizedBox(height: 10),
             if (ref.watch(ComparisonController.years).isNotEmpty)
               Form(

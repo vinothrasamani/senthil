@@ -59,7 +59,7 @@ class _ExamUploadDetailsScreenState
               padding: EdgeInsets.symmetric(vertical: 10, horizontal: 4),
               children: [
                 AppController.animatedTitle(
-                    '${widget.index == 0 ? 'CBSE' : "Metric"} School', isDark),
+                    '${widget.index == 0 ? 'CBSE' : "Matric"} School', isDark),
                 SizedBox(height: 10),
                 AppController.heading(
                     'Uploaded Classes Only!', isDark, Icons.table_view),

@@ -7,7 +7,7 @@ String loginModelToJson(LoginModel data) => json.encode(data.toJson());
 
 class LoginModel {
   bool success;
-  Data data;
+  Data? data;
   String message;
 
   LoginModel({
@@ -24,7 +24,7 @@ class LoginModel {
 
   Map<String, dynamic> toJson() => {
         "success": success,
-        "data": data.toJson(),
+        "data": (data != null) ? data!.toJson() : null,
         "message": message,
       };
 }
@@ -37,12 +37,12 @@ class Data {
   dynamic fcmToken;
   DateTime createdAt;
   DateTime updatedAt;
-  String className;
-  String board;
-  String school;
-  String refName;
+  dynamic className;
+  dynamic board;
+  dynamic school;
+  dynamic refName;
   String fullname;
-  String mobile;
+  dynamic mobile;
   int role;
 
   Data({

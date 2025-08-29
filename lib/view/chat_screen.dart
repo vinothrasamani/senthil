@@ -47,7 +47,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   void load() async {
     preferences = await SharedPreferences.getInstance();
     final user1 = ref.read(LoginController.userProvider)!.data;
-    sender = user1.id;
+    sender = user1!.id;
     List<int> ids = [user1.id, widget.user.id];
     ids.sort();
     chatId = 'chat_${ids[0]}.${ids[1]}';
