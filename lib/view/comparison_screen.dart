@@ -85,8 +85,11 @@ class _ComparisonScreen extends ConsumerState<ComparisonScreen> {
           selectedExam = null;
           selectedStmGroup = null;
           selectedRefGroup = null;
-          ComparisonController.setData(
-              ref, 'classes', {'index': widget.index, 'userId': widget.userId});
+          ComparisonController.setData(ref, 'classes', {
+            'index': widget.index,
+            'year': val,
+            'userId': widget.userId,
+          });
         },
       ),
       DropdownButtonFormField<String>(
@@ -109,6 +112,7 @@ class _ComparisonScreen extends ConsumerState<ComparisonScreen> {
           ComparisonController.setData(ref, 'exams', {
             'index': widget.index,
             'className': val,
+            'year': selectedYear,
             'userId': widget.userId
           });
           if (selectedClass == "XI" ||
@@ -147,19 +151,25 @@ class _ComparisonScreen extends ConsumerState<ComparisonScreen> {
           ComparisonController.setData(ref, 'courses', {
             'index': widget.index,
             'className': selectedClass,
+            'year': selectedYear,
             'userId': widget.userId
           });
           ComparisonController.setData(ref, 'course-group', {
             'index': widget.index,
             'className': selectedClass,
             'exam': selectedExam,
+            'year': selectedYear,
             'userId': widget.userId
           });
-          ComparisonController.setData(ref, 'stream-group',
-              {'index': widget.index, 'userId': widget.userId});
+          ComparisonController.setData(ref, 'stream-group', {
+            'index': widget.index,
+            'userId': widget.userId,
+            'year': selectedYear,
+          });
           ComparisonController.setData(ref, 'ref-group', {
             'index': widget.index,
             'className': selectedClass,
+            'year': selectedYear,
             'userId': widget.userId
           });
         },

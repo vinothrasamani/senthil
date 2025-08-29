@@ -90,8 +90,11 @@ class _TopperListImageScreenState extends ConsumerState<TopperListImageScreen> {
           selectedCrGroup = null;
           selectedExam = null;
           selectedStmGroup = null;
-          TopperListController.setDataTopImage(ref, 'classes-top-image',
-              {'index': widget.index, 'userId': widget.userId});
+          TopperListController.setDataTopImage(ref, 'classes-top-image', {
+            'index': widget.index,
+            'year': selectedYear,
+            'userId': widget.userId
+          });
         },
       ),
       DropdownButtonFormField<String>(
@@ -113,6 +116,7 @@ class _TopperListImageScreenState extends ConsumerState<TopperListImageScreen> {
           TopperListController.setDataTopImage(ref, 'exams-top-image', {
             'index': widget.index,
             'className': val,
+            'year': selectedYear,
             'userId': widget.userId
           });
           if (selectedClass == "XI" ||
@@ -145,6 +149,7 @@ class _TopperListImageScreenState extends ConsumerState<TopperListImageScreen> {
           selectedCrGroup = null;
           TopperListController.setDataTopImage(ref, 'courses-top-image', {
             'index': widget.index,
+            'year': selectedYear,
             'className': selectedClass,
             'userId': widget.userId
           });
@@ -152,13 +157,18 @@ class _TopperListImageScreenState extends ConsumerState<TopperListImageScreen> {
             'index': widget.index,
             'className': selectedClass,
             'exam': selectedExam,
+            'year': selectedYear,
             'userId': widget.userId
           });
-          TopperListController.setDataTopImage(ref, 'stream-group-top-image',
-              {'index': widget.index, 'userId': widget.userId});
+          TopperListController.setDataTopImage(ref, 'stream-group-top-image', {
+            'index': widget.index,
+            'year': selectedYear,
+            'userId': widget.userId
+          });
           TopperListController.setDataTopImage(ref, 'ref-group-top-image', {
             'index': widget.index,
             'className': selectedClass,
+            'year': selectedYear,
             'userId': widget.userId
           });
         },

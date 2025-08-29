@@ -134,8 +134,11 @@ class _ConsistencyScreenState extends ConsumerState<ConsistencyScreen> {
           selectedCourse = null;
           selectedCrGroup = null;
           selectedStmGroup = null;
-          ConsistencyController.setConData(
-              ref, 'con-classes', {'index': widget.index, 'id': widget.userId});
+          ConsistencyController.setConData(ref, 'con-classes', {
+            'index': widget.index,
+            'year': selectedYear,
+            'id': widget.userId
+          });
         },
       ),
       DropdownButtonFormField<String>(
@@ -159,14 +162,24 @@ class _ConsistencyScreenState extends ConsumerState<ConsistencyScreen> {
           ConsistencyController.setConData(ref, 'con-courses', {
             'index': widget.index,
             'className': selectedClass,
+            'year': selectedYear,
             'id': widget.userId
           });
-          ConsistencyController.setConData(ref, 'con-course-group',
-              {'index': widget.index, 'className': selectedClass});
-          ConsistencyController.setConData(ref, 'con-stream-group',
-              {'index': widget.index, 'className': selectedClass});
-          ConsistencyController.setConData(ref, 'con-ref-group',
-              {'index': widget.index, 'className': selectedClass});
+          ConsistencyController.setConData(ref, 'con-course-group', {
+            'index': widget.index,
+            'year': selectedYear,
+            'className': selectedClass
+          });
+          ConsistencyController.setConData(ref, 'con-stream-group', {
+            'index': widget.index,
+            'year': selectedYear,
+            'className': selectedClass
+          });
+          ConsistencyController.setConData(ref, 'con-ref-group', {
+            'index': widget.index,
+            'year': selectedYear,
+            'className': selectedClass
+          });
           if (selectedClass == "XI" || selectedClass == "XII") {
             ref.read(ConsistencyController.canAddTop.notifier).state = true;
           } else {
