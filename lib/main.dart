@@ -74,7 +74,7 @@ class _MyAppState extends ConsumerState<MyApp> {
   Widget build(BuildContext context) {
     final themeMode = ref.watch(ThemeController.themeMode);
     return GetMaterialApp(
-      title: 'Senthil School',
+      title: 'Senthil Group of Schools',
       debugShowCheckedModeBanner: false,
       theme: ThemeController.lightTheme,
       darkTheme: ThemeController.darkTheme,

@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:senthil/controller/app_controller.dart';
+import 'package:senthil/controller/settings_controller.dart';
 import 'package:senthil/model/notice_model.dart';
 
 class NoticeController {
@@ -27,6 +28,7 @@ class NoticeController {
       final data = jsonDecode(res);
       if (data['success']) {
         AppController.toastMessage('Success!', data['message']);
+        SettingsController.loadControls(ref);
       } else {
         AppController.toastMessage('Failed!', data['message'],
             purpose: Purpose.fail);

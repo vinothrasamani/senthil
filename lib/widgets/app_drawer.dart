@@ -66,154 +66,157 @@ class AppDrawer extends ConsumerWidget {
     }
 
     return Drawer(
-      child: ListView(
-        children: [
-          DrawerHeader(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+      child: SafeArea(
+        child: ListView(
+          children: [
+            DrawerHeader(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text('Hi, ${user!.data!.fullname}',
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  SizedBox(height: 8),
+                  SizedBox(
+                    width: 60,
+                    height: 50,
+                    child: Image.asset('assets/images/logo.png',
+                        fit: BoxFit.cover),
+                  ),
+                  SizedBox(height: 5),
+                  Text('Senthil Group Of Schools',
+                      style:
+                          TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+                  Text('Salem / Dharmapuri /Krishnagiri',
+                      style: TextStyle(fontSize: 10)),
+                ],
+              ),
+            ),
+            for (var school in schools)
+              Builder(builder: (context) {
+                final schoolIndex = schools.indexOf(school);
+                return ExpansionTile(
+                  leading: Text(school[0].toUpperCase(),
+                      style: GoogleFonts.poppins(
+                          fontSize: 24,
+                          color: isDark ? Colors.blue : baseColor,
+                          fontWeight: FontWeight.bold)),
+                  textColor: AppController.headColor,
+                  title: Text(school),
+                  children: [
+                    for (var item in menuItems)
+                      Builder(builder: (context) {
+                        final index = menuItems.indexOf(item);
+                        return ListTile(
+                          leading: Icon(menuIcons[index]),
+                          title: Text(item),
+                          onTap: () {
+                            Get.back();
+                            switch (index) {
+                              case 0:
+                                Get.to(
+                                    () => ComparisonScreen(
+                                        index: schoolIndex,
+                                        userId: user.data!.id),
+                                    transition: Transition.zoom);
+                                break;
+                              case 1:
+                                Get.to(
+                                    () => TopperListScreen(
+                                        index: schoolIndex,
+                                        userId: user.data!.id),
+                                    transition: Transition.zoom);
+                                break;
+                              case 2:
+                                Get.to(
+                                    () => TopperListImageScreen(
+                                        index: schoolIndex,
+                                        userId: user.data!.id),
+                                    transition: Transition.zoom);
+                                break;
+                              case 3:
+                                Get.to(
+                                    () => ConsistencyScreen(
+                                        index: schoolIndex,
+                                        userId: user.data!.id),
+                                    transition: Transition.zoom);
+                                break;
+                              case 4:
+                                Get.to(
+                                    () => QuestionScreen(
+                                        index: schoolIndex,
+                                        userId: user.data!.id),
+                                    transition: Transition.zoom);
+                                break;
+                              case 5:
+                                Get.to(
+                                    () => FeedbackScreen(
+                                        index: schoolIndex,
+                                        userId: user.data!.id),
+                                    transition: Transition.zoom);
+                                break;
+                              case 6:
+                                Get.to(
+                                    () => StaffDetailsScreen(
+                                        index: schoolIndex,
+                                        userId: user.data!.id),
+                                    transition: Transition.zoom);
+                                break;
+                              case 7:
+                                Get.to(
+                                    () => ExamUploadDetailsScreen(
+                                        index: schoolIndex),
+                                    transition: Transition.zoom);
+                                break;
+                              default:
+                            }
+                          },
+                        );
+                      }),
+                  ],
+                );
+              }),
+            ExpansionTile(
+              leading: Icon(Icons.admin_panel_settings_outlined),
+              title: Text('Additional'),
+              textColor: AppController.headColor,
               children: [
-                Text('Hi, ${user!.data!.fullname}',
-                    style:
-                        TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                SizedBox(height: 8),
-                SizedBox(
-                  width: 60,
-                  height: 50,
-                  child:
-                      Image.asset('assets/images/logo.png', fit: BoxFit.cover),
-                ),
-                SizedBox(height: 5),
-                Text('Senthil Group Of Schools',
-                    style:
-                        TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
-                Text('Salem / Dharmapuri /Krishnagiri',
-                    style: TextStyle(fontSize: 10)),
+                menuItem(TablerIcons.message, 'Notice', NoticeScreen()),
+                menuItem(
+                    TablerIcons.users_group, 'User List', UserListScreen()),
+                menuItem(
+                    Icons.feedback_outlined, 'Feedback', FeedbackListScreen()),
+                menuItem(TablerIcons.message_2_plus, 'Feedback Entry',
+                    FeedbackEntryScreen()),
+                menuItem(TablerIcons.book_2, 'Subject Handling',
+                    SubjectHandlingScreen(id: user.data!.id)),
+                menuItem(TablerIcons.book, 'Exam Details', ExamDetailsScreen()),
+                menuItem(TablerIcons.books, 'Subject Details',
+                    SubjectDetailsScreen()),
+                menuItem(TablerIcons.file_text, 'Content', ContentScreen()),
               ],
             ),
-          ),
-          for (var school in schools)
-            Builder(builder: (context) {
-              final schoolIndex = schools.indexOf(school);
-              return ExpansionTile(
-                leading: Text(school[0].toUpperCase(),
-                    style: GoogleFonts.poppins(
-                        fontSize: 24,
-                        color: isDark ? Colors.blue : baseColor,
-                        fontWeight: FontWeight.bold)),
-                textColor: AppController.headColor,
-                title: Text(school),
-                children: [
-                  for (var item in menuItems)
-                    Builder(builder: (context) {
-                      final index = menuItems.indexOf(item);
-                      return ListTile(
-                        leading: Icon(menuIcons[index]),
-                        title: Text(item),
-                        onTap: () {
-                          Get.back();
-                          switch (index) {
-                            case 0:
-                              Get.to(
-                                  () => ComparisonScreen(
-                                      index: schoolIndex,
-                                      userId: user.data!.id),
-                                  transition: Transition.zoom);
-                              break;
-                            case 1:
-                              Get.to(
-                                  () => TopperListScreen(
-                                      index: schoolIndex,
-                                      userId: user.data!.id),
-                                  transition: Transition.zoom);
-                              break;
-                            case 2:
-                              Get.to(
-                                  () => TopperListImageScreen(
-                                      index: schoolIndex,
-                                      userId: user.data!.id),
-                                  transition: Transition.zoom);
-                              break;
-                            case 3:
-                              Get.to(
-                                  () => ConsistencyScreen(
-                                      index: schoolIndex,
-                                      userId: user.data!.id),
-                                  transition: Transition.zoom);
-                              break;
-                            case 4:
-                              Get.to(
-                                  () => QuestionScreen(
-                                      index: schoolIndex,
-                                      userId: user.data!.id),
-                                  transition: Transition.zoom);
-                              break;
-                            case 5:
-                              Get.to(
-                                  () => FeedbackScreen(
-                                      index: schoolIndex,
-                                      userId: user.data!.id),
-                                  transition: Transition.zoom);
-                              break;
-                            case 6:
-                              Get.to(
-                                  () => StaffDetailsScreen(
-                                      index: schoolIndex,
-                                      userId: user.data!.id),
-                                  transition: Transition.zoom);
-                              break;
-                            case 7:
-                              Get.to(
-                                  () => ExamUploadDetailsScreen(
-                                      index: schoolIndex),
-                                  transition: Transition.zoom);
-                              break;
-                            default:
-                          }
-                        },
-                      );
-                    }),
-                ],
-              );
-            }),
-          ExpansionTile(
-            leading: Icon(Icons.admin_panel_settings_outlined),
-            title: Text('Additional'),
-            textColor: AppController.headColor,
-            children: [
-              menuItem(TablerIcons.message, 'Notice', NoticeScreen()),
-              menuItem(TablerIcons.users_group, 'User List', UserListScreen()),
-              menuItem(
-                  Icons.feedback_outlined, 'Feedback', FeedbackListScreen()),
-              menuItem(TablerIcons.message_2_plus, 'Feedback Entry',
-                  FeedbackEntryScreen()),
-              menuItem(TablerIcons.book_2, 'Subject Handling',
-                  SubjectHandlingScreen(id: user.data!.id)),
-              menuItem(TablerIcons.book, 'Exam Details', ExamDetailsScreen()),
-              menuItem(
-                  TablerIcons.books, 'Subject Details', SubjectDetailsScreen()),
-              menuItem(TablerIcons.file_text, 'Content', ContentScreen()),
-            ],
-          ),
-          ListTile(
-            leading: Icon(TablerIcons.settings),
-            title: Text('Settings'),
-            onTap: () {
-              Get.back();
-              Get.to(() => AppSettings());
-            },
-          ),
-          ListTile(
-            leading: Icon(Icons.privacy_tip_outlined),
-            title: Text('Privacy Policy'),
-            onTap: () {
-              Get.back();
-              Get.to(() => WebViewScreen(
-                    title: 'Privacy Policy',
-                    link: 'https://stest.ijessi.com/api/privacy-policy',
-                  ));
-            },
-          ),
-        ],
+            ListTile(
+              leading: Icon(TablerIcons.settings),
+              title: Text('Settings'),
+              onTap: () {
+                Get.back();
+                Get.to(() => AppSettings());
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.privacy_tip_outlined),
+              title: Text('Privacy Policy'),
+              onTap: () {
+                Get.back();
+                Get.to(() => WebViewScreen(
+                      title: 'Privacy Policy',
+                      link: 'https://stest.ijessi.com/api/privacy-policy',
+                    ));
+              },
+            ),
+          ],
+        ),
       ),
     );
   }

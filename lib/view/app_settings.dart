@@ -40,6 +40,7 @@ class AppSettings extends ConsumerWidget {
             Builder(builder: (context) {
               final bool canShowResult =
                   ref.watch(SettingsController.canShowResult);
+              final isBlocked = ref.watch(SettingsController.isResultBlocked);
               return SwitchListTile(
                 thumbIcon: WidgetStatePropertyAll(
                     Icon(canShowResult ? Icons.slideshow : Icons.hide_source)),
@@ -50,12 +51,41 @@ class AppSettings extends ConsumerWidget {
                     Expanded(child: Text('Enable examination result slider')),
                   ],
                 ),
-                value: canShowResult,
-                onChanged: (val) {
-                  ref.read(SettingsController.canShowResult.notifier).state =
-                      val;
-                  SettingsController.setResultAction(val);
-                },
+                value: isBlocked ? false : canShowResult,
+                onChanged: isBlocked
+                    ? null
+                    : (val) {
+                        ref
+                            .read(SettingsController.canShowResult.notifier)
+                            .state = val;
+                        SettingsController.setResultAction(val);
+                      },
+              );
+            }),
+            Builder(builder: (context) {
+              final bool canShowCollection =
+                  ref.watch(SettingsController.canShowCollection);
+              final isBlocked = ref.watch(SettingsController.isResultBlocked);
+              return SwitchListTile(
+                thumbIcon: WidgetStatePropertyAll(
+                  Icon(canShowCollection ? Icons.slideshow : Icons.hide_source),
+                ),
+                title: Row(
+                  children: [
+                    Icon(TablerIcons.currency_dollar),
+                    SizedBox(width: 10),
+                    Expanded(child: Text('Enable Collection dashboard')),
+                  ],
+                ),
+                value: isBlocked ? false : canShowCollection,
+                onChanged: isBlocked
+                    ? null
+                    : (val) {
+                        ref
+                            .read(SettingsController.canShowCollection.notifier)
+                            .state = val;
+                        SettingsController.setCollectionAction(val);
+                      },
               );
             }),
             Builder(builder: (context) {
@@ -127,7 +157,7 @@ class AppSettings extends ConsumerWidget {
               );
             }),
             SizedBox(height: 10),
-            title('Aditionals'),
+            title('Additionals'),
             ListTile(
               leading: Icon(Icons.settings_suggest),
               title: Text('Additional Settings'),

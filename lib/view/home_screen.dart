@@ -37,6 +37,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     future = HomeController.fetchResults();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       SettingsController.loadSettings(ref);
+      SettingsController.loadControls(ref);
     });
     super.initState();
   }
@@ -127,41 +128,42 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               ),
               loading: () => HomeShimmer(isDark: isDark, id: 1),
             ),
-            listenBanner.when(
-                data: (banner) {
-                  return Padding(
-                    padding: const EdgeInsets.all(5.0),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        SizedBox(height: 10),
-                        title(
-                            const Color.fromARGB(255, 216, 194, 0),
-                            Icons.attach_money,
-                            'Collection Details',
-                            isDark,
-                            banner.data[0].banner.academicYear),
-                        if (size.width < 800)
-                          ...cardList(banner)
-                        else
-                          LayoutBuilder(builder: (context, cons) {
-                            return Wrap(
-                              spacing: 5,
-                              children: cardList(banner)
-                                  .map((card) => SizedBox(
-                                        width: (cons.maxWidth / 2) - 15,
-                                        child: card,
-                                      ))
-                                  .toList(),
-                            );
-                          }),
-                        SizedBox(height: 10),
-                      ],
-                    ),
-                  );
-                },
-                error: (error, _) => SizedBox.shrink(),
-                loading: () => HomeShimmer(isDark: isDark, id: 2)),
+            if (ref.watch(SettingsController.canShowCollection))
+              listenBanner.when(
+                  data: (banner) {
+                    return Padding(
+                      padding: const EdgeInsets.all(5.0),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          SizedBox(height: 10),
+                          title(
+                              const Color.fromARGB(255, 216, 194, 0),
+                              Icons.attach_money,
+                              'Collection Details',
+                              isDark,
+                              banner.data[0].banner.academicYear),
+                          if (size.width < 800)
+                            ...cardList(banner)
+                          else
+                            LayoutBuilder(builder: (context, cons) {
+                              return Wrap(
+                                spacing: 5,
+                                children: cardList(banner)
+                                    .map((card) => SizedBox(
+                                          width: (cons.maxWidth / 2) - 15,
+                                          child: card,
+                                        ))
+                                    .toList(),
+                              );
+                            }),
+                          SizedBox(height: 10),
+                        ],
+                      ),
+                    );
+                  },
+                  error: (error, _) => SizedBox.shrink(),
+                  loading: () => HomeShimmer(isDark: isDark, id: 2)),
             SizedBox(height: 10),
             if (ref.watch(SettingsController.canShowResult))
               FutureBuilder(
