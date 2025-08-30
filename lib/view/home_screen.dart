@@ -53,7 +53,56 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final listenBanner = ref.watch(HomeController.bannerData);
 
     return Scaffold(
-      appBar: AppBar(title: Text('Dashboard')),
+      appBar: AppBar(
+        title: Text('Dashboard'),
+        actions: [
+          PopupMenuButton(
+            position: PopupMenuPosition.under,
+            itemBuilder: (ctx) => [
+              PopupMenuItem(
+                value: 1,
+                child: ListTile(
+                  leading: CircleAvatar(
+                    radius: 15,
+                    backgroundColor: Colors.grey,
+                    child: Icon(
+                      Icons.person,
+                      color: Colors.white,
+                    ),
+                  ),
+                  title: Text(
+                    user.data?.name ?? 'Username',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  subtitle: Text(
+                    user.data?.fullname ?? 'Fullname',
+                    style: TextStyle(fontSize: 12),
+                  ),
+                ),
+              ),
+              PopupMenuItem(
+                value: 2,
+                child: ListTile(
+                  leading: Icon(
+                    TablerIcons.logout,
+                    color: AppController.red,
+                  ),
+                  onTap: () => SettingsController.logout(ref),
+                  title: Text('Logout'),
+                ),
+              ),
+            ],
+            child: CircleAvatar(
+              backgroundColor: Colors.white30,
+              child: Icon(
+                Icons.person,
+                color: Colors.white,
+              ),
+            ),
+          ),
+          SizedBox(width: 8),
+        ],
+      ),
       body: SafeArea(
         child: ListView(
           shrinkWrap: true,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:senthil/controller/app_controller.dart';
 import 'package:senthil/controller/settings_controller.dart';
 import 'package:senthil/controller/theme_controller.dart';
@@ -10,6 +11,7 @@ class AppSettings extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    bool isDark = ref.watch(ThemeController.themeMode) == ThemeMode.dark;
     final amounttitles = [
       'Target',
       'Concussion',
@@ -65,7 +67,8 @@ class AppSettings extends ConsumerWidget {
             Builder(builder: (context) {
               final bool canShowCollection =
                   ref.watch(SettingsController.canShowCollection);
-              final isBlocked = ref.watch(SettingsController.isResultBlocked);
+              final isBlocked =
+                  ref.watch(SettingsController.isCollectionBlocked);
               return SwitchListTile(
                 thumbIcon: WidgetStatePropertyAll(
                   Icon(canShowCollection ? Icons.slideshow : Icons.hide_source),
@@ -137,41 +140,53 @@ class AppSettings extends ConsumerWidget {
                 ),
               );
             }),
-            SizedBox(height: 10),
+            SizedBox(height: 20),
             title('Theme'),
-            Builder(builder: (context) {
-              bool isDark =
-                  ref.watch(ThemeController.themeMode) == ThemeMode.dark;
-              return SwitchListTile(
-                thumbIcon: WidgetStatePropertyAll(
-                    Icon(isDark ? Icons.light_mode : Icons.dark_mode)),
-                title: Row(
-                  children: [
-                    Icon(TablerIcons.brightness),
-                    SizedBox(width: 10),
-                    Text('Dark Theme'),
-                  ],
-                ),
-                value: isDark,
-                onChanged: (val) => SettingsController.changeTheme(ref, val),
-              );
-            }),
-            SizedBox(height: 10),
+            SwitchListTile(
+              thumbIcon: WidgetStatePropertyAll(
+                  Icon(isDark ? Icons.light_mode : Icons.dark_mode)),
+              title: Row(
+                children: [
+                  Icon(TablerIcons.brightness),
+                  SizedBox(width: 10),
+                  Text('Dark Theme'),
+                ],
+              ),
+              value: isDark,
+              onChanged: (val) => SettingsController.changeTheme(ref, val),
+            ),
+            SizedBox(height: 20),
             title('Additionals'),
             ListTile(
               leading: Icon(Icons.settings_suggest),
               title: Text('Additional Settings'),
-              onTap: () {},
-            ),
-            ListTile(
-              leading: Icon(TablerIcons.logout),
-              title: Text(
-                'Logout',
-                style: TextStyle(color: Colors.red),
-              ),
-              onTap: () => SettingsController.logout(ref),
+              onTap: () => openAppSettings(),
             ),
           ],
+        ),
+      ),
+      bottomNavigationBar: Container(
+        padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 10),
+        child: TextButton.icon(
+          onPressed: () => SettingsController.logout(ref),
+          style: TextButton.styleFrom(
+            backgroundColor: AppController.red.withAlpha(50),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+              side: BorderSide(color: AppController.red),
+            ),
+          ),
+          icon: Icon(
+            TablerIcons.logout,
+            color: isDark ? Colors.white : AppController.red,
+          ),
+          label: Text(
+            'Logout',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: isDark ? Colors.white : AppController.red,
+            ),
+          ),
         ),
       ),
     );
