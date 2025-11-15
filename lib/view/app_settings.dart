@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
@@ -156,12 +157,15 @@ class AppSettings extends ConsumerWidget {
               onChanged: (val) => SettingsController.changeTheme(ref, val),
             ),
             SizedBox(height: 20),
-            title('Additionals'),
-            ListTile(
-              leading: Icon(Icons.settings_suggest),
-              title: Text('Additional Settings'),
-              onTap: () => openAppSettings(),
-            ),
+            if (!kIsWeb) ...[
+              title('Additionals'),
+              ListTile(
+                leading: Icon(Icons.settings_suggest),
+                title: Text('Additional Settings'),
+                onTap: () => openAppSettings(),
+              ),
+              SizedBox(height: 20),
+            ],
           ],
         ),
       ),

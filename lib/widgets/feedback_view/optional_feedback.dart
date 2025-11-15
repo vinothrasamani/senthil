@@ -58,13 +58,16 @@ class OptionalFeedback extends StatelessWidget {
                         ),
                       ),
                       onTap: () {
-                        Get.to(
-                            () => OptionalFeedbackDetails(
-                                sub: snap.data.feedbackSubjects[i],
-                                isDark: isDark,
-                                count: snap.data.feedbackTab2.feedRemCounts[i],
-                                list: snap.data.feedbackTab2.remarks[i]),
-                            transition: Transition.rightToLeft);
+                        if (snap.data.feedbackTab2.feedRemCounts[i] > 0) {
+                          Get.to(
+                              () => OptionalFeedbackDetails(
+                                  sub: snap.data.feedbackSubjects[i],
+                                  isDark: isDark,
+                                  count:
+                                      snap.data.feedbackTab2.feedRemCounts[i],
+                                  list: snap.data.feedbackTab2.remarks[i]),
+                              transition: Transition.rightToLeft);
+                        }
                       },
                     ),
                     Container(

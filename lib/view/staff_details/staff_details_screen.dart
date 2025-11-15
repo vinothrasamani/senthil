@@ -1,4 +1,5 @@
 import 'package:expansion_tile_group/expansion_tile_group.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
@@ -77,6 +78,18 @@ class _StaffDetailsScreenState extends ConsumerState<StaffDetailsScreen> {
 
     final listener =
         data == null ? null : ref.watch(StaffController.staffDetails(data!));
+
+    List<Widget> staffList(snap) {
+      return [
+        for (var i = 0; i < snap.data.length; i++)
+          Builder(
+            builder: (context) {
+              final staff = snap.data[i];
+              return StaffDetailCard(staff: staff, isDark: isDark);
+            },
+          ),
+      ];
+    }
 
     List<Widget> dropdownList = [
       DropdownButtonFormField<String>(
@@ -175,10 +188,11 @@ class _StaffDetailsScreenState extends ConsumerState<StaffDetailsScreen> {
       appBar: AppBar(
         title: Text('Staff Details'),
         actions: [
-          IconButton(
-            onPressed: openDownloads,
-            icon: Icon(TablerIcons.download),
-          ),
+          if (!kIsWeb)
+            IconButton(
+              onPressed: openDownloads,
+              icon: Icon(TablerIcons.download),
+            ),
           IconButton(
             onPressed: () {
               scrollController.animateTo(5,
@@ -244,14 +258,20 @@ class _StaffDetailsScreenState extends ConsumerState<StaffDetailsScreen> {
                                 'Staff List', isDark, TablerIcons.list),
                             SizedBox(height: 10),
                             if (snap.data.isNotEmpty)
-                              for (var i = 0; i < snap.data.length; i++)
-                                Builder(
-                                  builder: (context) {
-                                    final staff = snap.data[i];
-                                    return StaffDetailCard(
-                                        staff: staff, isDark: isDark);
-                                  },
-                                ),
+                              if (size.width > 800)
+                                Wrap(
+                                  spacing: 5,
+                                  children: [
+                                    ...staffList(snap).map((c) {
+                                      return SizedBox(
+                                        width: (size.width / 2) - 30,
+                                        child: c,
+                                      );
+                                    }),
+                                  ],
+                                )
+                              else
+                                ...staffList(snap),
                           ],
                         );
                       },

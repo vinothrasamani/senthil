@@ -30,6 +30,9 @@ class ContentController extends StateNotifier<AsyncValue<ContentData>> {
     await showModalBottomSheet(
       context: context,
       showDragHandle: true,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(15),
+      ),
       isScrollControlled: true,
       builder: (ctx) => ContentEdit(
         info: info,

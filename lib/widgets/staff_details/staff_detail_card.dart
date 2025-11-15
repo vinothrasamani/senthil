@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:get/get.dart';
@@ -120,27 +121,28 @@ class _StaffDetailCardState extends State<StaffDetailCard> {
                   ),
                 ),
                 SizedBox(width: 6),
-                downloading
-                    ? Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          CircularProgressIndicator(
-                            value: progress,
-                            backgroundColor: Colors.grey.withAlpha(50),
-                            color: AppController.headColor,
-                          ),
-                          Text(
-                            '${(progress * 100).toInt()}%',
-                            style: TextStyle(fontSize: 10),
-                          ),
-                        ],
-                      )
-                    : IconButton(
-                        onPressed: downloaded ? openFile : downloadPDF,
-                        icon: Icon(downloaded
-                            ? TablerIcons.file_text
-                            : TablerIcons.download),
-                      ),
+                if (!kIsWeb)
+                  downloading
+                      ? Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            CircularProgressIndicator(
+                              value: progress,
+                              backgroundColor: Colors.grey.withAlpha(50),
+                              color: AppController.headColor,
+                            ),
+                            Text(
+                              '${(progress * 100).toInt()}%',
+                              style: TextStyle(fontSize: 10),
+                            ),
+                          ],
+                        )
+                      : IconButton(
+                          onPressed: downloaded ? openFile : downloadPDF,
+                          icon: Icon(downloaded
+                              ? TablerIcons.file_text
+                              : TablerIcons.download),
+                        ),
               ],
             ),
             Wrap(

@@ -20,6 +20,53 @@ class ContentScreen extends ConsumerWidget {
     final style = TextStyle(
         fontWeight: FontWeight.bold, fontSize: 12, color: Colors.white);
 
+    List<Widget> itemList(list) => [
+          for (var item in list)
+            Container(
+              padding: EdgeInsets.symmetric(vertical: 8, horizontal: 10),
+              margin: EdgeInsets.symmetric(vertical: 3, horizontal: 10),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: Colors.grey),
+              ),
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      CircleAvatar(
+                        radius: 14,
+                        backgroundColor: AppController.lightBlue,
+                        child: Text('${list.indexOf(item) + 1}', style: style),
+                      ),
+                      SizedBox(width: 6),
+                      Expanded(
+                        child: Text(
+                          item.name,
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () {
+                          ContentController.openEditor(context, item);
+                        },
+                        color: AppController.yellow,
+                        icon: Icon(TablerIcons.edit),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      SizedBox(width: 10),
+                      MyChip('Order : ${item.ord}', AppController.headColor),
+                      SizedBox(width: 6),
+                      MyChip('Ref Id : ${item.id}', AppController.red),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+        ];
+
     return DefaultTabController(
       length: 2,
       child: Scaffold(
@@ -46,62 +93,23 @@ class ContentScreen extends ConsumerWidget {
                       } else {
                         list = snap.matric;
                       }
+                      if (size.width > 800) {
+                        return SingleChildScrollView(
+                          padding: EdgeInsets.only(bottom: 80),
+                          child: Wrap(
+                            alignment: WrapAlignment.center,
+                            children: itemList(list).map((item) {
+                              return SizedBox(
+                                width: (size.width / 2) - 40,
+                                child: item,
+                              );
+                            }).toList(),
+                          ),
+                        );
+                      }
                       return ListView(
                         padding: EdgeInsets.only(bottom: 80),
-                        children: [
-                          for (var item in list)
-                            Container(
-                              padding: EdgeInsets.symmetric(
-                                  vertical: 8, horizontal: 10),
-                              margin: EdgeInsets.symmetric(
-                                  vertical: 3, horizontal: 10),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                border: Border.all(color: Colors.grey),
-                              ),
-                              child: Column(
-                                children: [
-                                  Row(
-                                    children: [
-                                      CircleAvatar(
-                                        radius: 14,
-                                        backgroundColor:
-                                            AppController.lightBlue,
-                                        child: Text('${list.indexOf(item) + 1}',
-                                            style: style),
-                                      ),
-                                      SizedBox(width: 6),
-                                      Expanded(
-                                        child: Text(
-                                          item.name,
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                      ),
-                                      IconButton(
-                                        onPressed: () {
-                                          ContentController.openEditor(
-                                              context, item);
-                                        },
-                                        color: AppController.yellow,
-                                        icon: Icon(TablerIcons.edit),
-                                      ),
-                                    ],
-                                  ),
-                                  Row(
-                                    children: [
-                                      SizedBox(width: 10),
-                                      MyChip('Order : ${item.ord}',
-                                          AppController.headColor),
-                                      SizedBox(width: 6),
-                                      MyChip('Ref Id : ${item.id}',
-                                          AppController.red),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                        ],
+                        children: itemList(list),
                       );
                     }),
                   ),

@@ -1,4 +1,7 @@
 import 'package:data_table_2/data_table_2.dart';
+// ignore: avoid_web_libraries_in_flutter
+import 'dart:html' as html;
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:get/get.dart';
@@ -107,8 +110,16 @@ class QuestionTable extends StatelessWidget {
                     bool isAvail = stud.info.examQuestion != null;
                     return GestureDetector(
                       onTap: isAvail
-                          ? () => Get.to(() => PdfViewerScreen(
-                              fileName: stud.info.examQuestion!))
+                          ? () {
+                              if (kIsWeb) {
+                                html.window.open(
+                                    '${AppController.basefileUrl}/${stud.info.examQuestion!}',
+                                    "_blank");
+                              } else {
+                                Get.to(() => PdfViewerScreen(
+                                    fileName: stud.info.examQuestion!));
+                              }
+                            }
                           : null,
                       child: Text(
                         stud.info.examQuestion ?? "None",
@@ -122,8 +133,16 @@ class QuestionTable extends StatelessWidget {
                     bool isAvail = stud.info.markingScheme != null;
                     return GestureDetector(
                       onTap: isAvail
-                          ? () => Get.to(() => PdfViewerScreen(
-                              fileName: stud.info.markingScheme!))
+                          ? () {
+                              if (kIsWeb) {
+                                html.window.open(
+                                    '${AppController.basefileUrl}/${stud.info.markingScheme!}',
+                                    "_blank");
+                              } else {
+                                Get.to(() => PdfViewerScreen(
+                                    fileName: stud.info.markingScheme!));
+                              }
+                            }
                           : null,
                       child: Text(
                         stud.info.markingScheme ?? "None",

@@ -270,8 +270,8 @@ class _TopperListScreenState extends ConsumerState<TopperListScreen> {
                                 width: size.width < 500
                                     ? null
                                     : size.width < 1020
-                                        ? (size.width / 2) - 15
-                                        : (size.width / 3) - 15,
+                                        ? (size.width / 2) - 20
+                                        : (size.width / 3) - 30,
                                 child: child,
                               ))
                           .toList(),

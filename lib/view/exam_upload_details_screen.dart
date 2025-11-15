@@ -99,7 +99,9 @@ class _ExamUploadDetailsScreenState
                     border: TableBorder.all(color: Colors.grey),
                     columnSpacing: 12,
                     horizontalMargin: 12,
-                    minWidth: size.width * (snap.data.resSch.length + 2),
+                    minWidth: size.width > 600
+                        ? size.width
+                        : size.width * (snap.data.resSch.length + 2),
                     headingRowColor:
                         WidgetStatePropertyAll(AppController.tableColor),
                     fixedColumnsColor: AppController.tableColor,
@@ -112,7 +114,7 @@ class _ExamUploadDetailsScreenState
                           headingRowAlignment: MainAxisAlignment.center),
                       DataColumn2(
                           label: Text('Exam Name'),
-                          fixedWidth: sideWidth * 1.4,
+                          fixedWidth: size.width > 600 ? null : sideWidth * 1.4,
                           headingRowAlignment: MainAxisAlignment.center),
                       for (var school in snap.data.resSch)
                         DataColumn2(

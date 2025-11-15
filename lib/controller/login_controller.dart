@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
 import 'package:senthil/controller/app_controller.dart';
@@ -15,7 +16,10 @@ class LoginController {
   static Future<void> login(
       String username, String password, WidgetRef ref) async {
     try {
-      final token = await requestNotificationPermission();
+      String? token;
+      if (!kIsWeb) {
+        token = await requestNotificationPermission();
+      }
       SharedPreferences preferences = await SharedPreferences.getInstance();
       final res = await AppController.send('login',
           {'username': username, 'password': password, 'token': token});

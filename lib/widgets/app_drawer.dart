@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
@@ -16,6 +17,8 @@ import 'package:senthil/view/feedback/feedback_list_screen.dart';
 import 'package:senthil/view/feedback_entry_screen.dart';
 import 'package:senthil/view/feedback_screen.dart';
 import 'package:senthil/view/notice_screen.dart';
+// ignore: avoid_web_libraries_in_flutter
+import 'dart:html' as html;
 import 'package:senthil/view/question_screen.dart';
 import 'package:senthil/view/staff_details/staff_details_screen.dart';
 import 'package:senthil/view/subject_details_screen.dart';
@@ -209,10 +212,15 @@ class AppDrawer extends ConsumerWidget {
               title: Text('Privacy Policy'),
               onTap: () {
                 Get.back();
-                Get.to(() => WebViewScreen(
-                      title: 'Privacy Policy',
-                      link: 'https://stest.ijessi.com/api/privacy-policy',
-                    ));
+                final url = 'https://stest.ijessi.com/api/privacy-policy';
+                if (kIsWeb) {
+                  html.window.open(url, "_blank");
+                } else {
+                  Get.to(() => WebViewScreen(
+                        title: 'Privacy Policy',
+                        link: url,
+                      ));
+                }
               },
             ),
           ],

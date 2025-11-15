@@ -1,4 +1,7 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
+// ignore: avoid_web_libraries_in_flutter
+import 'dart:html' as html;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -152,10 +155,16 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                   text: 'Privacy Policy ',
                                   recognizer: TapGestureRecognizer()
                                     ..onTap = () {
-                                      Get.to(() => WebViewScreen(
-                                          title: 'Privacy Policy',
-                                          link:
-                                              'https://stest.ijessi.com/api/privacy-policy'));
+                                      final url =
+                                          'https://stest.ijessi.com/api/privacy-policy';
+                                      if (kIsWeb) {
+                                        html.window.open(url, "_blank");
+                                      } else {
+                                        Get.to(() => WebViewScreen(
+                                              title: 'Privacy Policy',
+                                              link: url,
+                                            ));
+                                      }
                                     },
                                   style: TextStyle(color: Colors.blue),
                                 ),

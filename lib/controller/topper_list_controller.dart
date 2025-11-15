@@ -77,6 +77,7 @@ class TopperListController {
             ListTile(title: Text(name), leading: Icon(Icons.person)),
             Container(
               width: double.infinity,
+              constraints: BoxConstraints(maxHeight: 300),
               decoration:
                   BoxDecoration(borderRadius: BorderRadius.circular(10)),
               clipBehavior: Clip.hardEdge,

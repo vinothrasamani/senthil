@@ -1,4 +1,5 @@
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
@@ -290,11 +291,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           },
                           options: CarouselOptions(
                             autoPlay: true,
-                            height: size.height < size.width
-                                ? size.width * 0.75
-                                : size.height * 0.75,
+                            height: kIsWeb
+                                ? size.height * 0.80
+                                : size.height < size.width
+                                    ? size.width * 0.75
+                                    : size.height * 0.75,
                             clipBehavior: Clip.hardEdge,
-                            viewportFraction: 1.0,
+                            viewportFraction: kIsWeb && size.width > 500
+                                ? kIsWeb && size.width > 1000
+                                    ? 0.3
+                                    : 0.6
+                                : 1.0,
                           ),
                         ),
                       ],
