@@ -24,7 +24,7 @@ class AppController {
   static final red = const Color.fromARGB(255, 199, 31, 1);
   static final tableColor = headColor.withAlpha(40);
   //-------------------- For an API --------------------
-  static final String baseUrl = 'https://stest.ijessi.com';
+  static final String baseUrl = 'https://senthil.ijessi.com';
   static final String baseApiUrl = '$baseUrl/api';
   static final String basefileUrl = '$baseUrl/public/pdf';
   static final String baseImageUrl = '$baseUrl/public/images';
@@ -35,6 +35,7 @@ class AppController {
   static Future<dynamic> fetch(String endPoint) async {
     final url = Uri.parse('$baseApiUrl/$endPoint');
     final res = await http.get(url);
+    print(res);
     if (res.statusCode == 200) {
       return res.body;
     } else {
@@ -47,6 +48,7 @@ class AppController {
     final res = await http.post(url,
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(object));
+    print(res);
     if (res.statusCode == 200) {
       return res.body;
     } else {

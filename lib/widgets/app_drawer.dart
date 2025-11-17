@@ -62,8 +62,13 @@ class AppDrawer extends ConsumerWidget {
         leading: Icon(icon),
         title: Text(title),
         onTap: () {
+          print('hello1');
           Get.back();
-          Get.to(() => screen, transition: Transition.zoom);
+          print('hello2');
+          Get.to(() {
+            print('hello3');
+            return screen;
+          }, transition: Transition.zoom);
         },
       );
     }
@@ -212,7 +217,7 @@ class AppDrawer extends ConsumerWidget {
               title: Text('Privacy Policy'),
               onTap: () {
                 Get.back();
-                final url = 'https://stest.ijessi.com/api/privacy-policy';
+                final url = 'https://senthil.ijessi.com/api/privacy-policy';
                 if (kIsWeb) {
                   html.window.open(url, "_blank");
                 } else {

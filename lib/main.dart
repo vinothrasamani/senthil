@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_windowmanager_plus/flutter_windowmanager_plus.dart';
 import 'package:get/get.dart';
 import 'package:senthil/controller/notification_controller.dart';
+import 'package:senthil/controller/protect_web_controller.dart';
 import 'package:senthil/controller/theme_controller.dart';
 import 'package:senthil/firebase_options.dart';
 import 'package:senthil/view/splash_screen.dart';
@@ -70,6 +71,8 @@ class _MyAppState extends ConsumerState<MyApp> {
     if (!kIsWeb) {
       await FlutterWindowManagerPlus.addFlags(
           FlutterWindowManagerPlus.FLAG_SECURE);
+    } else {
+      protectWebPage();
     }
   }
 

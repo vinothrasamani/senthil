@@ -1,10 +1,12 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
 import 'package:senthil/controller/app_controller.dart';
 import 'package:senthil/controller/notification_controller.dart';
 import 'package:senthil/model/login_model.dart';
 import 'package:senthil/view/home_screen.dart';
+import 'package:senthil/view/stud_feedback/feedback_home_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginController {
@@ -25,9 +27,13 @@ class LoginController {
           {'username': username, 'password': password, 'token': token});
       final result = loginModelFromJson(res);
       if (result.success) {
+        Widget screen = HomeScreen();
         await preferences.setString('user', res);
         ref.read(userProvider.notifier).state = result;
-        Get.offAll(() => HomeScreen(), transition: Transition.zoom);
+        if (result.data!.role == 6) {
+          screen = FeedbackHomeScreen();
+        }
+        Get.offAll(() => screen, transition: Transition.zoom);
         AppController.toastMessage(
             'Login Successfully!', 'Welcome back ${result.data!.fullname}.');
       } else {

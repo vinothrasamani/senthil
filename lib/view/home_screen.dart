@@ -13,6 +13,7 @@ import 'package:senthil/model/home/exam_results_model.dart';
 import 'package:senthil/shimmer/home_shimme.dart';
 import 'package:senthil/widgets/app_drawer.dart';
 import 'package:senthil/widgets/home/collection_card.dart';
+import 'package:senthil/widgets/popup_menu.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
@@ -56,53 +57,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Dashboard'),
-        actions: [
-          PopupMenuButton(
-            position: PopupMenuPosition.under,
-            itemBuilder: (ctx) => [
-              PopupMenuItem(
-                value: 1,
-                child: ListTile(
-                  leading: CircleAvatar(
-                    radius: 15,
-                    backgroundColor: Colors.grey,
-                    child: Icon(
-                      Icons.person,
-                      color: Colors.white,
-                    ),
-                  ),
-                  title: Text(
-                    user.data?.name ?? 'Username',
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  subtitle: Text(
-                    user.data?.fullname ?? 'Fullname',
-                    style: TextStyle(fontSize: 12),
-                  ),
-                ),
-              ),
-              PopupMenuItem(
-                value: 2,
-                child: ListTile(
-                  leading: Icon(
-                    TablerIcons.logout,
-                    color: AppController.red,
-                  ),
-                  onTap: () => SettingsController.logout(ref),
-                  title: Text('Logout'),
-                ),
-              ),
-            ],
-            child: CircleAvatar(
-              backgroundColor: Colors.white30,
-              child: Icon(
-                Icons.person,
-                color: Colors.white,
-              ),
-            ),
-          ),
-          SizedBox(width: 8),
-        ],
+        actions: [PopupMenu(user: user), SizedBox(width: 8)],
       ),
       body: SafeArea(
         child: ListView(

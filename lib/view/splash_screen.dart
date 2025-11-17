@@ -5,6 +5,7 @@ import 'package:senthil/controller/login_controller.dart';
 import 'package:senthil/model/login_model.dart';
 import 'package:senthil/view/home_screen.dart';
 import 'package:senthil/view/login_screen.dart';
+import 'package:senthil/view/stud_feedback/feedback_home_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
@@ -34,9 +35,13 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
       preferences = await SharedPreferences.getInstance();
       var data = preferences.getString('user');
       if (data != null) {
+        Widget screen = HomeScreen();
         final user = loginModelFromJson(data);
         ref.read(LoginController.userProvider.notifier).state = user;
-        Get.offAll(() => HomeScreen(), transition: Transition.zoom);
+        if (user.data!.role == 6) {
+          screen = FeedbackHomeScreen();
+        }
+        Get.offAll(() => screen, transition: Transition.zoom);
       } else {
         Get.offAll(() => LoginScreen(), transition: Transition.zoom);
       }

@@ -156,7 +156,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                   recognizer: TapGestureRecognizer()
                                     ..onTap = () {
                                       final url =
-                                          'https://stest.ijessi.com/api/privacy-policy';
+                                          'https://senthil.ijessi.com/api/privacy-policy';
                                       if (kIsWeb) {
                                         html.window.open(url, "_blank");
                                       } else {
