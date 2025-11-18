@@ -35,9 +35,6 @@ class FeedbackHome {
   String title;
   FeedbackNotice notice;
   List<String> schooltype;
-  List<String> school;
-  List<String> classname;
-  List<String> sections;
   String staff;
   List<String> refgrouplist;
 
@@ -45,9 +42,6 @@ class FeedbackHome {
     required this.title,
     required this.notice,
     required this.schooltype,
-    required this.school,
-    required this.classname,
-    required this.sections,
     required this.staff,
     required this.refgrouplist,
   });
@@ -56,9 +50,6 @@ class FeedbackHome {
         title: json["title"],
         notice: FeedbackNotice.fromJson(json["notice"]),
         schooltype: List<String>.from(json["Schooltype"].map((x) => x)),
-        school: List<String>.from(json["School"].map((x) => x)),
-        classname: List<String>.from(json["classname"].map((x) => x)),
-        sections: List<String>.from(json["sections"].map((x) => x)),
         staff: json["Staff"],
         refgrouplist: List<String>.from(json["refgrouplist"].map((x) => x)),
       );
@@ -67,9 +58,6 @@ class FeedbackHome {
         "title": title,
         "notice": notice.toJson(),
         "Schooltype": List<dynamic>.from(schooltype.map((x) => x)),
-        "School": List<dynamic>.from(school.map((x) => x)),
-        "classname": List<dynamic>.from(classname.map((x) => x)),
-        "sections": List<dynamic>.from(sections.map((x) => x)),
         "Staff": staff,
         "refgrouplist": List<dynamic>.from(refgrouplist.map((x) => x)),
       };

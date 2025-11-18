@@ -1,11 +1,81 @@
+import 'dart:convert';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:get/get.dart';
 import 'package:senthil/controller/app_controller.dart';
 import 'package:senthil/model/feedback_home_model.dart';
+import 'package:senthil/view/stud_feedback/feedback_start_screen.dart';
 
 class StudentFeedbackController {
+  static final school = StateProvider.autoDispose<String?>((ref) => null);
+  static final className = StateProvider.autoDispose<String?>((ref) => null);
+  static final section = StateProvider.autoDispose<String?>((ref) => null);
+  static final board = StateProvider.autoDispose<String?>((ref) => null);
+  static final refGrp = StateProvider.autoDispose<String?>((ref) => null);
+  static final loading = StateProvider.autoDispose<bool>((ref) => false);
+  static final schoolList =
+      StateProvider.autoDispose<List<String>>((ref) => []);
+  static final classList = StateProvider.autoDispose<List<String>>((ref) => []);
+  static final sectionList =
+      StateProvider.autoDispose<List<String>>((ref) => []);
+
   static final credentials = FutureProvider.family
       .autoDispose<FeedbackHomeModel, int>((ref, id) async {
     final res = await AppController.fetch('feed-home/$id');
     return feedbackHomeModelFromJson(res);
   });
+
+  static void setData(WidgetRef ref, String url, int id, Object object) async {
+    switch (url) {
+      case 'feed-home-school':
+        final res = await AppController.send('$url/$id', object);
+        final decrypted = jsonDecode(res);
+        if (decrypted['success']) {
+          ref.read(schoolList.notifier).state =
+              List<String>.from(decrypted['data']);
+        }
+        break;
+      case 'feed-home-class':
+        final res = await AppController.send('$url/$id', object);
+        final decrypted = jsonDecode(res);
+        if (decrypted['success']) {
+          ref.read(classList.notifier).state =
+              List<String>.from(decrypted['data']);
+        }
+        break;
+      case 'feed-home-section':
+        final res = await AppController.send('$url/$id', object);
+        final decrypted = jsonDecode(res);
+        if (decrypted['success']) {
+          ref.read(sectionList.notifier).state =
+              List<String>.from(decrypted['data']);
+        }
+        break;
+      default:
+    }
+  }
+
+  static void chackSubjectAvailability(
+      WidgetRef ref, Map<String, dynamic> object) async {
+    try {
+      // ref.read(loading.notifier).state = true;
+      // final res = await AppController.send('check-availability', object);
+      // final result = jsonDecode(res);
+      // if (result['success']) {
+      //   ref.read(loading.notifier).state = false;
+      Get.to(() => FeedbackStartScreen(info: object),
+          transition: Transition.rightToLeftWithFade);
+      // } else {
+      //   ref.read(loading.notifier).state = false;
+      //   AppController.toastMessage('Result', result['message']);
+      // }
+    } catch (e) {
+      ref.read(loading.notifier).state = false;
+      AppController.toastMessage(
+        'Error',
+        'Something went wrong!',
+        purpose: Purpose.fail,
+      );
+    }
+  }
 }

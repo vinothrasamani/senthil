@@ -301,6 +301,7 @@ class _FeebackEntryScreenState extends ConsumerState<FeedbackEntryScreen> {
                   );
                 },
               ),
+              SizedBox(width: 4),
               myButton(
                 TablerIcons.trash,
                 AppController.red,

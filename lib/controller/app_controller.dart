@@ -28,6 +28,7 @@ class AppController {
   static final String baseApiUrl = '$baseUrl/api';
   static final String basefileUrl = '$baseUrl/public/pdf';
   static final String baseImageUrl = '$baseUrl/public/images';
+  static final String baseGifUrl = '$baseImageUrl/assets';
   static final String baseChatImgUrl = '$baseImageUrl/chat';
   static final String baseResultImageUrl = '$baseUrl/public/img';
   static final String baseStaffImageUrl = '$baseUrl/public/uploads/staff';
@@ -35,7 +36,6 @@ class AppController {
   static Future<dynamic> fetch(String endPoint) async {
     final url = Uri.parse('$baseApiUrl/$endPoint');
     final res = await http.get(url);
-    print(res);
     if (res.statusCode == 200) {
       return res.body;
     } else {
@@ -48,7 +48,6 @@ class AppController {
     final res = await http.post(url,
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(object));
-    print(res);
     if (res.statusCode == 200) {
       return res.body;
     } else {
