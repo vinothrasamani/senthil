@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
 import 'package:senthil/controller/app_controller.dart';
+import 'package:senthil/model/feedback_form_model.dart';
 import 'package:senthil/model/feedback_home_model.dart';
 import 'package:senthil/view/stud_feedback/feedback_start_screen.dart';
 
@@ -13,6 +14,9 @@ class StudentFeedbackController {
   static final board = StateProvider.autoDispose<String?>((ref) => null);
   static final refGrp = StateProvider.autoDispose<String?>((ref) => null);
   static final loading = StateProvider.autoDispose<bool>((ref) => false);
+  static final fetching = StateProvider.autoDispose<bool>((ref) => false);
+  static final feedData =
+      StateProvider.autoDispose<FeedbackFormModel?>((ref) => null);
   static final schoolList =
       StateProvider.autoDispose<List<String>>((ref) => []);
   static final classList = StateProvider.autoDispose<List<String>>((ref) => []);
@@ -24,6 +28,46 @@ class StudentFeedbackController {
     final res = await AppController.fetch('feed-home/$id');
     return feedbackHomeModelFromJson(res);
   });
+
+  static void startFeedback(WidgetRef ref, Object object) async {
+    try {
+      ref.read(fetching.notifier).state = true;
+      final res = await AppController.send('start-feedback', object);
+      if (res == null) return null;
+      final data = feedbackFormModelFromJson(res);
+      ref.read(feedData.notifier).state = data;
+      ref.read(fetching.notifier).state = false;
+    } catch (e) {
+      ref.read(fetching.notifier).state = false;
+    }
+  }
+
+  static void nextFeedback(WidgetRef ref, int id, Object object) async {
+    try {
+      ref.read(fetching.notifier).state = true;
+      final res = await AppController.send('store-feedback/$id', object);
+      if (res == null) return null;
+      final data = feedbackFormModelFromJson(res);
+      ref.read(feedData.notifier).state = data;
+      ref.read(fetching.notifier).state = false;
+    } catch (e) {
+      ref.read(fetching.notifier).state = false;
+    }
+  }
+
+  static void submitFeedback(WidgetRef ref, Object object) async {
+    try {
+      ref.read(fetching.notifier).state = true;
+      final res = await AppController.send('store-feedback-data', object);
+      if (res == null) return null;
+      final data = jsonDecode(res);
+      if (data['success']) {
+        ref.read(fetching.notifier).state = false;
+      }
+    } catch (e) {
+      ref.read(fetching.notifier).state = false;
+    }
+  }
 
   static void setData(WidgetRef ref, String url, int id, Object object) async {
     switch (url) {
@@ -58,17 +102,17 @@ class StudentFeedbackController {
   static void chackSubjectAvailability(
       WidgetRef ref, Map<String, dynamic> object) async {
     try {
-      // ref.read(loading.notifier).state = true;
-      // final res = await AppController.send('check-availability', object);
-      // final result = jsonDecode(res);
-      // if (result['success']) {
-      //   ref.read(loading.notifier).state = false;
-      Get.to(() => FeedbackStartScreen(info: object),
-          transition: Transition.rightToLeftWithFade);
-      // } else {
-      //   ref.read(loading.notifier).state = false;
-      //   AppController.toastMessage('Result', result['message']);
-      // }
+      ref.read(loading.notifier).state = true;
+      final res = await AppController.send('check-availability', object);
+      final result = jsonDecode(res);
+      if (result['success']) {
+        ref.read(loading.notifier).state = false;
+        Get.to(() => FeedbackStartScreen(info: object),
+            transition: Transition.rightToLeftWithFade);
+      } else {
+        ref.read(loading.notifier).state = false;
+        AppController.toastMessage('Result', result['message']);
+      }
     } catch (e) {
       ref.read(loading.notifier).state = false;
       AppController.toastMessage(

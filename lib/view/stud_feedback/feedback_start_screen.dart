@@ -1,17 +1,23 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:get/get.dart';
 import 'package:senthil/controller/app_controller.dart';
+import 'package:senthil/controller/login_controller.dart';
+import 'package:senthil/controller/theme_controller.dart';
+import 'package:senthil/view/stud_feedback/rating_feedback_screen.dart';
 
-class FeedbackStartScreen extends StatefulWidget {
+class FeedbackStartScreen extends ConsumerStatefulWidget {
   const FeedbackStartScreen({super.key, required this.info});
   final Map<String, dynamic> info;
 
   @override
-  State<FeedbackStartScreen> createState() => _FeedbackStartScreenState();
+  ConsumerState<FeedbackStartScreen> createState() =>
+      _FeedbackStartScreenState();
 }
 
-class _FeedbackStartScreenState extends State<FeedbackStartScreen> {
+class _FeedbackStartScreenState extends ConsumerState<FeedbackStartScreen> {
   String url = '${AppController.baseGifUrl}/back1.gif';
 
   @override
@@ -23,6 +29,8 @@ class _FeedbackStartScreenState extends State<FeedbackStartScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = ref.watch(ThemeController.themeMode) == ThemeMode.dark;
+    final user = ref.watch(LoginController.userProvider);
     return Scaffold(
       body: Stack(
         fit: StackFit.expand,
@@ -56,80 +64,99 @@ class _FeedbackStartScreenState extends State<FeedbackStartScreen> {
                             : myChip(item.value))
                         .toList(),
                   ),
+                  SizedBox(height: 10),
                   Expanded(
                     child: Center(
-                      child: Container(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 15, vertical: 25),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          color: Colors.black45,
-                        ),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              Icons.feedback_outlined,
-                              size: 80,
-                              color: Colors.white,
-                            ),
-                            const SizedBox(height: 24),
-                            Text(
-                              'Welcome to Feedback',
-                              style: TextStyle(
-                                fontSize: 32,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                                shadows: [
-                                  Shadow(
-                                    color: Colors.black.withAlpha(120),
-                                    offset: Offset(2, 2),
-                                    blurRadius: 4,
-                                  ),
-                                ],
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                            const SizedBox(height: 16),
-                            Text(
-                              'Share your thoughts and opinions of subjects',
-                              style: TextStyle(
-                                fontSize: 18,
-                                color: Colors.white.withAlpha(230),
-                                shadows: [
-                                  Shadow(
-                                    color: Colors.black.withAlpha(120),
-                                    offset: Offset(1, 1),
-                                    blurRadius: 3,
-                                  ),
-                                ],
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                            const SizedBox(height: 48),
-                            ElevatedButton(
-                              onPressed: () {},
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.blue,
-                                foregroundColor: Colors.white,
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 48,
-                                  vertical: 16,
+                      child: SingleChildScrollView(
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 15, vertical: 25),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: Colors.black45,
+                          ),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.feedback_outlined,
+                                  size: 80, color: Colors.white),
+                              const SizedBox(height: 24),
+                              Text(
+                                'Welcome to Feedback',
+                                style: TextStyle(
+                                  fontSize: 32,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                  shadows: [
+                                    Shadow(
+                                        color: Colors.black.withAlpha(120),
+                                        offset: Offset(2, 2),
+                                        blurRadius: 4),
+                                  ],
                                 ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(30),
-                                ),
-                                elevation: 8,
+                                textAlign: TextAlign.center,
                               ),
-                              child: const Text(
-                                'Get Started',
+                              const SizedBox(height: 16),
+                              Text(
+                                "Please share your thoughts and opinions on the subjects.",
                                 style: TextStyle(
                                   fontSize: 18,
-                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white.withAlpha(230),
+                                  shadows: [
+                                    Shadow(
+                                        color: Colors.black.withAlpha(120),
+                                        offset: Offset(1, 1),
+                                        blurRadius: 3),
+                                  ],
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                              const SizedBox(height: 48),
+                              ElevatedButton(
+                                onPressed: () => Get.off(
+                                  () => RatingFeedbackScreen(
+                                    info: widget.info,
+                                    isDark: isDark,
+                                    userId: user!.data!.id,
+                                  ),
+                                ),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.blue,
+                                  foregroundColor: Colors.white,
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 48, vertical: 16),
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(30)),
+                                  elevation: 8,
+                                ),
+                                child: const Text(
+                                  'Get Started',
+                                  style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w600),
                                 ),
                               ),
-                            ),
-                          ],
+                              SizedBox(height: 20),
+                              TextButton(
+                                onPressed: () => Get.back(),
+                                style: TextButton.styleFrom(
+                                    foregroundColor:
+                                        const Color.fromARGB(255, 0, 247, 255)),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(
+                                      Icons.arrow_back,
+                                      color: const Color.fromARGB(
+                                          255, 0, 247, 255),
+                                    ),
+                                    SizedBox(width: 6),
+                                    Text('Go back')
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),

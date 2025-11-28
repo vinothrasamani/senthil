@@ -37,6 +37,7 @@ class FeedbackFormData {
   int subgroup;
   int anim;
   String studOid;
+  dynamic prevQusId;
   FeedQues feedQues;
   List<FeedFormSubject> subject;
   List<SubjectList> subjectList;
@@ -47,6 +48,7 @@ class FeedbackFormData {
     required this.subgroup,
     required this.anim,
     required this.studOid,
+    required this.prevQusId,
     required this.feedQues,
     required this.subject,
     required this.subjectList,
@@ -56,6 +58,7 @@ class FeedbackFormData {
       FeedbackFormData(
         title: json["title"],
         questType: json["questType"],
+        prevQusId: json['prevQusId'],
         subgroup: json["subgroup"],
         anim: json["anim"],
         studOid: json["studOid"],
@@ -71,6 +74,7 @@ class FeedbackFormData {
         "questType": questType,
         "subgroup": subgroup,
         "anim": anim,
+        "prevQusId": prevQusId,
         "studOid": studOid,
         "feedQues": feedQues.toJson(),
         "subject": List<dynamic>.from(subject.map((x) => x.toJson())),
@@ -125,7 +129,7 @@ class FeedQues {
 class FeedFormSubject {
   int id;
   String fullname;
-  String staffName;
+  String? staffName;
   String department;
 
   FeedFormSubject({

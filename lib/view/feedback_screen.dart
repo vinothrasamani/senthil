@@ -32,7 +32,6 @@ class _FeedbackScreenState extends ConsumerState<FeedbackScreen> {
 
   @override
   void initState() {
-    print(widget.feedback);
     if (widget.feedback == null) {
       FeedbackController.loadinitials(ref, 'feedback-initials',
           {'index': widget.index, 'id': widget.userId});
