@@ -6,6 +6,7 @@ import 'package:senthil/controller/app_controller.dart';
 import 'package:senthil/model/feedback_form_model.dart';
 import 'package:senthil/model/feedback_home_model.dart';
 import 'package:senthil/view/stud_feedback/feedback_start_screen.dart';
+import 'package:senthil/view/stud_feedback/thankyou_screen.dart';
 
 class StudentFeedbackController {
   static final school = StateProvider.autoDispose<String?>((ref) => null);
@@ -63,6 +64,8 @@ class StudentFeedbackController {
       final data = jsonDecode(res);
       if (data['success']) {
         ref.read(fetching.notifier).state = false;
+        Get.to(() => ThankYouScreen(),
+            transition: Transition.rightToLeftWithFade);
       }
     } catch (e) {
       ref.read(fetching.notifier).state = false;
