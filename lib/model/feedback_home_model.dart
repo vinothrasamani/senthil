@@ -78,11 +78,11 @@ class FeedbackNotice {
   String school;
   int stafffeedback;
   int animation;
-  String slmStaffcode;
-  String dpicStaffcode;
-  String dpimStaffcode;
-  String kgicStaffcode;
-  String kgimStaffcode;
+  String? slmStaffcode;
+  String? dpicStaffcode;
+  String? dpimStaffcode;
+  String? kgicStaffcode;
+  String? kgimStaffcode;
   dynamic dash;
 
   FeedbackNotice({

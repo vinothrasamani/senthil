@@ -24,7 +24,7 @@ class AppController {
   static final red = const Color.fromARGB(255, 199, 31, 1);
   static final tableColor = headColor.withAlpha(40);
   //-------------------- For an API --------------------
-  static final String baseUrl = 'https://senthil.ijessi.com';
+  static final String baseUrl = 'https://stest.ijessi.com';
   static final String baseApiUrl = '$baseUrl/api';
   static final String basefileUrl = '$baseUrl/public/pdf';
   static final String baseImageUrl = '$baseUrl/public/images';

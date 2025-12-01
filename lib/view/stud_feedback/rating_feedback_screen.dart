@@ -57,7 +57,20 @@ class _RatingFeedbackScreenState extends ConsumerState<RatingFeedbackScreen> {
   Widget _buildFeedbackForm(FeedbackFormData info) {
     final screenWidth = MediaQuery.of(context).size.width;
     final isSmallScreen = screenWidth < 600;
+    double size;
+
+    if (isSmallScreen) {
+      size = double.infinity;
+    } else if (screenWidth < 800) {
+      size = screenWidth * 0.8;
+    } else if (screenWidth < 1000) {
+      size = screenWidth * 0.7;
+    } else {
+      size = screenWidth * 0.6;
+    }
+
     return Column(
+      mainAxisSize: MainAxisSize.min,
       children: [
         Container(
           width: double.infinity,
@@ -69,106 +82,122 @@ class _RatingFeedbackScreenState extends ConsumerState<RatingFeedbackScreen> {
             textAlign: TextAlign.center,
           ),
         ),
-        SizedBox(height: 15),
-        for (var subject in info.subject)
-          Container(
-            width: isSmallScreen ? double.infinity : screenWidth * 0.5,
-            padding: const EdgeInsets.symmetric(horizontal: 10),
-            child: Card(
-              margin: const EdgeInsets.only(bottom: 16),
-              elevation: 2,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(6),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        CircleAvatar(
-                          backgroundColor: Colors.blue.shade100,
-                          child: Text(
-                            '${info.subject.indexOf(subject) + 1}',
-                            style: TextStyle(
-                              color: Colors.blue.shade900,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                subject.fullname,
-                                style: const TextStyle(
-                                    fontSize: 16, fontWeight: FontWeight.bold),
-                              ),
-                              if (subject.staffName != null)
-                                Text(
-                                  '(${subject.staffName})',
-                                  style: TextStyle(
-                                      fontSize: 14, color: Colors.grey),
-                                ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    TextField(
-                      maxLength: maxLength,
-                      maxLines: 2,
-                      decoration: InputDecoration(
-                        hintText:
-                            'What do you like or dislike about this teacher?',
-                        hintStyle: TextStyle(
-                            fontSize: 13, color: Colors.grey.shade400),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(color: Colors.grey.shade300),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide:
-                              const BorderSide(color: Colors.blue, width: 2),
-                        ),
-                        filled: true,
-                        fillColor: Colors.grey.shade50,
-                        counterText: '',
+        Expanded(
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                SizedBox(height: 15),
+                for (var subject in info.subject)
+                  Container(
+                    width: size,
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    child: Card(
+                      margin: const EdgeInsets.only(bottom: 16),
+                      elevation: 2,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(6),
                       ),
-                      onChanged: (value) {
-                        textFeedback['${subject.id}'] = value;
-                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                CircleAvatar(
+                                  backgroundColor: Colors.blue.shade100,
+                                  child: Text(
+                                    '${info.subject.indexOf(subject) + 1}',
+                                    style: TextStyle(
+                                      color: Colors.blue.shade900,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        subject.fullname,
+                                        style: const TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      if (subject.staffName != null)
+                                        Text(
+                                          '(${subject.staffName})',
+                                          style: TextStyle(
+                                              fontSize: 14, color: Colors.grey),
+                                        ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 12),
+                            TextField(
+                              maxLength: maxLength,
+                              maxLines: 2,
+                              decoration: InputDecoration(
+                                hintText:
+                                    'What do you like or dislike about this teacher?',
+                                hintStyle: TextStyle(
+                                    fontSize: 13, color: Colors.grey.shade400),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                  borderSide: BorderSide(
+                                      color: const Color.fromARGB(
+                                          144, 224, 224, 224)),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                  borderSide: const BorderSide(
+                                      color: Colors.blue, width: 2),
+                                ),
+                                filled: true,
+                                fillColor:
+                                    Theme.of(context).scaffoldBackgroundColor,
+                                counterText: '',
+                              ),
+                              onChanged: (value) {
+                                textFeedback['${subject.id}'] = value;
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
-                  ],
+                  ),
+                SizedBox(height: 15),
+                Container(
+                  margin: EdgeInsets.symmetric(horizontal: 16),
+                  width: isSmallScreen ? double.infinity : screenWidth * 0.5,
+                  child: ElevatedButton(
+                    onPressed: () => submitFeedback(info),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: isSmallScreen ? 32 : 48,
+                        vertical: isSmallScreen ? 16 : 20,
+                      ),
+                    ),
+                    child: Text(
+                      'Submit Feedback',
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                  ),
                 ),
-              ),
-            ),
-          ),
-        SizedBox(height: 15),
-        Container(
-          margin: EdgeInsets.symmetric(horizontal: 16),
-          width: isSmallScreen ? double.infinity : screenWidth * 0.5,
-          child: ElevatedButton(
-            onPressed: () => submitFeedback(info),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.green,
-              foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15),
-              ),
-              padding: EdgeInsets.symmetric(
-                horizontal: isSmallScreen ? 32 : 48,
-                vertical: isSmallScreen ? 16 : 20,
-              ),
-            ),
-            child: Text(
-              'Submit Feedback',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                SizedBox(height: 25),
+              ],
             ),
           ),
         ),
@@ -181,7 +210,7 @@ class _RatingFeedbackScreenState extends ConsumerState<RatingFeedbackScreen> {
       ...widget.info,
       'StudOid': feed.studOid,
       'questype': feed.questType,
-      'Quesid': feed.feedQues.id,
+      'Quesid': feed.feedQues?.id,
       'sub': textFeedback
     };
     StudentFeedbackController.submitFeedback(ref, body);
@@ -237,7 +266,7 @@ class _RatingFeedbackScreenState extends ConsumerState<RatingFeedbackScreen> {
   Widget _buildLegendCard(bool isSmallScreen, double screenWidth) {
     return Container(
       margin: EdgeInsets.all(16),
-      width: isSmallScreen ? double.infinity : screenWidth * 0.5,
+      width: double.infinity,
       decoration: BoxDecoration(
         gradient: widget.isDark
             ? null
@@ -349,7 +378,7 @@ class _RatingFeedbackScreenState extends ConsumerState<RatingFeedbackScreen> {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       padding: EdgeInsets.all(isSmallScreen ? 16 : 20),
-      width: isSmallScreen ? double.infinity : screenWidth * 0.5,
+      width: double.infinity,
       decoration: BoxDecoration(
         gradient: widget.isDark
             ? null
@@ -378,7 +407,7 @@ class _RatingFeedbackScreenState extends ConsumerState<RatingFeedbackScreen> {
               borderRadius: BorderRadius.circular(20),
             ),
             child: Text(
-              'Question ${feedData.feedQues.ord}',
+              'Question ${feedData.feedQues?.ord ?? '?'}',
               style: TextStyle(
                 fontSize: isSmallScreen ? 12 : 14,
                 color: Colors.white,
@@ -388,7 +417,7 @@ class _RatingFeedbackScreenState extends ConsumerState<RatingFeedbackScreen> {
           ),
           SizedBox(height: 12),
           Text(
-            feedData.feedQues.subject,
+            feedData.feedQues?.subject ?? 'Unknown',
             style: TextStyle(
               fontSize: isSmallScreen ? 16 : 20,
               color: widget.isDark
@@ -467,6 +496,7 @@ class _RatingFeedbackScreenState extends ConsumerState<RatingFeedbackScreen> {
         isDark: widget.isDark,
         onRate: (val) {
           starRatings['${subject.id}'] = val;
+          setState(() {});
         },
         currentRating: currentRating);
   }
@@ -540,10 +570,12 @@ class _RatingFeedbackScreenState extends ConsumerState<RatingFeedbackScreen> {
       ...widget.info,
       'StudOid': feed.studOid,
       'questype': feed.questType,
-      'Quesid': feed.feedQues.id,
+      'Quesid': feed.feedQues?.id,
       'sub': starRatings
     };
-    StudentFeedbackController.nextFeedback(ref, widget.userId, body);
+    StudentFeedbackController.nextFeedback(ref, widget.userId, body, () {
+      starRatings.clear();
+    });
   }
 
   Widget _buildErrorState(String msg) {

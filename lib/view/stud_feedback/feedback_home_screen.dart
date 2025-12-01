@@ -64,7 +64,10 @@ class FeedbackHomeScreen extends ConsumerWidget {
               credentials.when(
                 data: (snap) =>
                     _buildForm(context, ref, user.data!, snap.data, size),
-                error: (e, _) => _buildErrorState(size),
+                error: (e, _) {
+                  debugPrint(e.toString());
+                  return _buildErrorState(size);
+                },
                 loading: () => _buildLoadingState(size),
               ),
             ],
@@ -94,45 +97,34 @@ class FeedbackHomeScreen extends ConsumerWidget {
           ),
         ],
       ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            padding: EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withAlpha(50),
-                  blurRadius: 8,
-                  spreadRadius: 2,
-                ),
-              ],
-            ),
-            child: Image.asset('assets/images/logo.png', width: 70, height: 70),
+      child: ListTile(
+        leading: Container(
+          padding: EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            shape: BoxShape.circle,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withAlpha(50),
+                blurRadius: 8,
+                spreadRadius: 2,
+              ),
+            ],
           ),
-          SizedBox(height: 12),
-          Text(
-            'Senthil Group of Schools',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 22,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
-          ),
-          SizedBox(height: 4),
-          Text(
-            'Salem / Dharmapuri / Krishnagiri',
-            textAlign: TextAlign.center,
-            style: TextStyle(
+          child: Image.asset('assets/images/logo.png'),
+        ),
+        title: Text(
+          'Senthil Group of Schools',
+          style: TextStyle(
+              fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
+        ),
+        subtitle: Text(
+          'Salem / Dharmapuri / Krishnagiri',
+          style: TextStyle(
               fontSize: 14,
               color: Colors.white.withAlpha(220),
-              letterSpacing: 0.5,
-            ),
-          ),
-        ],
+              letterSpacing: 0.5),
+        ),
       ),
     );
   }

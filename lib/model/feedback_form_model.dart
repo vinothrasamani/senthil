@@ -38,7 +38,7 @@ class FeedbackFormData {
   int anim;
   String studOid;
   dynamic prevQusId;
-  FeedQues feedQues;
+  FeedQues? feedQues;
   List<FeedFormSubject> subject;
   List<SubjectList> subjectList;
 
@@ -59,10 +59,12 @@ class FeedbackFormData {
         title: json["title"],
         questType: json["questType"],
         prevQusId: json['prevQusId'],
-        subgroup: json["subgroup"],
-        anim: json["anim"],
+        subgroup: int.parse(json["subgroup"].toString()),
+        anim: int.parse(json["anim"].toString()),
         studOid: json["studOid"],
-        feedQues: FeedQues.fromJson(json["feedQues"]),
+        feedQues: json["feedQues"] == null
+            ? null
+            : FeedQues.fromJson(json["feedQues"]),
         subject: List<FeedFormSubject>.from(
             json["subject"].map((x) => FeedFormSubject.fromJson(x))),
         subjectList: List<SubjectList>.from(
@@ -76,7 +78,7 @@ class FeedbackFormData {
         "anim": anim,
         "prevQusId": prevQusId,
         "studOid": studOid,
-        "feedQues": feedQues.toJson(),
+        "feedQues": feedQues?.toJson(),
         "subject": List<dynamic>.from(subject.map((x) => x.toJson())),
         "subjectList": List<dynamic>.from(subjectList.map((x) => x.toJson())),
       };
@@ -106,10 +108,10 @@ class FeedQues {
   factory FeedQues.fromJson(Map<String, dynamic> json) => FeedQues(
         id: json["id"],
         subject: json["subject"],
-        ord: json["ord"],
+        ord: int.parse(json["ord"].toString()),
         questype: json["questype"],
         board: json["board"],
-        show: json["show"],
+        show: int.parse(json["show"].toString()),
         updatedAt: DateTime.parse(json["updated_at"]),
         createdAt: DateTime.parse(json["created_at"]),
       );

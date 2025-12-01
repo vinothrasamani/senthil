@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
 import 'package:senthil/controller/app_controller.dart';
@@ -43,13 +44,15 @@ class StudentFeedbackController {
     }
   }
 
-  static void nextFeedback(WidgetRef ref, int id, Object object) async {
+  static void nextFeedback(
+      WidgetRef ref, int id, Object object, VoidCallback onSuccess) async {
     try {
       ref.read(fetching.notifier).state = true;
       final res = await AppController.send('store-feedback/$id', object);
-      if (res == null) return null;
+      if (res == null) return;
       final data = feedbackFormModelFromJson(res);
       ref.read(feedData.notifier).state = data;
+      onSuccess();
       ref.read(fetching.notifier).state = false;
     } catch (e) {
       ref.read(fetching.notifier).state = false;
@@ -64,7 +67,7 @@ class StudentFeedbackController {
       final data = jsonDecode(res);
       if (data['success']) {
         ref.read(fetching.notifier).state = false;
-        Get.to(() => ThankYouScreen(),
+        Get.off(() => ThankYouScreen(),
             transition: Transition.rightToLeftWithFade);
       }
     } catch (e) {
