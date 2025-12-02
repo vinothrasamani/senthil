@@ -3,11 +3,13 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_confetti/flutter_confetti.dart';
 import 'package:animate_do/animate_do.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'dart:math';
+import 'package:senthil/view/stud_feedback/feedback_home_screen.dart';
 
 class ThankYouScreen extends StatefulWidget {
-  const ThankYouScreen({Key? key}) : super(key: key);
+  const ThankYouScreen({super.key});
 
   @override
   State<ThankYouScreen> createState() => _ThankYouScreenState();
@@ -47,6 +49,12 @@ class _ThankYouScreenState extends State<ThankYouScreen>
       ),
     );
     _checkController.forward();
+    getback();
+  }
+
+  void getback() async {
+    await Future.delayed(Duration(seconds: 35));
+    Get.offAll(() => FeedbackHomeScreen(), transition: Transition.fadeIn);
   }
 
   void popup() {

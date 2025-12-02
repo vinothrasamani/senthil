@@ -1,6 +1,5 @@
 import 'package:data_table_2/data_table_2.dart';
-// ignore: avoid_web_libraries_in_flutter
-import 'dart:html' as html;
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
@@ -9,6 +8,7 @@ import 'package:senthil/controller/app_controller.dart';
 import 'package:senthil/controller/theme_controller.dart';
 import 'package:senthil/model/question_model.dart';
 import 'package:senthil/view/pdf_viewer_screen.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class QuestionTable extends StatelessWidget {
   const QuestionTable(
@@ -110,11 +110,13 @@ class QuestionTable extends StatelessWidget {
                     bool isAvail = stud.info.examQuestion != null;
                     return GestureDetector(
                       onTap: isAvail
-                          ? () {
+                          ? () async {
                               if (kIsWeb) {
-                                html.window.open(
-                                    '${AppController.basefileUrl}/${stud.info.examQuestion!}',
-                                    "_blank");
+                                final url =
+                                    '${AppController.basefileUrl}/${stud.info.examQuestion!}';
+                                if (await canLaunchUrlString(url)) {
+                                  await launchUrlString(url);
+                                }
                               } else {
                                 Get.to(() => PdfViewerScreen(
                                     fileName: stud.info.examQuestion!));
@@ -133,11 +135,13 @@ class QuestionTable extends StatelessWidget {
                     bool isAvail = stud.info.markingScheme != null;
                     return GestureDetector(
                       onTap: isAvail
-                          ? () {
+                          ? () async {
                               if (kIsWeb) {
-                                html.window.open(
-                                    '${AppController.basefileUrl}/${stud.info.markingScheme!}',
-                                    "_blank");
+                                final url =
+                                    '${AppController.basefileUrl}/${stud.info.markingScheme!}';
+                                if (await canLaunchUrlString(url)) {
+                                  await launchUrlString(url);
+                                }
                               } else {
                                 Get.to(() => PdfViewerScreen(
                                     fileName: stud.info.markingScheme!));

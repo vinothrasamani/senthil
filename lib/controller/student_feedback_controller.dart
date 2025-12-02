@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
@@ -8,12 +9,14 @@ import 'package:senthil/model/feedback_form_model.dart';
 import 'package:senthil/model/feedback_home_model.dart';
 import 'package:senthil/view/stud_feedback/feedback_start_screen.dart';
 import 'package:senthil/view/stud_feedback/thankyou_screen.dart';
+import 'package:senthil/widgets/student_feedback/subject_selection.dart';
 
 class StudentFeedbackController {
   static final school = StateProvider.autoDispose<String?>((ref) => null);
   static final className = StateProvider.autoDispose<String?>((ref) => null);
   static final section = StateProvider.autoDispose<String?>((ref) => null);
   static final board = StateProvider.autoDispose<String?>((ref) => null);
+  static final subject = StateProvider.autoDispose<String?>((ref) => null);
   static final refGrp = StateProvider.autoDispose<String?>((ref) => null);
   static final loading = StateProvider.autoDispose<bool>((ref) => false);
   static final fetching = StateProvider.autoDispose<bool>((ref) => false);
@@ -22,6 +25,8 @@ class StudentFeedbackController {
   static final schoolList =
       StateProvider.autoDispose<List<String>>((ref) => []);
   static final classList = StateProvider.autoDispose<List<String>>((ref) => []);
+  static final subjectList =
+      StateProvider.autoDispose<List<String>>((ref) => []);
   static final sectionList =
       StateProvider.autoDispose<List<String>>((ref) => []);
 
@@ -82,7 +87,7 @@ class StudentFeedbackController {
         final decrypted = jsonDecode(res);
         if (decrypted['success']) {
           ref.read(schoolList.notifier).state =
-              List<String>.from(decrypted['data']);
+              List<String>.from(decrypted['data'] ?? []);
         }
         break;
       case 'feed-home-class':
@@ -90,7 +95,7 @@ class StudentFeedbackController {
         final decrypted = jsonDecode(res);
         if (decrypted['success']) {
           ref.read(classList.notifier).state =
-              List<String>.from(decrypted['data']);
+              List<String>.from(decrypted['data'] ?? []);
         }
         break;
       case 'feed-home-section':
@@ -98,7 +103,15 @@ class StudentFeedbackController {
         final decrypted = jsonDecode(res);
         if (decrypted['success']) {
           ref.read(sectionList.notifier).state =
-              List<String>.from(decrypted['data']);
+              List<String>.from(decrypted['data'] ?? []);
+        }
+        break;
+      case 'feed-home-subject':
+        final res = await AppController.send(url, object);
+        final decrypted = jsonDecode(res);
+        if (decrypted['success']) {
+          ref.read(subjectList.notifier).state =
+              List<String>.from(decrypted['data'] ?? []);
         }
         break;
       default:
@@ -127,5 +140,12 @@ class StudentFeedbackController {
         purpose: Purpose.fail,
       );
     }
+  }
+
+  static void selectSubjects(BuildContext context) async {
+    showDialog(
+      context: context,
+      builder: (ctx) => SubjectSelection(),
+    );
   }
 }

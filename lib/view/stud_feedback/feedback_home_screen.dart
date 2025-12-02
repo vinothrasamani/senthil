@@ -365,6 +365,19 @@ class FeedbackHomeScreen extends ConsumerWidget {
         (val) {
           ref.read(StudentFeedbackController.section.notifier).state = val;
           ref.read(StudentFeedbackController.refGrp.notifier).state = null;
+          ref.read(StudentFeedbackController.subject.notifier).state = null;
+          StudentFeedbackController.setData(
+            ref,
+            'feed-home-subject',
+            0,
+            {
+              "year": data.notice.feedyear,
+              "school": ref.read(StudentFeedbackController.school),
+              "cls": ref.read(StudentFeedbackController.className),
+              "type": ref.read(StudentFeedbackController.board),
+              "section": val,
+            },
+          );
         },
       ),
       if (clsName == 'XI' || clsName == 'XII')
@@ -376,6 +389,16 @@ class FeedbackHomeScreen extends ConsumerWidget {
           (val) =>
               ref.read(StudentFeedbackController.refGrp.notifier).state = val,
         ),
+      Builder(builder: (context) {
+        final c = ref.watch(StudentFeedbackController.subjectList).length;
+        return _buildSelectionField(
+          c,
+          ref.watch(StudentFeedbackController.subject),
+          'Exclude Subject',
+          Icons.subject_rounded,
+          () => StudentFeedbackController.selectSubjects(context),
+        );
+      }),
     ];
 
     return Column(
@@ -402,6 +425,36 @@ class FeedbackHomeScreen extends ConsumerWidget {
         SizedBox(height: 24),
         _buildSubmitButton(context, ref, data, user),
       ],
+    );
+  }
+
+  Widget _buildSelectionField(int count, String? value, String label,
+      IconData icon, VoidCallback onTap) {
+    return TextFormField(
+      initialValue: value,
+      readOnly: true,
+      onTap: onTap,
+      decoration: InputDecoration(
+        labelText: label,
+        filled: true,
+        fillColor: Colors.grey.withAlpha(20),
+        prefixIcon: Icon(icon, color: Colors.teal.shade400, size: 20),
+        suffixIcon:
+            count > 0 ? Icon(Icons.check_circle_outline_outlined) : null,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: Colors.grey.withAlpha(60)),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: Colors.grey.withAlpha(60)),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: Colors.teal.shade300, width: 2),
+        ),
+        contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      ),
     );
   }
 
@@ -484,6 +537,7 @@ class FeedbackHomeScreen extends ConsumerWidget {
                 final school = ref.read(StudentFeedbackController.school);
                 final className = ref.read(StudentFeedbackController.className);
                 final section = ref.read(StudentFeedbackController.section);
+                final subject = ref.read(StudentFeedbackController.subject);
                 final refGrp = ref.read(StudentFeedbackController.refGrp);
                 var addRef = className == "XI" || className == "XII";
 
@@ -499,8 +553,9 @@ class FeedbackHomeScreen extends ConsumerWidget {
                     'school': school,
                     'classname': className,
                     'section': section,
-                    'subject': '-',
-                    'refgroup': refGrp,
+                    'subject':
+                        subject == null || subject.isEmpty ? '-' : subject,
+                    'refgroup': refGrp ?? "None",
                   };
                   StudentFeedbackController.chackSubjectAvailability(ref, info);
                 } else {

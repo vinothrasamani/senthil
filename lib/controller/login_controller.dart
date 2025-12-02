@@ -33,6 +33,11 @@ class LoginController {
         if (result.data!.role == 6) {
           screen = FeedbackHomeScreen();
         }
+        // else {
+        //   AppController.toastMessage('Failed', 'Invalid User!.',
+        //       purpose: Purpose.fail);
+        //   return;
+        // }
         Get.offAll(() => screen, transition: Transition.zoom);
         AppController.toastMessage(
             'Login Successfully!', 'Welcome back ${result.data!.fullname}.');

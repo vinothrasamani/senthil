@@ -1,7 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
-// ignore: avoid_web_libraries_in_flutter
-import 'dart:html' as html;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -11,6 +9,7 @@ import 'package:senthil/controller/login_controller.dart';
 import 'package:senthil/controller/theme_controller.dart';
 import 'package:senthil/view/terms_screen.dart';
 import 'package:senthil/view/web_view_screen.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -154,11 +153,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                 TextSpan(
                                   text: 'Privacy Policy ',
                                   recognizer: TapGestureRecognizer()
-                                    ..onTap = () {
+                                    ..onTap = () async {
                                       final url =
                                           'https://senthil.ijessi.com/api/privacy-policy';
                                       if (kIsWeb) {
-                                        html.window.open(url, "_blank");
+                                        if (await canLaunchUrlString(url)) {
+                                          await launchUrlString(url);
+                                        }
                                       } else {
                                         Get.to(() => WebViewScreen(
                                               title: 'Privacy Policy',

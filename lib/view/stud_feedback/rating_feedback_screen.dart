@@ -247,6 +247,7 @@ class _RatingFeedbackScreenState extends ConsumerState<RatingFeedbackScreen> {
     final isSmallScreen = screenWidth < 600;
     final isMediumScreen = screenWidth >= 600 && screenWidth < 900;
     final isLargeScreen = screenWidth >= 900;
+    final isOverLargeScreen = screenWidth >= 1100;
 
     return SingleChildScrollView(
       child: Column(
@@ -254,7 +255,7 @@ class _RatingFeedbackScreenState extends ConsumerState<RatingFeedbackScreen> {
           _buildLegendCard(isSmallScreen, screenWidth),
           _buildQuestionHeader(feedData, screenWidth),
           _buildSubjectsGrid(feedData, screenWidth, isSmallScreen,
-              isMediumScreen, isLargeScreen),
+              isMediumScreen, isLargeScreen, isOverLargeScreen),
           SizedBox(height: 24),
           _buildSubmitButton(feedData, screenWidth, isSmallScreen),
           SizedBox(height: 24),
@@ -375,76 +376,45 @@ class _RatingFeedbackScreenState extends ConsumerState<RatingFeedbackScreen> {
 
   Widget _buildQuestionHeader(FeedbackFormData feedData, double screenWidth) {
     final isSmallScreen = screenWidth < 600;
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      padding: EdgeInsets.all(isSmallScreen ? 16 : 20),
-      width: double.infinity,
-      decoration: BoxDecoration(
-        gradient: widget.isDark
-            ? null
-            : LinearGradient(
-                colors: [Color(0xFFFFF8DC), Color(0xFFFFFAF0)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-        color: widget.isDark ? Colors.grey.withAlpha(70) : null,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          if (!widget.isDark)
-            BoxShadow(
-              color: Colors.purple.withAlpha(70),
-              blurRadius: 8,
-              offset: Offset(0, 4),
-            ),
-        ],
+    return ListTile(
+      leading: CircleAvatar(
+        backgroundColor: Colors.deepPurple,
+        child: Text(
+          '${feedData.feedQues?.ord ?? '?'}',
+          style: TextStyle(
+              fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+        ),
       ),
-      child: Column(
-        children: [
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            decoration: BoxDecoration(
-              color: Colors.deepPurple,
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Text(
-              'Question ${feedData.feedQues?.ord ?? '?'}',
-              style: TextStyle(
-                fontSize: isSmallScreen ? 12 : 14,
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-          SizedBox(height: 12),
-          Text(
-            feedData.feedQues?.subject ?? 'Unknown',
-            style: TextStyle(
-              fontSize: isSmallScreen ? 16 : 20,
-              color: widget.isDark
-                  ? const Color.fromARGB(255, 160, 126, 255)
-                  : Colors.deepPurple,
-              fontWeight: FontWeight.bold,
-              height: 1.3,
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ],
+      title: Text(
+        feedData.feedQues?.subject ?? 'Unknown',
+        style: TextStyle(
+          fontSize: isSmallScreen ? 16 : 20,
+          color: widget.isDark
+              ? const Color.fromARGB(255, 160, 126, 255)
+              : Colors.deepPurple,
+          fontWeight: FontWeight.bold,
+          height: 1.3,
+        ),
       ),
     );
   }
 
   Widget _buildSubjectsGrid(
-    FeedbackFormData feedData,
-    double screenWidth,
-    bool isSmallScreen,
-    bool isMediumScreen,
-    bool isLargeScreen,
-  ) {
+      FeedbackFormData feedData,
+      double screenWidth,
+      bool isSmallScreen,
+      bool isMediumScreen,
+      bool isLargeScreen,
+      bool isOverLargeScreen) {
     int crossAxisCount;
     double childAspectRatio;
     double horizontalPadding;
 
-    if (isLargeScreen) {
+    if (isOverLargeScreen) {
+      crossAxisCount = 5;
+      childAspectRatio = 0.8;
+      horizontalPadding = 40;
+    } else if (isLargeScreen) {
       crossAxisCount = 4;
       childAspectRatio = 0.85;
       horizontalPadding = 32;

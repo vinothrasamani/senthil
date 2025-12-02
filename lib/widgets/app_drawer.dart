@@ -17,8 +17,6 @@ import 'package:senthil/view/feedback/feedback_list_screen.dart';
 import 'package:senthil/view/feedback_entry_screen.dart';
 import 'package:senthil/view/feedback_screen.dart';
 import 'package:senthil/view/notice_screen.dart';
-// ignore: avoid_web_libraries_in_flutter
-import 'dart:html' as html;
 import 'package:senthil/view/question_screen.dart';
 import 'package:senthil/view/staff_details/staff_details_screen.dart';
 import 'package:senthil/view/subject_details_screen.dart';
@@ -27,6 +25,7 @@ import 'package:senthil/view/topper_list_image_screen.dart';
 import 'package:senthil/view/topper_list_screen.dart';
 import 'package:senthil/view/user_list_screen.dart';
 import 'package:senthil/view/web_view_screen.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class AppDrawer extends ConsumerWidget {
   const AppDrawer({super.key});
@@ -216,12 +215,14 @@ class AppDrawer extends ConsumerWidget {
                   ListTile(
                     leading: Icon(Icons.privacy_tip_outlined),
                     title: Text('Privacy Policy'),
-                    onTap: () {
+                    onTap: () async {
                       Get.back();
                       final url =
                           'https://senthil.ijessi.com/api/privacy-policy';
                       if (kIsWeb) {
-                        html.window.open(url, "_blank");
+                        if (await canLaunchUrlString(url)) {
+                          await launchUrlString(url);
+                        }
                       } else {
                         Get.to(() => WebViewScreen(
                               title: 'Privacy Policy',
