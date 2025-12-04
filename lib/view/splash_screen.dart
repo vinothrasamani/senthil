@@ -38,7 +38,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
         Widget screen = HomeScreen();
         final user = loginModelFromJson(data);
         ref.read(LoginController.userProvider.notifier).state = user;
-        if (user.data!.role == 6) {
+        if (user.data!.role == 6 || user.data!.role == 7) {
           screen = FeedbackHomeScreen();
         }
         Get.offAll(() => screen, transition: Transition.zoom);

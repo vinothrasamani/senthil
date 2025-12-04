@@ -24,7 +24,8 @@ class TopperListImageScreen extends ConsumerStatefulWidget {
 class _TopperListImageScreenState extends ConsumerState<TopperListImageScreen> {
   final formKey = GlobalKey<FormState>();
   String? selectedClass, selectedYear, selectedCourse, selectedRefGroup;
-  String? selectedExam, selectedStmGroup, selectedCrGroup;
+  String? selectedStmGroup, selectedCrGroup;
+  int? selectedExam;
   final cardKey = GlobalKey<ExpansionTileCoreState>();
   Object? data;
   final ScrollController scrollController = ScrollController();
@@ -129,15 +130,15 @@ class _TopperListImageScreenState extends ConsumerState<TopperListImageScreen> {
           }
         },
       ),
-      DropdownButtonFormField<String>(
+      DropdownButtonFormField<int>(
         value: selectedExam,
         items: ref
             .watch(TopperListController.examsTop)
-            .map((e) => DropdownMenuItem<String>(
-                value: e ?? '',
+            .map((e) => DropdownMenuItem<int>(
+                value: e['id'] ?? '',
                 child: ConstrainedBox(
                     constraints: BoxConstraints(maxWidth: 220),
-                    child: Text(e ?? 'None'))))
+                    child: Text(e['ExamName'] ?? 'None'))))
             .toList(),
         decoration: InputDecoration(
             labelText: 'Exam',

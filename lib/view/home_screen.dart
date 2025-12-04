@@ -13,6 +13,7 @@ import 'package:senthil/model/home/exam_results_model.dart';
 import 'package:senthil/shimmer/home_shimme.dart';
 import 'package:senthil/widgets/app_drawer.dart';
 import 'package:senthil/widgets/home/collection_card.dart';
+import 'package:senthil/widgets/common_error_widget.dart';
 import 'package:senthil/widgets/popup_menu.dart';
 import 'package:transparent_image/transparent_image.dart';
 
@@ -137,12 +138,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                               ),
                       );
                     }),
-                    error: (e, _) => SizedBox(
-                      height: 200,
-                      child: Center(
-                          child:
-                              Text('Something went wrong! try again later!')),
-                    ),
+                    error: (e, _) => CommonErrorWidget(),
                     loading: () => HomeShimmer(isDark: isDark, id: 1),
                   ),
                   if (ref.watch(SettingsController.canShowCollection))

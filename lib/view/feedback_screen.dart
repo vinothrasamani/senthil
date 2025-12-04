@@ -98,7 +98,8 @@ class _FeedbackScreenState extends ConsumerState<FeedbackScreen> {
       ),
       DropdownButtonFormField<String>(
         value: selectedSession,
-        items: ['session1', 'session2', 'session3']
+        items: ref
+            .watch(FeedbackController.sessions)
             .map((e) => DropdownMenuItem<String>(value: e, child: Text(e)))
             .toList(),
         decoration: InputDecoration(

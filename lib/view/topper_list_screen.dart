@@ -7,6 +7,8 @@ import 'package:senthil/controller/theme_controller.dart';
 import 'package:senthil/controller/topper_list_controller.dart';
 import 'package:senthil/shimmer/search_shimmer.dart';
 import 'package:senthil/shimmer/topper_list_shimmer.dart';
+import 'package:senthil/widgets/common_error_widget.dart';
+import 'package:senthil/widgets/initializer_widget.dart';
 import 'package:senthil/widgets/topper_list/class_topper_card.dart';
 import 'package:senthil/widgets/topper_list/subject_topper_table.dart';
 
@@ -23,14 +25,15 @@ class TopperListScreen extends ConsumerStatefulWidget {
 class _TopperListScreenState extends ConsumerState<TopperListScreen> {
   final formKey = GlobalKey<FormState>();
   String? selectedClass, selectedYear, selectedCourse, selectedRefGroup;
-  String? selectedExam, selectedStmGroup, selectedCrGroup;
+  String? selectedStmGroup, selectedCrGroup;
+  int? selectedExam;
   Object? data;
   final ScrollController scrollController = ScrollController();
   final cardKey = GlobalKey<ExpansionTileCoreState>();
 
   @override
   void initState() {
-    TopperListController.setDataTop(ref, 'years-top', {'index': widget.index});
+    TopperListController.setDataTop(ref, 'years', {'index': widget.index});
     super.initState();
   }
 
@@ -46,7 +49,9 @@ class _TopperListScreenState extends ConsumerState<TopperListScreen> {
       "exam": selectedExam,
       "courseGroup": selectedCrGroup,
       "stream": selectedStmGroup,
-      "ref": selectedRefGroup
+      "ref": selectedRefGroup,
+      "course": selectedCourse,
+      'userId': widget.userId
     };
     cardKey.currentState?.collapse();
   }
@@ -77,10 +82,7 @@ class _TopperListScreenState extends ConsumerState<TopperListScreen> {
             .toList(),
         decoration: InputDecoration(
             labelText: 'Year',
-            prefixIcon: Icon(
-              TablerIcons.calendar_smile,
-              color: Colors.grey,
-            )),
+            prefixIcon: Icon(TablerIcons.calendar_smile, color: Colors.grey)),
         onChanged: (val) {
           selectedYear = val;
           selectedClass = null;
@@ -88,7 +90,8 @@ class _TopperListScreenState extends ConsumerState<TopperListScreen> {
           selectedCrGroup = null;
           selectedExam = null;
           selectedStmGroup = null;
-          TopperListController.setDataTop(ref, 'classes-top', {
+          selectedRefGroup = null;
+          TopperListController.setDataTop(ref, 'classes', {
             'index': widget.index,
             'year': selectedYear,
             'userId': widget.userId
@@ -107,11 +110,12 @@ class _TopperListScreenState extends ConsumerState<TopperListScreen> {
             prefixIcon: Icon(TablerIcons.chalkboard, color: Colors.grey)),
         onChanged: (val) {
           selectedClass = val;
-          selectedCourse = null;
-          selectedCrGroup = null;
           selectedExam = null;
+          selectedCrGroup = null;
+          selectedCourse = null;
           selectedStmGroup = null;
-          TopperListController.setDataTop(ref, 'exams-top', {
+          selectedRefGroup = null;
+          TopperListController.setDataTop(ref, 'exams', {
             'index': widget.index,
             'className': val,
             'year': selectedYear,
@@ -127,40 +131,30 @@ class _TopperListScreenState extends ConsumerState<TopperListScreen> {
           }
         },
       ),
-      DropdownButtonFormField<String>(
+      DropdownButtonFormField<int>(
         value: selectedExam,
         items: ref
             .watch(TopperListController.examsTop)
-            .map((e) => DropdownMenuItem<String>(
-                value: e ?? '',
+            .map((e) => DropdownMenuItem<int>(
+                value: e['id'] ?? '',
                 child: ConstrainedBox(
                     constraints: BoxConstraints(maxWidth: 220),
-                    child: Text(e ?? 'None'))))
+                    child: Text(e['ExamName'] ?? 'None'))))
             .toList(),
         decoration: InputDecoration(
             labelText: 'Exam',
             prefixIcon: Icon(TablerIcons.file_text, color: Colors.grey)),
         onChanged: (val) {
           selectedExam = val;
-          selectedStmGroup = null;
-          selectedCourse = null;
           selectedCrGroup = null;
-          TopperListController.setDataTop(ref, 'courses-top', {
-            'index': widget.index,
-            'className': selectedClass,
-            'year': selectedYear,
-            'userId': widget.userId
-          });
-          TopperListController.setDataTop(ref, 'course-group-top', {
+          selectedCourse = null;
+          selectedStmGroup = null;
+          selectedRefGroup = null;
+          TopperListController.setDataTop(ref, 'course-group', {
             'index': widget.index,
             'className': selectedClass,
             'year': selectedYear,
             'exam': selectedExam,
-            'userId': widget.userId
-          });
-          TopperListController.setDataTop(ref, 'stream-group-top', {
-            'index': widget.index,
-            'year': selectedYear,
             'userId': widget.userId
           });
         },
@@ -177,6 +171,42 @@ class _TopperListScreenState extends ConsumerState<TopperListScreen> {
             prefixIcon: Icon(Icons.group, color: Colors.grey)),
         onChanged: (val) {
           selectedCrGroup = val;
+          selectedCourse = null;
+          selectedStmGroup = null;
+          selectedRefGroup = null;
+          TopperListController.setDataTop(ref, 'courses', {
+            'index': widget.index,
+            'className': selectedClass,
+            'year': selectedYear,
+            'exam': selectedExam,
+            'cGrp': val,
+            'userId': widget.userId
+          });
+        },
+      ),
+      DropdownButtonFormField<String>(
+        value: selectedCourse,
+        items: ref
+            .watch(TopperListController.coursesTop)
+            .map((e) => DropdownMenuItem<String>(
+                value: e ?? '', child: Text(e ?? 'None')))
+            .toList(),
+        decoration: InputDecoration(
+            labelText: 'Main Course',
+            prefixIcon: Icon(Icons.golf_course, color: Colors.grey)),
+        onChanged: (val) {
+          selectedCourse = val;
+          selectedStmGroup = null;
+          selectedRefGroup = null;
+          TopperListController.setDataTop(ref, 'stream-group', {
+            'index': widget.index,
+            'className': selectedClass,
+            'year': selectedYear,
+            'exam': selectedExam,
+            'cGrp': selectedCrGroup,
+            'course': val,
+            'userId': widget.userId
+          });
         },
       ),
       if (ref.watch(TopperListController.canAddTop)) ...[
@@ -192,23 +222,34 @@ class _TopperListScreenState extends ConsumerState<TopperListScreen> {
               prefixIcon: Icon(Icons.group, color: Colors.grey)),
           onChanged: (val) {
             selectedStmGroup = val;
+            selectedRefGroup = null;
+            TopperListController.setDataTop(ref, 'ref-group', {
+              'index': widget.index,
+              'className': selectedClass,
+              'year': selectedYear,
+              'exam': selectedExam,
+              'cGrp': selectedCrGroup,
+              'course': selectedCourse,
+              'stream': val,
+              'userId': widget.userId
+            });
+          },
+        ),
+        DropdownButtonFormField<String>(
+          value: selectedRefGroup,
+          items: ref
+              .watch(TopperListController.refGroupTop)
+              .map((e) => DropdownMenuItem<String>(
+                  value: e ?? '', child: Text(e ?? 'None')))
+              .toList(),
+          decoration: InputDecoration(
+              labelText: 'Ref group',
+              prefixIcon: Icon(Icons.group, color: Colors.grey)),
+          onChanged: (val) {
+            selectedRefGroup = val;
           },
         ),
       ],
-      DropdownButtonFormField<String>(
-        value: selectedCourse,
-        items: ref
-            .watch(TopperListController.coursesTop)
-            .map((e) => DropdownMenuItem<String>(
-                value: e ?? '', child: Text(e ?? 'None')))
-            .toList(),
-        decoration: InputDecoration(
-            labelText: 'Main Course',
-            prefixIcon: Icon(Icons.golf_course, color: Colors.grey)),
-        onChanged: (val) {
-          selectedCourse = val;
-        },
-      ),
       Builder(builder: (context) {
         bool searching = ref.watch(TopperListController.searchingTop);
         return SizedBox(
@@ -231,7 +272,7 @@ class _TopperListScreenState extends ConsumerState<TopperListScreen> {
                   duration: Duration(milliseconds: 400),
                   curve: Curves.easeInOut);
             },
-            icon: Icon(Icons.arrow_upward),
+            icon: Icon(Icons.move_up),
           ),
           IconButton(
             onPressed: () {
@@ -240,7 +281,7 @@ class _TopperListScreenState extends ConsumerState<TopperListScreen> {
                   duration: Duration(milliseconds: 400),
                   curve: Curves.easeInOut);
             },
-            icon: Icon(Icons.arrow_downward),
+            icon: Icon(Icons.move_down),
           ),
         ],
       ),
@@ -270,7 +311,7 @@ class _TopperListScreenState extends ConsumerState<TopperListScreen> {
                                 width: size.width < 500
                                     ? null
                                     : size.width < 1020
-                                        ? (size.width / 2) - 20
+                                        ? (size.width / 2) - 30
                                         : (size.width / 3) - 30,
                                 child: child,
                               ))
@@ -284,29 +325,26 @@ class _TopperListScreenState extends ConsumerState<TopperListScreen> {
             SizedBox(height: 20),
             if (ref.watch(TopperListController.yearsTop).isNotEmpty)
               listener == null
-                  ? SizedBox(
-                      height: 200,
-                      child:
-                          Center(child: Text('Search to get class toppers!')),
-                    )
+                  ? InitializerWidget()
                   : listener.when(
                       data: (snap) {
-                        bool isTheOne = selectedClass == 'XI' ||
-                            selectedClass == 'XI*' ||
-                            selectedClass == 'XII' ||
-                            selectedClass == 'XII*';
-
                         TextStyle style = TextStyle(
                             fontWeight: FontWeight.bold,
                             color: AppController.darkGreen);
-
                         Widget commonText = Text.rich(
                           TextSpan(
                             text: 'Comparison of Result for class ',
                             children: [
-                              TextSpan(text: '$selectedClass ', style: style),
+                              TextSpan(text: '$selectedClass - ', style: style),
+                              TextSpan(
+                                  text: '$selectedCourse (All) / ',
+                                  style: style),
+                              TextSpan(text: '$selectedExam / ', style: style),
+                              TextSpan(
+                                  text: '$selectedStmGroup ', style: style),
                               TextSpan(text: 'for '),
-                              TextSpan(text: '$selectedExam ', style: style),
+                              TextSpan(
+                                  text: '$selectedRefGroup ', style: style),
                               TextSpan(text: '/ Exam for '),
                               TextSpan(text: '$selectedYear', style: style),
                             ],
@@ -320,58 +358,44 @@ class _TopperListScreenState extends ConsumerState<TopperListScreen> {
                             AppController.heading(
                                 'Class Topper List', isDark, TablerIcons.list),
                             SizedBox(height: 10),
-                            if (isTheOne)
-                              Column(
-                                mainAxisSize: MainAxisSize.min,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Note : (ClassName / Course / Stream / Group)',
+                            commonText,
+                            if (snap.data.classToppers.isEmpty)
+                              Padding(
+                                padding: const EdgeInsets.all(20.0),
+                                child: Center(
+                                  child: Text(
+                                    'No class toppers found',
                                     style: TextStyle(
-                                        color: Colors.grey, fontSize: 12),
+                                        fontSize: 16, color: Colors.grey),
                                   ),
-                                  Text.rich(
-                                    TextSpan(
-                                      text: 'Comparison of Result for class ',
-                                      children: [
-                                        TextSpan(
-                                            text: '$selectedClass ',
-                                            style: style),
-                                        TextSpan(text: '/'),
-                                        TextSpan(
-                                            text: '$selectedCrGroup ',
-                                            style: style),
-                                        TextSpan(text: 'for '),
-                                        TextSpan(
-                                            text: '$selectedExam ',
-                                            style: style),
-                                        TextSpan(text: '/ Exam for '),
-                                        TextSpan(
-                                            text: '$selectedYear',
-                                            style: style),
-                                      ],
-                                    ),
-                                  ),
-                                ],
+                                ),
                               )
                             else
-                              commonText,
-                            ClassTopperCard(snap: snap, isDark: isDark),
+                              ClassTopperCard(snap: snap, isDark: isDark),
                             SizedBox(height: 20),
                             AppController.heading('Subject Wise Topper List',
                                 isDark, TablerIcons.list),
                             SizedBox(height: 10),
                             commonText,
                             SizedBox(height: 10),
-                            if (snap.data.subToppers.schools.isNotEmpty)
+                            if (snap.data.subjectToppers.isEmpty)
+                              Padding(
+                                padding: const EdgeInsets.all(20.0),
+                                child: Center(
+                                  child: Text(
+                                    'No subject toppers found',
+                                    style: TextStyle(
+                                        fontSize: 16, color: Colors.grey),
+                                  ),
+                                ),
+                              )
+                            else
                               SubjectTopperTable(snap: snap, isDark: isDark),
+                            SizedBox(height: 20),
                           ],
                         );
                       },
-                      error: (e, _) => SizedBox(
-                        height: 200,
-                        child: Center(child: Text('Something went wrong!')),
-                      ),
+                      error: (e, _) => CommonErrorWidget(),
                       loading: () => TopperListShimmer(isDark: isDark),
                     ),
           ],

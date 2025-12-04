@@ -254,7 +254,8 @@ class _RatingFeedbackScreenState extends ConsumerState<RatingFeedbackScreen> {
         children: [
           _buildLegendCard(isSmallScreen, screenWidth),
           _buildQuestionHeader(feedData, screenWidth),
-          _buildSubjectsGrid(feedData, screenWidth, isSmallScreen,
+          SizedBox(height: 10),
+          _buildSubjectsWrap(feedData, screenWidth, isSmallScreen,
               isMediumScreen, isLargeScreen, isOverLargeScreen),
           SizedBox(height: 24),
           _buildSubmitButton(feedData, screenWidth, isSmallScreen),
@@ -379,10 +380,11 @@ class _RatingFeedbackScreenState extends ConsumerState<RatingFeedbackScreen> {
     return ListTile(
       leading: CircleAvatar(
         backgroundColor: Colors.deepPurple,
+        radius: 20,
         child: Text(
           '${feedData.feedQues?.ord ?? '?'}',
           style: TextStyle(
-              fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+              fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white),
         ),
       ),
       title: Text(
@@ -399,57 +401,51 @@ class _RatingFeedbackScreenState extends ConsumerState<RatingFeedbackScreen> {
     );
   }
 
-  Widget _buildSubjectsGrid(
+  Widget _buildSubjectsWrap(
       FeedbackFormData feedData,
       double screenWidth,
       bool isSmallScreen,
       bool isMediumScreen,
       bool isLargeScreen,
       bool isOverLargeScreen) {
-    int crossAxisCount;
-    double childAspectRatio;
+    double cardWidth;
     double horizontalPadding;
+    double spacing;
 
     if (isOverLargeScreen) {
-      crossAxisCount = 5;
-      childAspectRatio = 0.8;
+      cardWidth = (screenWidth - 80 - (4 * 16)) / 5;
       horizontalPadding = 40;
+      spacing = 16;
     } else if (isLargeScreen) {
-      crossAxisCount = 4;
-      childAspectRatio = 0.85;
+      cardWidth = (screenWidth - 64 - (3 * 16)) / 4;
       horizontalPadding = 32;
+      spacing = 16;
     } else if (isMediumScreen) {
-      crossAxisCount = 3;
-      childAspectRatio = 0.8;
+      cardWidth = (screenWidth - 48 - (2 * 16)) / 3;
       horizontalPadding = 24;
+      spacing = 16;
     } else if (screenWidth < 400) {
-      crossAxisCount = 1;
-      childAspectRatio = 1.5;
+      cardWidth = screenWidth - 32;
       horizontalPadding = 16;
+      spacing = 12;
     } else {
-      crossAxisCount = 2;
-      childAspectRatio = 0.85;
+      cardWidth = (screenWidth - 32 - 12) / 2;
       horizontalPadding = 16;
+      spacing = 12;
     }
 
     return Container(
       padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
-      child: GridView.builder(
-        shrinkWrap: true,
-        physics: NeverScrollableScrollPhysics(),
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: crossAxisCount,
-          childAspectRatio: childAspectRatio,
-          crossAxisSpacing: isSmallScreen ? 12 : 16,
-          mainAxisSpacing: isSmallScreen ? 12 : 16,
-        ),
-        itemCount: feedData.subject.length,
-        itemBuilder: (context, index) {
-          return _buildSubjectRatingCard(
-            feedData.subject[index],
-            isSmallScreen,
+      child: Wrap(
+        spacing: spacing,
+        runSpacing: spacing,
+        alignment: WrapAlignment.start,
+        children: feedData.subject.map((subject) {
+          return SizedBox(
+            width: cardWidth,
+            child: _buildSubjectRatingCard(subject, isSmallScreen),
           );
-        },
+        }).toList(),
       ),
     );
   }

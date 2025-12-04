@@ -53,7 +53,10 @@ class _FeedbackSettingState extends ConsumerState<FeedbackSettingScreen> {
     final years = await AppController.fetch('feed-notice-years');
     final decrypted = jsonDecode(years);
     if (decrypted['success']) {
-      ref.read(FeedbackListController.years.notifier).state = decrypted['data'];
+      ref.read(FeedbackListController.years.notifier).state =
+          decrypted['data']['years'];
+      ref.read(FeedbackListController.sessions.notifier).state =
+          decrypted['data']['sessions'];
     }
     final res = await AppController.fetch('feedback-settings');
     final data = noticeModelFromJson(res);
@@ -115,6 +118,7 @@ class _FeedbackSettingState extends ConsumerState<FeedbackSettingScreen> {
     bool isLoading = ref.watch(FeedbackListController.feedLoading);
     bool isDark = ref.watch(ThemeController.themeMode) == ThemeMode.dark;
     final years = ref.watch(FeedbackListController.years);
+    final sessions = ref.watch(FeedbackListController.sessions);
     final updating = ref.watch(FeedbackListController.updating);
     final fa = ref.watch(FeedbackListController.fAnim);
     final fs = ref.watch(FeedbackListController.fStaff);
@@ -152,7 +156,7 @@ class _FeedbackSettingState extends ConsumerState<FeedbackSettingScreen> {
                     value: selectedSession,
                     isDense: true,
                     padding: EdgeInsets.symmetric(horizontal: 0),
-                    items: ['session1', 'session2', 'session3']
+                    items: sessions
                         .map<DropdownMenuItem<String>>(
                             (e) => DropdownMenuItem(value: e, child: Text(e)))
                         .toList(),

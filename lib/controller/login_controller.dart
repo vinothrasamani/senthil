@@ -17,20 +17,19 @@ class LoginController {
 
   static Future<void> login(
       String username, String password, WidgetRef ref) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
     try {
       String? token;
       if (!kIsWeb) {
         token = await requestNotificationPermission();
       }
-      SharedPreferences preferences = await SharedPreferences.getInstance();
       final res = await AppController.send('login',
           {'username': username, 'password': password, 'token': token});
       final result = loginModelFromJson(res);
       if (result.success) {
         Widget screen = HomeScreen();
-        await preferences.setString('user', res);
         ref.read(userProvider.notifier).state = result;
-        if (result.data!.role == 6) {
+        if (result.data!.role == 6 || result.data!.role == 7) {
           screen = FeedbackHomeScreen();
         }
         // else {
@@ -38,6 +37,7 @@ class LoginController {
         //       purpose: Purpose.fail);
         //   return;
         // }
+        await preferences.setString('user', res);
         Get.offAll(() => screen, transition: Transition.zoom);
         AppController.toastMessage(
             'Login Successfully!', 'Welcome back ${result.data!.fullname}.');
@@ -47,6 +47,8 @@ class LoginController {
             purpose: Purpose.fail);
       }
     } catch (e) {
+      debugPrint(e.toString());
+      preferences.remove('user');
       AppController.toastMessage('Error!', 'Something went wrong!',
           purpose: Purpose.fail);
     }

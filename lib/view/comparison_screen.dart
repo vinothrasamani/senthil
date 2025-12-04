@@ -6,8 +6,12 @@ import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:senthil/controller/app_controller.dart';
 import 'package:senthil/controller/comparison_controller.dart';
 import 'package:senthil/controller/theme_controller.dart';
+import 'package:senthil/model/search_comparison_model.dart';
 import 'package:senthil/shimmer/search_shimmer.dart';
 import 'package:senthil/shimmer/table_shimmer.dart';
+import 'package:senthil/widgets/common_error_widget.dart';
+import 'package:senthil/widgets/initializer_widget.dart';
+import 'package:senthil/widgets/no_record_content.dart';
 
 class ComparisonScreen extends ConsumerStatefulWidget {
   const ComparisonScreen(
@@ -22,7 +26,8 @@ class ComparisonScreen extends ConsumerStatefulWidget {
 class _ComparisonScreen extends ConsumerState<ComparisonScreen> {
   final formkey = GlobalKey<FormState>();
   String? selectedClass, selectedYear, selectedCourse, selectedCrGroup;
-  String? selectedExam, selectedStmGroup, selectedRefGroup;
+  String? selectedStmGroup, selectedRefGroup;
+  int? selectedExam;
   Object? data;
   final cardKey = GlobalKey<ExpansionTileCoreState>();
 
@@ -35,13 +40,12 @@ class _ComparisonScreen extends ConsumerState<ComparisonScreen> {
   void search() async {
     ref.read(ComparisonController.searching.notifier).state = true;
     selectedStmGroup ??= "All";
-    selectedRefGroup ??= "None";
+    selectedRefGroup ??= "All";
     selectedCrGroup ??= "All";
     data = {
       "academic_year": selectedYear,
       "exam_name": selectedExam,
       "class_name": selectedClass,
-      "subject_name": '',
       "coursegroup": selectedCrGroup,
       "streamgroup": selectedStmGroup,
       "refgroup": selectedRefGroup,
@@ -125,16 +129,16 @@ class _ComparisonScreen extends ConsumerState<ComparisonScreen> {
           }
         },
       ),
-      DropdownButtonFormField<String>(
+      DropdownButtonFormField<int>(
         value: selectedExam,
         items: ref
             .watch(ComparisonController.exams)
-            .map((e) => DropdownMenuItem<String>(
-                value: e ?? '',
+            .map((e) => DropdownMenuItem<int>(
+                value: e['id'] ?? '',
                 child: ConstrainedBox(
                   constraints: BoxConstraints(maxWidth: 220),
                   child: Text(
-                    e ?? '',
+                    e['ExamName'] ?? '',
                     overflow: TextOverflow.clip,
                   ),
                 )))
@@ -148,27 +152,10 @@ class _ComparisonScreen extends ConsumerState<ComparisonScreen> {
           selectedRefGroup = null;
           selectedCourse = null;
           selectedCrGroup = null;
-          ComparisonController.setData(ref, 'courses', {
-            'index': widget.index,
-            'className': selectedClass,
-            'year': selectedYear,
-            'userId': widget.userId
-          });
           ComparisonController.setData(ref, 'course-group', {
             'index': widget.index,
             'className': selectedClass,
             'exam': selectedExam,
-            'year': selectedYear,
-            'userId': widget.userId
-          });
-          ComparisonController.setData(ref, 'stream-group', {
-            'index': widget.index,
-            'userId': widget.userId,
-            'year': selectedYear,
-          });
-          ComparisonController.setData(ref, 'ref-group', {
-            'index': widget.index,
-            'className': selectedClass,
             'year': selectedYear,
             'userId': widget.userId
           });
@@ -186,6 +173,17 @@ class _ComparisonScreen extends ConsumerState<ComparisonScreen> {
             prefixIcon: Icon(Icons.group, color: Colors.grey)),
         onChanged: (val) {
           selectedCrGroup = val;
+          selectedStmGroup = null;
+          selectedRefGroup = null;
+          selectedCourse = null;
+          ComparisonController.setData(ref, 'courses', {
+            'index': widget.index,
+            'className': selectedClass,
+            'year': selectedYear,
+            'exam': selectedExam,
+            'cGrp': val,
+            'userId': widget.userId
+          });
         },
       ),
       DropdownButtonFormField<String>(
@@ -200,6 +198,17 @@ class _ComparisonScreen extends ConsumerState<ComparisonScreen> {
             prefixIcon: Icon(Icons.golf_course, color: Colors.grey)),
         onChanged: (val) {
           selectedCourse = val;
+          selectedStmGroup = null;
+          selectedRefGroup = null;
+          ComparisonController.setData(ref, 'stream-group', {
+            'index': widget.index,
+            'className': selectedClass,
+            'year': selectedYear,
+            'exam': selectedExam,
+            'course': val,
+            'cGrp': selectedCrGroup,
+            'userId': widget.userId
+          });
         },
       ),
       if (ref.watch(ComparisonController.canAdd)) ...[
@@ -215,6 +224,17 @@ class _ComparisonScreen extends ConsumerState<ComparisonScreen> {
               prefixIcon: Icon(Icons.group, color: Colors.grey)),
           onChanged: (val) {
             selectedStmGroup = val;
+            selectedRefGroup = null;
+            ComparisonController.setData(ref, 'ref-group', {
+              'index': widget.index,
+              'className': selectedClass,
+              'year': selectedYear,
+              'exam': selectedExam,
+              'course': selectedCourse,
+              'cGrp': selectedCrGroup,
+              'stream': val,
+              'userId': widget.userId
+            });
           },
         ),
         DropdownButtonFormField<String>(
@@ -294,9 +314,11 @@ class _ComparisonScreen extends ConsumerState<ComparisonScreen> {
                     double sideWidth = searchData.data.schools.length >= 3
                         ? 40.0 * searchData.data.schools.length
                         : 40.0 * 3;
+
                     TextStyle style = TextStyle(
                         fontWeight: FontWeight.bold,
                         color: AppController.darkGreen);
+
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
@@ -322,7 +344,8 @@ class _ComparisonScreen extends ConsumerState<ComparisonScreen> {
                           ),
                         ),
                         SizedBox(height: 20),
-                        if (searchData.data.subjects.isNotEmpty)
+                        if (searchData.data.subjects.isNotEmpty &&
+                            searchData.data.content.isNotEmpty)
                           SizedBox(
                             height: size.height - 100,
                             child: DataTable2(
@@ -345,101 +368,100 @@ class _ComparisonScreen extends ConsumerState<ComparisonScreen> {
                                       children: [
                                         Text('Subject'),
                                         Divider(),
-                                        Text('Particular'),
+                                        Text('Particular')
                                       ],
                                     ),
                                     size: ColumnSize.L,
                                     fixedWidth: sideWidth),
                                 for (var sub in searchData.data.subjects)
                                   DataColumn2(
-                                      label: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceEvenly,
-                                        children: [
-                                          Text(sub),
-                                          Divider(),
+                                    label: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceEvenly,
+                                      children: [
+                                        Text(sub),
+                                        Divider(),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceEvenly,
+                                          children: [
+                                            for (var school
+                                                in searchData.data.schools)
+                                              Text(school.short ??
+                                                  school.school),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                    fixedWidth: size.width > 450
+                                        ? 250
+                                        : size.width - (sideWidth + 35),
+                                  ),
+                              ],
+                              rows: [
+                                for (var content in searchData.data.content)
+                                  DataRow(
+                                    cells: [
+                                      DataCell(Text(content.name)),
+                                      for (var subject
+                                          in searchData.data.subjects)
+                                        DataCell(
                                           Row(
                                             mainAxisAlignment:
                                                 MainAxisAlignment.spaceEvenly,
                                             children: [
                                               for (var school
                                                   in searchData.data.schools)
-                                                Text(school.school),
+                                                Text(_getValueForCell(
+                                                  searchData.data.report,
+                                                  school.school,
+                                                  subject,
+                                                  content.id,
+                                                )),
                                             ],
                                           ),
-                                        ],
-                                      ),
-                                      fixedWidth: size.width > 450
-                                          ? 250
-                                          : size.width - (sideWidth + 35)),
-                              ],
-                              rows: [
-                                for (var titleWithVal
-                                    in searchData.data.myValues)
-                                  DataRow(
-                                    cells: [
-                                      DataCell(Text(titleWithVal.title)),
-                                      if (titleWithVal.myList.isEmpty)
-                                        for (var e = 0;
-                                            e < searchData.data.subjects.length;
-                                            e++)
-                                          DataCell(
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.spaceEvenly,
-                                              children: [
-                                                for (var c = 0;
-                                                    c <
-                                                        searchData.data.schools
-                                                            .length;
-                                                    c++)
-                                                  Text('-'),
-                                              ],
-                                            ),
-                                          )
-                                      else
-                                        for (var countList
-                                            in titleWithVal.myList)
-                                          DataCell(
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.spaceEvenly,
-                                              children: [
-                                                for (var c in countList.counts)
-                                                  Text('${c.value}'),
-                                              ],
-                                            ),
-                                          ),
+                                        ),
                                     ],
                                   ),
                               ],
                             ),
                           )
                         else
-                          SizedBox(
-                            height: 200,
-                            child: Center(child: Text('No Results Found!')),
-                          )
+                          NoRecordContent(),
                       ],
                     );
                   },
-                  error: (e, _) => SizedBox(
-                    height: 200,
-                    child: Center(
-                        child: Text('Failed to fetch. Try again Later!')),
-                  ),
+                  error: (e, _) {
+                    debugPrint(e.toString());
+                    return CommonErrorWidget();
+                  },
                   loading: () => TableShimmer(isDark: isDark),
                 )
               else
-                SizedBox(
-                  height: 200,
-                  child: Center(child: Text('Search first then compare!')),
-                )
+                InitializerWidget()
             else
               SizedBox.shrink(),
           ],
         ),
       ),
     );
+  }
+
+  String _getValueForCell(Map<String, Map<String, SubjectReport>> report,
+      String schoolName, String subject, int contentId) {
+    try {
+      final schoolData = report[schoolName];
+      if (schoolData == null) return '-';
+      final subjectData = schoolData[subject];
+      if (subjectData == null) return '-';
+      final value = subjectData.getValueByContentId(contentId);
+      if (value == null || value == '-' || value == 0) return '-';
+      if (value is double) {
+        return value.toStringAsFixed(0);
+      }
+      return value.toString();
+    } catch (e) {
+      return '-';
+    }
   }
 }

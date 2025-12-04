@@ -32,295 +32,192 @@ class TopperListModel {
 }
 
 class TopperListData {
-  List<ClsTopper> clsToppers;
-  SubjectToppers subToppers;
+  List<String> schools;
+  Map<String, List<ClassTopperStudent>> classToppers;
+  Map<String, Map<String, SubjectTopperData>> subjectToppers;
 
   TopperListData({
-    required this.clsToppers,
-    required this.subToppers,
-  });
-
-  factory TopperListData.fromJson(Map<String, dynamic> json) => TopperListData(
-        clsToppers: List<ClsTopper>.from(
-            json["cls_toppers"].map((x) => ClsTopper.fromJson(x))),
-        subToppers: SubjectToppers.fromJson(json["sub_toppers"]),
-      );
-
-  Map<String, dynamic> toJson() => {
-        "cls_toppers": List<dynamic>.from(clsToppers.map((x) => x.toJson())),
-        "sub_toppers": subToppers.toJson(),
-      };
-}
-
-class ClsTopper {
-  dynamic school;
-  List<TopperDetail> details;
-
-  ClsTopper({
-    required this.school,
-    required this.details,
-  });
-
-  factory ClsTopper.fromJson(Map<String, dynamic> json) => ClsTopper(
-        school: json["school"],
-        details: List<TopperDetail>.from(
-            json["details"].map((x) => TopperDetail.fromJson(x))),
-      );
-
-  Map<String, dynamic> toJson() => {
-        "school": school,
-        "details": List<dynamic>.from(details.map((x) => x.toJson())),
-      };
-}
-
-class TopperDetail {
-  int rank;
-  List<Topper> topper;
-
-  TopperDetail({
-    required this.rank,
-    required this.topper,
-  });
-
-  factory TopperDetail.fromJson(Map<String, dynamic> json) => TopperDetail(
-        rank: json["rank"],
-        topper:
-            List<Topper>.from(json["topper"].map((x) => Topper.fromJson(x))),
-      );
-
-  Map<String, dynamic> toJson() => {
-        "rank": rank,
-        "topper": List<dynamic>.from(topper.map((x) => x.toJson())),
-      };
-}
-
-class Topper {
-  List<TopDatum> list;
-
-  Topper({
-    required this.list,
-  });
-
-  factory Topper.fromJson(Map<String, dynamic> json) => Topper(
-        list:
-            List<TopDatum>.from(json["list"].map((x) => TopDatum.fromJson(x))),
-      );
-
-  Map<String, dynamic> toJson() => {
-        "list": List<dynamic>.from(list.map((x) => x.toJson())),
-      };
-}
-
-class TopDatum {
-  int id;
-  dynamic schooltype;
-  dynamic school;
-  dynamic examName;
-  dynamic className;
-  dynamic classgroup;
-  dynamic subjectName;
-  String studentName;
-  int value;
-  int ord;
-  dynamic year;
-  dynamic sectionGroup;
-  dynamic filename;
-  dynamic subjectTeacher;
-  dynamic adminno;
-  dynamic photo;
-  dynamic toppertype;
-  int rank;
-  int subord;
-  int schord;
-  dynamic courseGroup;
-  dynamic streamGroup;
-  dynamic refGroup;
-  dynamic refnote;
-  int examid;
-  dynamic course;
-  dynamic maincourse;
-
-  TopDatum({
-    required this.id,
-    required this.schooltype,
-    required this.school,
-    required this.examName,
-    required this.className,
-    required this.classgroup,
-    required this.subjectName,
-    required this.studentName,
-    required this.value,
-    required this.ord,
-    required this.year,
-    required this.sectionGroup,
-    required this.filename,
-    required this.subjectTeacher,
-    required this.adminno,
-    required this.photo,
-    required this.toppertype,
-    required this.rank,
-    required this.subord,
-    required this.schord,
-    required this.courseGroup,
-    required this.streamGroup,
-    required this.refGroup,
-    required this.refnote,
-    required this.examid,
-    required this.course,
-    required this.maincourse,
-  });
-
-  factory TopDatum.fromJson(Map<String, dynamic> json) => TopDatum(
-        id: json["id"],
-        schooltype: json["Schooltype"],
-        school: json["School"],
-        examName: json["ExamName"],
-        className: json["ClassName"],
-        classgroup: json["Classgroup"],
-        subjectName: json["SubjectName"],
-        studentName: json["StudentName"],
-        value: json["Value"],
-        ord: json["Ord"],
-        year: json["Year"],
-        sectionGroup: json["SectionGroup"],
-        filename: json["filename"],
-        subjectTeacher: json["SubjectTeacher"],
-        adminno: json["Adminno"],
-        photo: json["photo"],
-        toppertype: json["toppertype"],
-        rank: json["Rank"],
-        subord: json["subord"],
-        schord: json["schord"],
-        courseGroup: json["CourseGroup"],
-        streamGroup: json["StreamGroup"],
-        refGroup: json["RefGroup"],
-        refnote: json["refnote"],
-        examid: json["examid"],
-        course: json["course"],
-        maincourse: json["maincourse"],
-      );
-
-  Map<String, dynamic> toJson() => {
-        "id": id,
-        "Schooltype": schooltype,
-        "School": school,
-        "ExamName": examName,
-        "ClassName": className,
-        "Classgroup": classgroup,
-        "SubjectName": subjectName,
-        "StudentName": studentName,
-        "Value": value,
-        "Ord": ord,
-        "Year": year,
-        "SectionGroup": sectionGroup,
-        "filename": filename,
-        "SubjectTeacher": subjectTeacher,
-        "Adminno": adminno,
-        "photo": photo,
-        "toppertype": toppertype,
-        "Rank": rank,
-        "subord": subord,
-        "schord": schord,
-        "CourseGroup": courseGroup,
-        "StreamGroup": streamGroup,
-        "RefGroup": refGroup,
-        "refnote": refnote,
-        "examid": examid,
-        "course": course,
-        "maincourse": maincourse,
-      };
-}
-
-class SubjectToppers {
-  List<SubList> subList;
-  List<dynamic> schools;
-
-  SubjectToppers({
-    required this.subList,
     required this.schools,
+    required this.classToppers,
+    required this.subjectToppers,
   });
 
-  factory SubjectToppers.fromJson(Map<String, dynamic> json) => SubjectToppers(
-        subList:
-            List<SubList>.from(json["subList"].map((x) => SubList.fromJson(x))),
-        schools: List<dynamic>.from(json["schools"].map((x) => x)),
-      );
+  factory TopperListData.fromJson(Map<String, dynamic> json) {
+    List<String> schools = List<String>.from(json["schools"]);
+
+    Map<String, List<ClassTopperStudent>> classToppers = {};
+    (json["classToppers"] as Map<String, dynamic>).forEach((school, students) {
+      classToppers[school] = (students as List)
+          .map((s) => ClassTopperStudent.fromJson(s))
+          .toList();
+    });
+
+    Map<String, Map<String, SubjectTopperData>> subjectToppers = {};
+    (json["subjectToppers"] as Map<String, dynamic>)
+        .forEach((subject, schoolData) {
+      subjectToppers[subject] = {};
+      (schoolData as Map<String, dynamic>).forEach((school, data) {
+        subjectToppers[subject]![school] = SubjectTopperData.fromJson(data);
+      });
+    });
+
+    return TopperListData(
+      schools: schools,
+      classToppers: classToppers,
+      subjectToppers: subjectToppers,
+    );
+  }
 
   Map<String, dynamic> toJson() => {
-        "subList": List<dynamic>.from(subList.map((x) => x.toJson())),
-        "schools": List<dynamic>.from(schools.map((x) => x)),
+        "schools": schools,
+        "classToppers": classToppers.map(
+          (school, students) => MapEntry(
+            school,
+            students.map((s) => s.toJson()).toList(),
+          ),
+        ),
+        "subjectToppers": subjectToppers.map(
+          (subject, schoolData) => MapEntry(
+            subject,
+            schoolData.map((school, data) => MapEntry(school, data.toJson())),
+          ),
+        ),
       };
 }
 
-class SubList {
-  Subject subject;
-  List<Value> value;
+class ClassTopperStudent {
+  String? stuOid;
+  String? student;
+  String school;
+  int total;
+  int maxTotal;
+  int examTotal;
+  List<SubjectMark> subjects;
+  String? photo;
+  String? file;
 
-  SubList({
+  ClassTopperStudent({
+    this.stuOid,
+    this.student,
+    required this.school,
+    required this.total,
+    required this.maxTotal,
+    required this.examTotal,
+    required this.subjects,
+    this.photo,
+    this.file,
+  });
+
+  factory ClassTopperStudent.fromJson(Map<String, dynamic> json) =>
+      ClassTopperStudent(
+        stuOid: json["stuOid"],
+        student: json["student"],
+        school: json["school"],
+        total: json["total"],
+        maxTotal: json["maxTotal"],
+        examTotal: json["examTotal"],
+        subjects: List<SubjectMark>.from(
+            json["subjects"].map((x) => SubjectMark.fromJson(x))),
+        photo: json["photo"],
+        file: json["file"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "stuOid": stuOid,
+        "student": student,
+        "school": school,
+        "total": total,
+        "maxTotal": maxTotal,
+        "examTotal": examTotal,
+        "subjects": List<dynamic>.from(subjects.map((x) => x.toJson())),
+        "photo": photo,
+        "file": file,
+      };
+}
+
+class SubjectMark {
+  String subject;
+  int mark;
+  int maxMark;
+  String? file;
+
+  SubjectMark({
     required this.subject,
-    required this.value,
+    required this.mark,
+    required this.maxMark,
+    this.file,
   });
 
-  factory SubList.fromJson(Map<String, dynamic> json) => SubList(
-        subject: Subject.fromJson(json["subject"]),
-        value: List<Value>.from(json["value"].map((x) => Value.fromJson(x))),
+  factory SubjectMark.fromJson(Map<String, dynamic> json) => SubjectMark(
+        subject: json["subject"],
+        mark: json["mark"],
+        maxMark: json["maxMark"],
+        file: json["file"],
       );
 
   Map<String, dynamic> toJson() => {
-        "subject": subject.toJson(),
-        "value": List<dynamic>.from(value.map((x) => x.toJson())),
+        "subject": subject,
+        "mark": mark,
+        "maxMark": maxMark,
+        "file": file,
       };
 }
 
-class Subject {
-  String subjectName;
+class SubjectTopperData {
+  List<SubjectTopperStudent> students;
+  int topMark;
+  int count;
 
-  Subject({
-    required this.subjectName,
+  SubjectTopperData({
+    required this.students,
+    required this.topMark,
+    required this.count,
   });
 
-  factory Subject.fromJson(Map<String, dynamic> json) => Subject(
-        subjectName: json["SubjectName"],
+  factory SubjectTopperData.fromJson(Map<String, dynamic> json) =>
+      SubjectTopperData(
+        students: List<SubjectTopperStudent>.from(
+            json["students"].map((x) => SubjectTopperStudent.fromJson(x))),
+        topMark: json["topMark"],
+        count: json["count"],
       );
 
   Map<String, dynamic> toJson() => {
-        "SubjectName": subjectName,
+        "students": List<dynamic>.from(students.map((x) => x.toJson())),
+        "topMark": topMark,
+        "count": count,
       };
 }
 
-class Value {
-  Top? top;
-  List<TopDatum> topData;
+class SubjectTopperStudent {
+  String? stuOid;
+  String? name;
+  int mark;
+  String? photo;
+  String? file;
 
-  Value({
-    required this.top,
-    required this.topData,
+  SubjectTopperStudent({
+    this.stuOid,
+    this.name,
+    required this.mark,
+    this.photo,
+    this.file,
   });
 
-  factory Value.fromJson(Map<String, dynamic> json) => Value(
-        top: json["top"] == null ? null : Top.fromJson(json["top"]),
-        topData: List<TopDatum>.from(
-            json["topData"].map((x) => TopDatum.fromJson(x))),
+  factory SubjectTopperStudent.fromJson(Map<String, dynamic> json) =>
+      SubjectTopperStudent(
+        stuOid: json["stuOid"],
+        name: json["name"],
+        mark: json["mark"],
+        photo: json["photo"],
+        file: json["file"],
       );
 
   Map<String, dynamic> toJson() => {
-        "top": top?.toJson(),
-        "topData": List<dynamic>.from(topData.map((x) => x.toJson())),
-      };
-}
-
-class Top {
-  int max;
-
-  Top({
-    required this.max,
-  });
-
-  factory Top.fromJson(Map<String, dynamic> json) => Top(
-        max: json["max"],
-      );
-
-  Map<String, dynamic> toJson() => {
-        "max": max,
+        "stuOid": stuOid,
+        "name": name,
+        "mark": mark,
+        "photo": photo,
+        "file": file,
       };
 }

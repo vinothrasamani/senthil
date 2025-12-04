@@ -53,10 +53,7 @@ class SubjectRatingCard extends ConsumerWidget {
       color: Colors.transparent,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
-        side: BorderSide(
-          color: borderColor,
-          width: 2,
-        ),
+        side: BorderSide(color: borderColor, width: 2),
       ),
       child: Container(
         decoration: BoxDecoration(
@@ -70,9 +67,11 @@ class SubjectRatingCard extends ConsumerWidget {
         child: Padding(
           padding: EdgeInsets.all(isSmallScreen ? 12 : 16),
           child: Column(
+            mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Flexible(
+              ConstrainedBox(
+                constraints: BoxConstraints(minHeight: 40),
                 child: Text(
                   subject.fullname,
                   style: TextStyle(
@@ -87,25 +86,23 @@ class SubjectRatingCard extends ConsumerWidget {
               ),
               const SizedBox(height: 6),
               if (subject.staffName != null)
-                Flexible(
-                  child: Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: staffBadgeBg,
-                      borderRadius: BorderRadius.circular(12),
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: staffBadgeBg,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    subject.staffName!,
+                    style: TextStyle(
+                      fontSize: isSmallScreen ? 11 : 13,
+                      color: staffBadgeText,
+                      fontWeight: FontWeight.w500,
                     ),
-                    child: Text(
-                      subject.staffName!,
-                      style: TextStyle(
-                        fontSize: isSmallScreen ? 11 : 13,
-                        color: staffBadgeText,
-                        fontWeight: FontWeight.w500,
-                      ),
-                      textAlign: TextAlign.center,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
+                    textAlign: TextAlign.center,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
               const SizedBox(height: 12),

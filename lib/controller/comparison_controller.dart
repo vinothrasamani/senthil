@@ -14,10 +14,12 @@ class ComparisonController {
   static final streamgroups =
       StateProvider.autoDispose<List<dynamic>>((ref) => []);
   static final courses = StateProvider.autoDispose<List<dynamic>>((ref) => []);
-  static final exams = StateProvider.autoDispose<List<dynamic>>((ref) => []);
+  static final exams =
+      StateProvider.autoDispose<List<Map<String, dynamic>>>((ref) => []);
   static final subjects = StateProvider.autoDispose<List<dynamic>>((ref) => []);
   static final canAdd = StateProvider.autoDispose<bool>((ref) => false);
   static final searching = StateProvider.autoDispose<bool>((ref) => false);
+
   static void setData(WidgetRef ref, String url, Object object) async {
     final res = await AppController.send(url, object);
     final decrypted = jsonDecode(res);
@@ -34,23 +36,30 @@ class ComparisonController {
         ref.read(refgroups.notifier).state = [];
         break;
       case 'exams':
-        ref.read(exams.notifier).state = decrypted['data'];
+        ref.read(exams.notifier).state =
+            List<Map<String, dynamic>>.from(decrypted['data']);
         ref.read(courses.notifier).state = [];
         ref.read(coursegroups.notifier).state = [];
         ref.read(streamgroups.notifier).state = [];
         ref.read(refgroups.notifier).state = [];
         break;
-      case 'courses':
-        ref.read(courses.notifier).state = decrypted['data'];
-        break;
       case 'course-group':
-        ref.read(coursegroups.notifier).state = decrypted['data'];
+        ref.read(coursegroups.notifier).state = ['All', ...decrypted['data']];
+        ref.read(streamgroups.notifier).state = [];
+        ref.read(courses.notifier).state = [];
+        ref.read(refgroups.notifier).state = [];
+        break;
+      case 'courses':
+        ref.read(courses.notifier).state = ['All', ...decrypted['data']];
+        ref.read(streamgroups.notifier).state = [];
+        ref.read(refgroups.notifier).state = [];
         break;
       case 'stream-group':
-        ref.read(streamgroups.notifier).state = decrypted['data'];
+        ref.read(streamgroups.notifier).state = ['All', ...decrypted['data']];
+        ref.read(refgroups.notifier).state = [];
         break;
       case 'ref-group':
-        ref.read(refgroups.notifier).state = decrypted['data'];
+        ref.read(refgroups.notifier).state = ['All', ...decrypted['data']];
         break;
       default:
     }

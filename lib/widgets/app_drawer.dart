@@ -36,9 +36,9 @@ class AppDrawer extends ConsumerWidget {
     final isDark = ref.watch(ThemeController.themeMode) == ThemeMode.dark;
     final schools = ['Public School', 'Matric School'];
     final menuItems = [
-      'Comparison',
-      'Topper List',
-      'Topper List Image',
+      'Compare',
+      'Compare Topper',
+      'Compare Topper Image',
       'Consistency',
       'Question & M.Scheme',
       'Feedback View',

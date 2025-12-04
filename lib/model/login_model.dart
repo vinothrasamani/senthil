@@ -18,7 +18,7 @@ class LoginModel {
 
   factory LoginModel.fromJson(Map<String, dynamic> json) => LoginModel(
         success: json["success"],
-        data: Data.fromJson(json["data"]),
+        data: json["data"] == null ? null : Data.fromJson(json["data"]),
         message: json["message"],
       );
 
@@ -76,7 +76,7 @@ class Data {
         refName: json["ref_name"],
         fullname: json["fullname"],
         mobile: json["mobile"],
-        role: json["role"],
+        role: int.parse(json["role"].toString()),
       );
 
   Map<String, dynamic> toJson() => {

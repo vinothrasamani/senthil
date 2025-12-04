@@ -5,6 +5,7 @@ import 'package:senthil/model/feedback_view_model.dart';
 
 class FeedbackController {
   static final years = StateProvider.autoDispose<List>((ref) => []);
+  static final sessions = StateProvider.autoDispose<List>((ref) => []);
   static final schools = StateProvider.autoDispose<List>((ref) => []);
   static final classes = StateProvider.autoDispose<List>((ref) => []);
   static final refGroups = StateProvider.autoDispose<List>((ref) => []);
@@ -18,6 +19,7 @@ class FeedbackController {
     switch (url) {
       case 'feedback-initials':
         ref.read(years.notifier).state = decrypted['data']['years'];
+        ref.read(sessions.notifier).state = decrypted['data']['sessions'];
         ref.read(schools.notifier).state = decrypted['data']['schools'];
         ref.read(refGroups.notifier).state = decrypted['data']['refGroups'];
         break;

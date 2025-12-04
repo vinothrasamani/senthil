@@ -13,6 +13,7 @@ class FeedbackListController extends StateNotifier<List<FeedbackItem>> {
   static final fStaff = StateProvider.autoDispose((ref) => false);
   static final fAnim = StateProvider.autoDispose((ref) => false);
   static final years = StateProvider.autoDispose((ref) => []);
+  static final sessions = StateProvider.autoDispose((ref) => []);
   static final feedLoading = StateProvider.autoDispose((ref) => true);
   static final updating = StateProvider.autoDispose((ref) => false);
 
