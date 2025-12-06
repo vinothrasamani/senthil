@@ -6,8 +6,12 @@ import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
 class PdfViewerScreen extends StatelessWidget {
   const PdfViewerScreen(
-      {super.key, required this.fileName, this.isLocal = false});
+      {super.key,
+      required this.fileName,
+      this.isLocal = false,
+      this.fromQs = false});
   final String fileName;
+  final bool fromQs;
   final bool isLocal;
 
   @override
@@ -20,7 +24,9 @@ class PdfViewerScreen extends StatelessWidget {
         behavior: ScrollBehavior().copyWith(overscroll: false),
         child: isLocal
             ? SfPdfViewer.file(File(fileName))
-            : SfPdfViewer.network('${AppController.basefileUrl}/$fileName'),
+            : SfPdfViewer.network(
+                '${fromQs ? AppController.baseQusUrl : AppController.basefileUrl}/$fileName',
+              ),
       ),
     );
   }

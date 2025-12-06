@@ -9,14 +9,19 @@ import 'package:senthil/shimmer/search_shimmer.dart';
 import 'package:senthil/shimmer/topper_list_shimmer.dart';
 import 'package:senthil/widgets/common_error_widget.dart';
 import 'package:senthil/widgets/initializer_widget.dart';
+import 'package:senthil/widgets/no_record_content.dart';
 import 'package:senthil/widgets/topper_list/class_topper_card.dart';
 import 'package:senthil/widgets/topper_list/subject_topper_table.dart';
 
 class TopperListScreen extends ConsumerStatefulWidget {
   const TopperListScreen(
-      {super.key, required this.index, required this.userId});
+      {super.key,
+      required this.index,
+      required this.userId,
+      required this.role});
   final int index;
   final int userId;
+  final int role;
 
   @override
   ConsumerState<TopperListScreen> createState() => _TopperListScreenState();
@@ -264,7 +269,7 @@ class _TopperListScreenState extends ConsumerState<TopperListScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Topper List'),
+        title: Text('School Topper'),
         actions: [
           IconButton(
             onPressed: () {
@@ -360,18 +365,14 @@ class _TopperListScreenState extends ConsumerState<TopperListScreen> {
                             SizedBox(height: 10),
                             commonText,
                             if (snap.data.classToppers.isEmpty)
-                              Padding(
-                                padding: const EdgeInsets.all(20.0),
-                                child: Center(
-                                  child: Text(
-                                    'No class toppers found',
-                                    style: TextStyle(
-                                        fontSize: 16, color: Colors.grey),
-                                  ),
-                                ),
+                              NoRecordContent(
+                                msg: 'No result for class topper!',
                               )
                             else
-                              ClassTopperCard(snap: snap, isDark: isDark),
+                              ClassTopperCard(
+                                  snap: snap,
+                                  isDark: isDark,
+                                  role: widget.role),
                             SizedBox(height: 20),
                             AppController.heading('Subject Wise Topper List',
                                 isDark, TablerIcons.list),
@@ -379,18 +380,14 @@ class _TopperListScreenState extends ConsumerState<TopperListScreen> {
                             commonText,
                             SizedBox(height: 10),
                             if (snap.data.subjectToppers.isEmpty)
-                              Padding(
-                                padding: const EdgeInsets.all(20.0),
-                                child: Center(
-                                  child: Text(
-                                    'No subject toppers found',
-                                    style: TextStyle(
-                                        fontSize: 16, color: Colors.grey),
-                                  ),
-                                ),
+                              NoRecordContent(
+                                msg: 'No result for subject wise class topper!',
                               )
                             else
-                              SubjectTopperTable(snap: snap, isDark: isDark),
+                              SubjectTopperTable(
+                                  snap: snap,
+                                  isDark: isDark,
+                                  role: widget.role),
                             SizedBox(height: 20),
                           ],
                         );

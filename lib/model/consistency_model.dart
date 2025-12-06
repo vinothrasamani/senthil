@@ -1,169 +1,103 @@
-import 'dart:convert';
-
-ConsistencyModel consistencyModelFromJson(String str) =>
-    ConsistencyModel.fromJson(json.decode(str));
-
-String consistencyModelToJson(ConsistencyModel data) =>
-    json.encode(data.toJson());
-
 class ConsistencyModel {
-  bool success;
-  ConsistencyData data;
-  String message;
+  final List<ExamName> examNames;
+  final Map<String, Map<String, List<dynamic>>> results;
+  final List<School> schools;
 
   ConsistencyModel({
-    required this.success,
-    required this.data,
-    required this.message,
-  });
-
-  factory ConsistencyModel.fromJson(Map<String, dynamic> json) =>
-      ConsistencyModel(
-        success: json["success"],
-        data: ConsistencyData.fromJson(json["data"]),
-        message: json["message"],
-      );
-
-  Map<String, dynamic> toJson() => {
-        "success": success,
-        "data": data.toJson(),
-        "message": message,
-      };
-}
-
-class ConsistencyData {
-  List<String> exams;
-  List<ConSchool> schools;
-
-  ConsistencyData({
-    required this.exams,
+    required this.examNames,
+    required this.results,
     required this.schools,
   });
 
-  factory ConsistencyData.fromJson(Map<String, dynamic> json) =>
-      ConsistencyData(
-        exams: List<String>.from(json["exams"].map((x) => x)),
-        schools: List<ConSchool>.from(
-            json["schools"].map((x) => ConSchool.fromJson(x))),
-      );
+  factory ConsistencyModel.fromJson(Map<String, dynamic> json) {
+    final examNamesList = (json['examNames'] as List<dynamic>?)
+            ?.map((e) => ExamName.fromJson(e as Map<String, dynamic>))
+            .toList() ??
+        [];
 
-  Map<String, dynamic> toJson() => {
-        "exams": List<dynamic>.from(exams.map((x) => x)),
-        "schools": List<dynamic>.from(schools.map((x) => x.toJson())),
-      };
+    final resultsMap = <String, Map<String, List<dynamic>>>{};
+    final resultsJson = json['results'] as Map<String, dynamic>?;
+    if (resultsJson != null) {
+      resultsJson.forEach((schoolKey, schoolData) {
+        final schoolExams = <String, List<dynamic>>{};
+        if (schoolData is Map<String, dynamic>) {
+          schoolData.forEach((examKey, examStudents) {
+            if (examStudents is List) {
+              schoolExams[examKey] = examStudents;
+            }
+          });
+        }
+        resultsMap[schoolKey] = schoolExams;
+      });
+    }
+
+    final schoolsList = (json['schools'] as List<dynamic>?)
+            ?.map((e) => School.fromJson(e as Map<String, dynamic>))
+            .toList() ??
+        [];
+
+    return ConsistencyModel(
+      examNames: examNamesList,
+      results: resultsMap,
+      schools: schoolsList,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'examNames': examNames.map((e) => e.toJson()).toList(),
+      'results': results.map((key, value) {
+        final examMap = <String, dynamic>{};
+        value.forEach((examKey, examData) {
+          examMap[examKey] = examData;
+        });
+        return MapEntry(key, examMap);
+      }),
+      'schools': schools.map((e) => e.toJson()).toList(),
+    };
+  }
 }
 
-class ConSchool {
-  String school;
-  List<ConSchoolDatum> schoolData;
+class ExamName {
+  final int id;
+  final String shortname;
 
-  ConSchool({
-    required this.school,
-    required this.schoolData,
-  });
-
-  factory ConSchool.fromJson(Map<String, dynamic> json) => ConSchool(
-        school: json["school"],
-        schoolData: List<ConSchoolDatum>.from(
-            json["school_data"].map((x) => ConSchoolDatum.fromJson(x))),
-      );
-
-  Map<String, dynamic> toJson() => {
-        "school": school,
-        "school_data": List<dynamic>.from(schoolData.map((x) => x.toJson())),
-      };
-}
-
-class ConSchoolDatum {
-  ConsistencyDetails details;
-  List<ConExamDatum> examData;
-
-  ConSchoolDatum({
-    required this.details,
-    required this.examData,
-  });
-
-  factory ConSchoolDatum.fromJson(Map<String, dynamic> json) => ConSchoolDatum(
-        details: ConsistencyDetails.fromJson(json["details"]),
-        examData: List<ConExamDatum>.from(
-            json["exam_data"].map((x) => ConExamDatum.fromJson(x))),
-      );
-
-  Map<String, dynamic> toJson() => {
-        "details": details.toJson(),
-        "exam_data": List<dynamic>.from(examData.map((x) => x.toJson())),
-      };
-}
-
-class ConsistencyDetails {
-  int ord;
-  String studentName;
-  String adminno;
-  String sectionName;
-
-  ConsistencyDetails({
-    required this.ord,
-    required this.studentName,
-    required this.adminno,
-    required this.sectionName,
-  });
-
-  factory ConsistencyDetails.fromJson(Map<String, dynamic> json) =>
-      ConsistencyDetails(
-        ord: json["Ord"],
-        studentName: json["StudentName"],
-        adminno: json["Adminno"],
-        sectionName: json["SectionName"],
-      );
-
-  Map<String, dynamic> toJson() => {
-        "Ord": ord,
-        "StudentName": studentName,
-        "Adminno": adminno,
-        "SectionName": sectionName,
-      };
-}
-
-class ConExamDatum {
-  ConInfo? info;
-
-  ConExamDatum({
-    required this.info,
-  });
-
-  factory ConExamDatum.fromJson(Map<String, dynamic> json) => ConExamDatum(
-        info: json["info"] == null ? null : ConInfo.fromJson(json["info"]),
-      );
-
-  Map<String, dynamic> toJson() => {
-        "info": info?.toJson(),
-      };
-}
-
-class ConInfo {
-  int id;
-  String studentName;
-  double value;
-  int rank;
-
-  ConInfo({
+  ExamName({
     required this.id,
-    required this.studentName,
-    required this.value,
-    required this.rank,
+    required this.shortname,
   });
 
-  factory ConInfo.fromJson(Map<String, dynamic> json) => ConInfo(
-        id: json["id"],
-        studentName: json["StudentName"],
-        value: json["Value"]?.toDouble(),
-        rank: json["Rank"],
-      );
+  factory ExamName.fromJson(Map<String, dynamic> json) {
+    return ExamName(
+      id: json['id'] as int? ?? 0,
+      shortname: json['shortname'] as String? ?? '',
+    );
+  }
 
-  Map<String, dynamic> toJson() => {
-        "id": id,
-        "StudentName": studentName,
-        "Value": value,
-        "Rank": rank,
-      };
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'shortname': shortname,
+    };
+  }
+}
+
+class School {
+  final String short;
+
+  School({
+    required this.short,
+  });
+
+  factory School.fromJson(Map<String, dynamic> json) {
+    return School(
+      short: json['short'] as String? ?? '',
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'short': short,
+    };
+  }
 }

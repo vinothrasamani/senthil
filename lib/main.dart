@@ -10,6 +10,7 @@ import 'package:senthil/controller/notification_controller.dart';
 import 'package:senthil/controller/web_safe/protect_web.dart';
 import 'package:senthil/controller/theme_controller.dart';
 import 'package:senthil/firebase_options.dart';
+import 'package:senthil/view/error_screen.dart';
 import 'package:senthil/view/splash_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -45,6 +46,9 @@ void main() async {
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
     loadFirebaseMessaging();
   }
+  ErrorWidget.builder = (FlutterErrorDetails details) {
+    return ErrorScreen(details: details);
+  };
   runApp(ProviderScope(child: const MyApp()));
 }
 

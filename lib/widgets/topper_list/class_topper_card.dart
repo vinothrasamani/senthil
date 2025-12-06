@@ -11,9 +11,14 @@ import 'package:flutter/foundation.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 class ClassTopperCard extends StatelessWidget {
-  const ClassTopperCard({super.key, required this.snap, required this.isDark});
+  const ClassTopperCard(
+      {super.key,
+      required this.snap,
+      required this.isDark,
+      required this.role});
   final TopperListModel snap;
   final bool isDark;
+  final int role;
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +45,7 @@ class ClassTopperCard extends StatelessWidget {
                       TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   labelColor: AppController.headColor,
                   indicatorColor: AppController.darkGreen,
-                  dividerColor: Colors.grey.withAlpha(30),
+                  dividerColor: Colors.grey.withAlpha(40),
                   tabs: [
                     for (var school in snap.data.schools) Tab(text: school)
                   ],
@@ -171,21 +176,24 @@ class ClassTopperCard extends StatelessWidget {
       ClassTopperStudent student, BuildContext context, bool isFirst) {
     String image = student.photo?.isEmpty ?? true
         ? '${AppController.baseImageUrl}/placeholder.jpg'
-        : '${AppController.basefileUrl}/${student.photo}';
+        : '${AppController.imageUrl}/${student.photo}';
+    bool canShow = role == 1;
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 5),
       child: ExpansionTileItem.outlined(
         initiallyExpanded: isFirst,
         title: Text(student.student ?? 'Unknown Student'),
-        leading: GestureDetector(
-          onTap: () => TopperListController.openImage(
-              context, image, student.student ?? 'Student'),
-          child: CircleAvatar(
-            backgroundColor: baseColor.withAlpha(150),
-            backgroundImage: NetworkImage(image),
-          ),
-        ),
+        leading: canShow
+            ? GestureDetector(
+                onTap: () => TopperListController.openImage(
+                    context, image, student.student ?? 'Student'),
+                child: CircleAvatar(
+                  backgroundColor: baseColor.withAlpha(150),
+                  backgroundImage: NetworkImage(image),
+                ),
+              )
+            : Icon(Icons.account_circle_outlined, size: 35, color: baseColor),
         children: [
           for (var i = 0; i < student.subjects.length; i++)
             myRow(student.subjects[i], i),

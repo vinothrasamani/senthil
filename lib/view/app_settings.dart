@@ -166,30 +166,37 @@ class AppSettings extends ConsumerWidget {
               ),
               SizedBox(height: 20),
             ],
+            SizedBox(height: 30),
+            logout(ref, isDark),
+            SizedBox(height: 30),
           ],
         ),
       ),
-      bottomNavigationBar: Container(
-        padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 10),
-        child: TextButton.icon(
-          onPressed: () => SettingsController.logout(ref),
-          style: TextButton.styleFrom(
-            backgroundColor: AppController.red.withAlpha(50),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-              side: BorderSide(color: AppController.red),
-            ),
+    );
+  }
+
+  Widget logout(WidgetRef ref, bool isDark) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 10),
+      constraints: BoxConstraints(maxWidth: 300),
+      child: TextButton.icon(
+        onPressed: () => SettingsController.logout(ref),
+        style: TextButton.styleFrom(
+          backgroundColor: AppController.red.withAlpha(50),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+            side: BorderSide(color: AppController.red),
           ),
-          icon: Icon(
-            TablerIcons.logout,
+        ),
+        icon: Icon(
+          TablerIcons.logout,
+          color: isDark ? Colors.white : AppController.red,
+        ),
+        label: Text(
+          'Logout',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
             color: isDark ? Colors.white : AppController.red,
-          ),
-          label: Text(
-            'Logout',
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              color: isDark ? Colors.white : AppController.red,
-            ),
           ),
         ),
       ),

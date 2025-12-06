@@ -27,8 +27,10 @@ class AppController {
   //-------------------- For an API --------------------
   static final String baseUrl = 'https://senthil.ijessi.com';
   static final String baseApiUrl = '$baseUrl/api';
-  static final String basefileUrl = '$baseUrl/public/pdf';
   static final String baseImageUrl = '$baseUrl/public/images';
+  static final String basefileUrl = '$baseUrl/public/uploads/pdf';
+  static final String baseQusUrl = '$baseUrl/public/uploads/QS';
+  static final String imageUrl = '$baseUrl/public/uploads/student';
   static final String baseGifUrl = '$baseImageUrl/assets';
   static final String baseChatImgUrl = '$baseImageUrl/chat';
   static final String baseResultImageUrl = '$baseUrl/public/img';
@@ -49,6 +51,7 @@ class AppController {
     final res = await http.post(url,
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(object));
+    print(res.body);
     if (res.statusCode == 200) {
       return res.body;
     } else {

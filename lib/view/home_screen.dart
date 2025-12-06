@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
+import 'package:get/get.dart';
 import 'package:senthil/controller/app_controller.dart';
 import 'package:senthil/controller/home_controller.dart';
 import 'package:senthil/controller/login_controller.dart';
@@ -11,6 +12,7 @@ import 'package:senthil/controller/theme_controller.dart';
 import 'package:senthil/model/home/dashboard_model.dart';
 import 'package:senthil/model/home/exam_results_model.dart';
 import 'package:senthil/shimmer/home_shimme.dart';
+import 'package:senthil/view/image_viewer_screen.dart';
 import 'package:senthil/widgets/app_drawer.dart';
 import 'package:senthil/widgets/home/collection_card.dart';
 import 'package:senthil/widgets/common_error_widget.dart';
@@ -243,11 +245,36 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                           ),
                                         ),
                                         Expanded(
-                                          child: Image.network(
-                                            '${AppController.baseResultImageUrl}/${snap.data![index].image}',
-                                            fit: BoxFit.fill,
-                                            width: double.infinity,
-                                          ),
+                                          child: Builder(builder: (context) {
+                                            final url =
+                                                '${AppController.baseResultImageUrl}/${snap.data![index].image}';
+                                            return GestureDetector(
+                                              onTap: () => Get.to(
+                                                  () => ImageViewerScreen(
+                                                      url: url,
+                                                      name: snap
+                                                          .data![index].title,
+                                                      from: 'network'),
+                                                  transition: Transition
+                                                      .rightToLeftWithFade),
+                                              child: Image.network(
+                                                url,
+                                                fit: BoxFit.fill,
+                                                width: double.infinity,
+                                                errorBuilder: (context, error,
+                                                    stackTrace) {
+                                                  return Container(
+                                                    padding: EdgeInsets.all(20),
+                                                    child: Icon(
+                                                      Icons.broken_image,
+                                                      size: 40,
+                                                      color: Colors.red[400],
+                                                    ),
+                                                  );
+                                                },
+                                              ),
+                                            );
+                                          }),
                                         ),
                                       ],
                                     ),

@@ -21,7 +21,6 @@ import 'package:senthil/view/question_screen.dart';
 import 'package:senthil/view/staff_details/staff_details_screen.dart';
 import 'package:senthil/view/subject_details_screen.dart';
 import 'package:senthil/view/subject_handling_screen.dart';
-import 'package:senthil/view/topper_list_image_screen.dart';
 import 'package:senthil/view/topper_list_screen.dart';
 import 'package:senthil/view/user_list_screen.dart';
 import 'package:senthil/view/web_view_screen.dart';
@@ -34,12 +33,20 @@ class AppDrawer extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.read(LoginController.userProvider);
     final isDark = ref.watch(ThemeController.themeMode) == ThemeMode.dark;
-    final schools = ['Public School', 'Matric School'];
+    List<Map<String, String>> schools = [];
+    List<Map<String, String>> list = [
+      {'board': 'CBSE', 'name': 'Public School'},
+      {'board': 'Matric', 'name': 'Matric School'}
+    ];
+    if (user != null && user.data != null) {
+      final roles = user.data?.board.toString().split(',').toList() ?? [];
+      schools = list.where((item) => roles.contains(item['board'])).toList();
+    }
     final menuItems = [
       'Compare',
       'Compare Topper',
       'Compare Topper Image',
-      'Consistency',
+      'Compare Consistency',
       'Question & M.Scheme',
       'Feedback View',
       'Staff Details',
@@ -102,13 +109,13 @@ class AppDrawer extends ConsumerWidget {
                     Builder(builder: (context) {
                       final schoolIndex = schools.indexOf(school);
                       return ExpansionTile(
-                        leading: Text(school[0].toUpperCase(),
+                        leading: Text(school['name']![0].toUpperCase(),
                             style: GoogleFonts.poppins(
                                 fontSize: 24,
                                 color: isDark ? Colors.blue : baseColor,
                                 fontWeight: FontWeight.bold)),
                         textColor: AppController.headColor,
-                        title: Text(school),
+                        title: Text(school['name']!),
                         children: [
                           for (var item in menuItems)
                             Builder(builder: (context) {
@@ -118,64 +125,7 @@ class AppDrawer extends ConsumerWidget {
                                 title: Text(item),
                                 onTap: () {
                                   Get.back();
-                                  switch (index) {
-                                    case 0:
-                                      Get.to(
-                                          () => ComparisonScreen(
-                                              index: schoolIndex,
-                                              userId: user.data!.id),
-                                          transition: Transition.zoom);
-                                      break;
-                                    case 1:
-                                      Get.to(
-                                          () => TopperListScreen(
-                                              index: schoolIndex,
-                                              userId: user.data!.id),
-                                          transition: Transition.zoom);
-                                      break;
-                                    case 2:
-                                      Get.to(
-                                          () => TopperListImageScreen(
-                                              index: schoolIndex,
-                                              userId: user.data!.id),
-                                          transition: Transition.zoom);
-                                      break;
-                                    case 3:
-                                      Get.to(
-                                          () => ConsistencyScreen(
-                                              index: schoolIndex,
-                                              userId: user.data!.id),
-                                          transition: Transition.zoom);
-                                      break;
-                                    case 4:
-                                      Get.to(
-                                          () => QuestionScreen(
-                                              index: schoolIndex,
-                                              userId: user.data!.id),
-                                          transition: Transition.zoom);
-                                      break;
-                                    case 5:
-                                      Get.to(
-                                          () => FeedbackScreen(
-                                              index: schoolIndex,
-                                              userId: user.data!.id),
-                                          transition: Transition.zoom);
-                                      break;
-                                    case 6:
-                                      Get.to(
-                                          () => StaffDetailsScreen(
-                                              index: schoolIndex,
-                                              userId: user.data!.id),
-                                          transition: Transition.zoom);
-                                      break;
-                                    case 7:
-                                      Get.to(
-                                          () => ExamUploadDetailsScreen(
-                                              index: schoolIndex),
-                                          transition: Transition.zoom);
-                                      break;
-                                    default:
-                                  }
+                                  navigate(index, schoolIndex, user.data!.id);
                                 },
                               );
                             }),
@@ -239,5 +189,45 @@ class AppDrawer extends ConsumerWidget {
         ),
       ),
     );
+  }
+
+  void navigate(int index, int schoolIndex, int userId) {
+    switch (index) {
+      case 0:
+        Get.to(() => ComparisonScreen(index: schoolIndex, userId: userId),
+            transition: Transition.zoom);
+        break;
+      case 1:
+        Get.to(
+            () => TopperListScreen(index: schoolIndex, role: 0, userId: userId),
+            transition: Transition.zoom);
+        break;
+      case 2:
+        Get.to(
+            () => TopperListScreen(index: schoolIndex, role: 1, userId: userId),
+            transition: Transition.zoom);
+        break;
+      case 3:
+        Get.to(() => ConsistencyScreen(index: schoolIndex, userId: userId),
+            transition: Transition.zoom);
+        break;
+      case 4:
+        Get.to(() => QuestionScreen(index: schoolIndex, userId: userId),
+            transition: Transition.zoom);
+        break;
+      case 5:
+        Get.to(() => FeedbackScreen(index: schoolIndex, userId: userId),
+            transition: Transition.zoom);
+        break;
+      case 6:
+        Get.to(() => StaffDetailsScreen(index: schoolIndex, userId: userId),
+            transition: Transition.zoom);
+        break;
+      case 7:
+        Get.to(() => ExamUploadDetailsScreen(index: schoolIndex),
+            transition: Transition.zoom);
+        break;
+      default:
+    }
   }
 }

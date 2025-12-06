@@ -7,7 +7,9 @@ import 'package:senthil/controller/consistency_controller.dart';
 import 'package:senthil/controller/theme_controller.dart';
 import 'package:senthil/shimmer/consistency_shimmer.dart';
 import 'package:senthil/shimmer/search_shimmer.dart';
+import 'package:senthil/widgets/common_error_widget.dart';
 import 'package:senthil/widgets/consistency_table.dart';
+import 'package:senthil/widgets/initializer_widget.dart';
 
 class ConsistencyScreen extends ConsumerStatefulWidget {
   const ConsistencyScreen(
@@ -21,31 +23,25 @@ class ConsistencyScreen extends ConsumerStatefulWidget {
 
 class _ConsistencyScreenState extends ConsumerState<ConsistencyScreen> {
   final formKey = GlobalKey<FormState>();
-  String? selectedClass, selectedYear, selectedCourse, selectedRefGroup;
-  String? selectedStmGroup, selectedCrGroup;
+  String? selectedYear, selectedClass, selectedCourse;
   Object? data;
   final cardKey = GlobalKey<ExpansionTileCoreState>();
 
   @override
   void initState() {
     ConsistencyController.setConData(
-        ref, 'con-years', {'index': widget.index, 'id': widget.userId});
+        ref, 'years', {'index': widget.index, 'id': widget.userId});
     super.initState();
   }
 
   void search() async {
     ref.read(ConsistencyController.searchingTop.notifier).state = true;
-    selectedStmGroup ??= "All";
-    selectedRefGroup ??= "All";
-    selectedCrGroup ??= "All";
     data = {
-      'id': widget.userId,
+      'userId': widget.userId,
       "index": widget.index,
+      "course": selectedCourse,
       "year": selectedYear,
-      "className": selectedClass,
-      "courseGroup": selectedCrGroup,
-      "stream": selectedStmGroup,
-      "ref": selectedRefGroup
+      "className": selectedClass
     };
     cardKey.currentState?.collapse();
   }
@@ -56,15 +52,16 @@ class _ConsistencyScreenState extends ConsumerState<ConsistencyScreen> {
             label: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text('Admission No. :'),
-                SizedBox(width: 8),
+                const Text('Admission No. :'),
+                const SizedBox(width: 8),
                 Container(
-                  padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                   decoration: BoxDecoration(
                       border: Border.all(
                           color: isDark ? AppController.lightBlue : baseColor),
                       borderRadius: BorderRadius.circular(5)),
-                  child: Text(
+                  child: const Text(
                     '123456',
                     style: TextStyle(fontSize: 10),
                   ),
@@ -72,13 +69,13 @@ class _ConsistencyScreenState extends ConsumerState<ConsistencyScreen> {
               ],
             ),
           ),
-          SizedBox(width: 8),
+          const SizedBox(width: 8),
           Chip(
             label: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text('Section : '),
-                SizedBox(width: 8),
+                const Text('Section : '),
+                const SizedBox(width: 8),
                 Container(
                   width: 18,
                   height: 18,
@@ -86,7 +83,7 @@ class _ConsistencyScreenState extends ConsumerState<ConsistencyScreen> {
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(5),
                       color: AppController.darkGreen),
-                  child: Text(
+                  child: const Text(
                     'A',
                     style: TextStyle(
                         fontWeight: FontWeight.bold,
@@ -123,21 +120,21 @@ class _ConsistencyScreenState extends ConsumerState<ConsistencyScreen> {
                 value: e ?? '', child: Text(e ?? 'None')))
             .toList(),
         decoration: InputDecoration(
-            labelText: 'Year',
+            labelText: 'Academic Year',
             prefixIcon: Icon(
               TablerIcons.calendar_smile,
               color: Colors.grey,
             )),
         onChanged: (val) {
-          selectedYear = val;
-          selectedClass = null;
-          selectedCourse = null;
-          selectedCrGroup = null;
-          selectedStmGroup = null;
-          ConsistencyController.setConData(ref, 'con-classes', {
+          setState(() {
+            selectedYear = val;
+            selectedClass = null;
+            selectedCourse = null;
+          });
+          ConsistencyController.setConData(ref, 'classes', {
             'index': widget.index,
             'year': selectedYear,
-            'id': widget.userId
+            'userId': widget.userId
           });
         },
       ),
@@ -155,82 +152,18 @@ class _ConsistencyScreenState extends ConsumerState<ConsistencyScreen> {
               color: Colors.grey,
             )),
         onChanged: (val) {
-          selectedClass = val;
-          selectedCourse = null;
-          selectedCrGroup = null;
-          selectedStmGroup = null;
+          setState(() {
+            selectedClass = val;
+            selectedCourse = null;
+          });
           ConsistencyController.setConData(ref, 'con-courses', {
             'index': widget.index,
-            'className': selectedClass,
+            'className': val,
             'year': selectedYear,
-            'id': widget.userId
+            'userId': widget.userId
           });
-          ConsistencyController.setConData(ref, 'con-course-group', {
-            'index': widget.index,
-            'year': selectedYear,
-            'className': selectedClass
-          });
-          ConsistencyController.setConData(ref, 'con-stream-group', {
-            'index': widget.index,
-            'year': selectedYear,
-            'className': selectedClass
-          });
-          ConsistencyController.setConData(ref, 'con-ref-group', {
-            'index': widget.index,
-            'year': selectedYear,
-            'className': selectedClass
-          });
-          if (selectedClass == "XI" || selectedClass == "XII") {
-            ref.read(ConsistencyController.canAddTop.notifier).state = true;
-          } else {
-            ref.read(ConsistencyController.canAddTop.notifier).state = false;
-          }
         },
       ),
-      if (ref.watch(ConsistencyController.canAddTop)) ...[
-        DropdownButtonFormField<String>(
-          value: selectedCrGroup,
-          items: ref
-              .watch(ConsistencyController.conCoursegroups)
-              .map((e) => DropdownMenuItem<String>(
-                  value: e ?? '', child: Text(e ?? 'None')))
-              .toList(),
-          decoration: InputDecoration(
-              labelText: 'Course Group',
-              prefixIcon: Icon(Icons.group, color: Colors.grey)),
-          onChanged: (val) {
-            selectedCrGroup = val;
-          },
-        ),
-        DropdownButtonFormField<String>(
-          value: selectedStmGroup,
-          items: ref
-              .watch(ConsistencyController.conStreamgroups)
-              .map((e) => DropdownMenuItem<String>(
-                  value: e ?? '', child: Text(e ?? 'None')))
-              .toList(),
-          decoration: InputDecoration(
-              labelText: 'stream group',
-              prefixIcon: Icon(Icons.group, color: Colors.grey)),
-          onChanged: (val) {
-            selectedStmGroup = val;
-          },
-        ),
-        DropdownButtonFormField<String>(
-          value: selectedRefGroup,
-          items: ref
-              .watch(ConsistencyController.conRefGroup)
-              .map((e) => DropdownMenuItem<String>(
-                  value: e ?? '', child: Text(e ?? 'None')))
-              .toList(),
-          decoration: InputDecoration(
-              labelText: 'Ref group',
-              prefixIcon: Icon(Icons.group, color: Colors.grey)),
-          onChanged: (val) {
-            selectedRefGroup = val;
-          },
-        ),
-      ],
       DropdownButtonFormField<String>(
         value: selectedCourse,
         items: ref
@@ -242,7 +175,9 @@ class _ConsistencyScreenState extends ConsumerState<ConsistencyScreen> {
             labelText: 'Main Course',
             prefixIcon: Icon(Icons.golf_course, color: Colors.grey)),
         onChanged: (val) {
-          selectedCourse = val;
+          setState(() {
+            selectedCourse = val;
+          });
         },
       ),
       Builder(builder: (context) {
@@ -258,16 +193,16 @@ class _ConsistencyScreenState extends ConsumerState<ConsistencyScreen> {
     ];
 
     return Scaffold(
-      appBar: AppBar(title: Text('Consistency')),
+      appBar: AppBar(title: const Text('Consistency')),
       body: SafeArea(
         child: ListView(
           shrinkWrap: true,
-          padding: EdgeInsets.all(10),
+          padding: const EdgeInsets.all(10),
           children: [
             if (ref.watch(ConsistencyController.conYears).isNotEmpty)
               AppController.animatedTitle(
                   '${widget.index == 0 ? 'CBSE' : "Matric"} School', isDark),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             if (ref.watch(ConsistencyController.conYears).isNotEmpty)
               Form(
                 key: formKey,
@@ -295,81 +230,78 @@ class _ConsistencyScreenState extends ConsumerState<ConsistencyScreen> {
               )
             else
               SearchShimmer(isDark: isDark),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             if (ref.watch(ConsistencyController.conYears).isNotEmpty)
               listener == null
-                  ? SizedBox(
-                      height: 200,
-                      child: Center(
-                          child: Text(
-                              'Search to Know the Consistency of students!')),
-                    )
+                  ? const InitializerWidget()
                   : listener.when(
                       data: (snap) {
-                        Widget commonText(school) => Text.rich(
+                        Widget commonText(String school) => Text.rich(
                               TextSpan(
                                 text: 'Consistency Results of class ',
                                 children: [
                                   TextSpan(
                                     text:
                                         '$selectedClass ($school School) $selectedYear',
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                         fontWeight: FontWeight.bold,
-                                        color: AppController.darkGreen),
+                                        color:
+                                            Color.fromARGB(255, 34, 139, 34)),
                                   ),
                                 ],
                               ),
                             );
 
                         return DefaultTabController(
-                          length: snap.data.schools.length,
+                          length: snap.schools.length,
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               TabBar(
                                 isScrollable:
-                                    snap.data.schools.length > 4 ? true : false,
-                                tabAlignment: snap.data.schools.length > 4
+                                    snap.schools.length > 4 ? true : false,
+                                tabAlignment: snap.schools.length > 4
                                     ? TabAlignment.start
                                     : null,
-                                labelStyle: TextStyle(
+                                labelStyle: const TextStyle(
                                     fontSize: 16, fontWeight: FontWeight.bold),
                                 labelColor: AppController.headColor,
                                 indicatorColor: AppController.darkGreen,
                                 dividerColor: Colors.grey.withAlpha(30),
                                 tabs: [
-                                  for (var item in snap.data.schools)
-                                    Tab(text: item.school),
+                                  for (var item in snap.schools)
+                                    Tab(text: item.short),
                                 ],
                               ),
                               SizedBox(
                                 height: size.height,
                                 child: TabBarView(
                                   children: [
-                                    for (var item in snap.data.schools)
+                                    for (var item in snap.schools)
                                       Builder(builder: (context) {
-                                        final index =
-                                            snap.data.schools.indexOf(item);
+                                        bool isLargeScreen = size.width > 800;
+                                        final schoolIndex =
+                                            snap.schools.indexOf(item);
                                         return Column(
                                           mainAxisSize: MainAxisSize.min,
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
-                                            SizedBox(height: 10),
+                                            const SizedBox(height: 10),
                                             AppController.heading(
                                                 'Exam Result Student Consistency',
                                                 isDark,
                                                 TablerIcons.chart_donut),
-                                            SizedBox(height: 10),
-                                            commonText(item.school),
-                                            SizedBox(height: 10),
-                                            desc(isDark),
-                                            SizedBox(height: 10),
+                                            const SizedBox(height: 10),
+                                            commonText(item.short),
+                                            const SizedBox(height: 10),
+                                            if (!isLargeScreen) desc(isDark),
+                                            const SizedBox(height: 10),
                                             ConsistencyTable(
                                                 snap: snap,
                                                 isDark: isDark,
-                                                index: index)
+                                                schoolIndex: schoolIndex)
                                           ],
                                         );
                                       }),
@@ -380,10 +312,10 @@ class _ConsistencyScreenState extends ConsumerState<ConsistencyScreen> {
                           ),
                         );
                       },
-                      error: (e, _) => SizedBox(
-                        height: 200,
-                        child: Center(child: Text('Something went wrong!')),
-                      ),
+                      error: (e, _) {
+                        debugPrint('$e');
+                        return const CommonErrorWidget();
+                      },
                       loading: () => ConsistencyShimmer(isDark: isDark),
                     ),
           ],

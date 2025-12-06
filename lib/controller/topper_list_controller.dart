@@ -2,12 +2,9 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:get/get.dart';
 import 'package:senthil/controller/app_controller.dart';
-import 'package:senthil/model/topper_list_image_model.dart';
 import 'package:senthil/model/topper_list_model.dart';
-import 'package:senthil/view/pdf_viewer_screen.dart';
 
 class TopperListController {
   static final yearsTop = StateProvider.autoDispose<List<dynamic>>((ref) => []);
@@ -130,82 +127,4 @@ class TopperListController {
       ),
     );
   }
-
-  static void listDocs(
-      BuildContext context, List<dynamic> list, bool isDark) async {
-    await showModalBottomSheet(
-      context: context,
-      showDragHandle: true,
-      builder: (ctx) => ListView(
-        children: [
-          AppController.heading(
-              'Available Documents', isDark, TablerIcons.file),
-          SizedBox(height: 10),
-          for (var item in list)
-            if (item.filename != null && item.filename.isNotEmpty)
-              ListTile(
-                leading: Builder(builder: (context) {
-                  final link = item.photo == null || item.photo.isEmpty
-                      ? '${AppController.baseImageUrl}/placeholder.jpg'
-                      : '${AppController.basefileUrl}/${item.photo}';
-                  return CircleAvatar(
-                    radius: 20,
-                    backgroundImage: NetworkImage(link),
-                  );
-                }),
-                title: Text(item.studentName),
-                trailing:
-                    Icon(TablerIcons.file, color: AppController.lightBlue),
-                onTap: () {
-                  Get.back();
-                  Get.to(() => PdfViewerScreen(fileName: item.filename));
-                },
-              ),
-        ],
-      ),
-    );
-  }
-
-  static void setDataTopImage(WidgetRef ref, String url, Object object) async {
-    final res = await AppController.send(url, object);
-    final decrypted = jsonDecode(res);
-    switch (url) {
-      case 'years-top-image':
-        ref.read(yearsTop.notifier).state = decrypted['data'];
-        break;
-      case 'classes-top-image':
-        ref.read(classesTop.notifier).state = decrypted['data'];
-        ref.read(examsTop.notifier).state = [];
-        ref.read(coursesTop.notifier).state = [];
-        ref.read(coursegroupsTop.notifier).state = [];
-        ref.read(streamgroupsTop.notifier).state = [];
-        break;
-      case 'exams-top-image':
-        ref.read(examsTop.notifier).state = decrypted['data'];
-        ref.read(coursesTop.notifier).state = [];
-        ref.read(coursegroupsTop.notifier).state = [];
-        ref.read(streamgroupsTop.notifier).state = [];
-        break;
-      case 'courses-top-image':
-        ref.read(coursesTop.notifier).state = decrypted['data'];
-        break;
-      case 'course-group-top-image':
-        ref.read(coursegroupsTop.notifier).state = decrypted['data'];
-        break;
-      case 'ref-group-top-image':
-        ref.read(refGroupTop.notifier).state = decrypted['data'];
-        break;
-      case 'stream-group-top-image':
-        ref.read(streamgroupsTop.notifier).state = decrypted['data'];
-        break;
-      default:
-    }
-  }
-
-  static final classTopperImageData = FutureProvider.family
-      .autoDispose<TopperListImageModel, Object>((ref, data) async {
-    final res = await AppController.send('top-list-img-search', data);
-    ref.read(searchingTop.notifier).state = false;
-    return topperListImageModelFromJson(res);
-  });
 }

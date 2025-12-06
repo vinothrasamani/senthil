@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 class NoRecordContent extends StatelessWidget {
-  const NoRecordContent({super.key});
+  const NoRecordContent({super.key, this.msg, this.title});
+  final String? title;
+  final String? msg;
 
   @override
   Widget build(BuildContext context) {
@@ -29,11 +31,11 @@ class NoRecordContent extends StatelessWidget {
               Icon(Icons.search_off_rounded, size: 55),
               SizedBox(height: 12),
               Text(
-                'Nothing Here!',
+                title ?? 'Nothing Here!',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               SizedBox(height: 8),
-              Text('No results match your search.',
+              Text(msg ?? 'No results match your search.',
                   textAlign: TextAlign.center),
             ],
           ),

@@ -41,7 +41,8 @@ class QuestionTable extends StatelessWidget {
           );
         }
         bool island = size.width > size.height || size.width > 500;
-        TextStyle textStyle = TextStyle(color: baseColor);
+        TextStyle textStyle =
+            TextStyle(color: isDark ? AppController.lightBlue : baseColor);
 
         return DataTable2(
           border: TableBorder.all(color: Colors.grey),
@@ -113,12 +114,13 @@ class QuestionTable extends StatelessWidget {
                           ? () async {
                               if (kIsWeb) {
                                 final url =
-                                    '${AppController.basefileUrl}/${stud.info.examQuestion!}';
+                                    '${AppController.baseQusUrl}/${stud.info.examQuestion!}';
                                 if (await canLaunchUrlString(url)) {
                                   await launchUrlString(url);
                                 }
                               } else {
                                 Get.to(() => PdfViewerScreen(
+                                    fromQs: true,
                                     fileName: stud.info.examQuestion!));
                               }
                             }
@@ -138,12 +140,13 @@ class QuestionTable extends StatelessWidget {
                           ? () async {
                               if (kIsWeb) {
                                 final url =
-                                    '${AppController.basefileUrl}/${stud.info.markingScheme!}';
+                                    '${AppController.baseQusUrl}/${stud.info.markingScheme!}';
                                 if (await canLaunchUrlString(url)) {
                                   await launchUrlString(url);
                                 }
                               } else {
                                 Get.to(() => PdfViewerScreen(
+                                    fromQs: true,
                                     fileName: stud.info.markingScheme!));
                               }
                             }
