@@ -31,7 +31,9 @@ class _StaffDetailCardState extends State<StaffDetailCard> {
   void initState() {
     name =
         '${widget.staff.school}_${widget.staff.schooltype}_${widget.staff.code}_StaffDetail.pdf';
-    checkDownloads();
+    if (!kIsWeb) {
+      checkDownloads();
+    }
     super.initState();
   }
 

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:senthil/controller/app_controller.dart';
 import 'package:senthil/model/feedback_view_model.dart';
+import 'package:senthil/model/rating_details_model.dart';
 
 class FeedbackController {
   static final years = StateProvider.autoDispose<List>((ref) => []);
@@ -10,6 +11,7 @@ class FeedbackController {
   static final classes = StateProvider.autoDispose<List>((ref) => []);
   static final refGroups = StateProvider.autoDispose<List>((ref) => []);
   static final sections = StateProvider.autoDispose<List>((ref) => []);
+  static final isStaff = StateProvider.autoDispose((ref) => false);
   static final searching = StateProvider.autoDispose((ref) => false);
   static final feedAvail = StateProvider.autoDispose((ref) => false);
 
@@ -21,16 +23,23 @@ class FeedbackController {
         ref.read(years.notifier).state = decrypted['data']['years'];
         ref.read(sessions.notifier).state = decrypted['data']['sessions'];
         ref.read(schools.notifier).state = decrypted['data']['schools'];
-        ref.read(refGroups.notifier).state = decrypted['data']['refGroups'];
         break;
       case 'feed-classes':
         ref.read(classes.notifier).state = decrypted['data'];
+        break;
+      case 'feed-refs':
+        ref.read(refGroups.notifier).state = decrypted['data'];
         break;
       case 'feed-secs':
         ref.read(sections.notifier).state = decrypted['data'];
         break;
       default:
     }
+  }
+
+  static Future<RatingDetailsModel> fetchRating(Object data) async {
+    final res = await AppController.send('fetch-ratings', data);
+    return ratingDetailsModelFromJson(res);
   }
 
   static final searchData = FutureProvider.family

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:senthil/widgets/no_record_content.dart';
 import 'package:senthil/controller/app_controller.dart';
 import 'package:senthil/model/feedback_view_model.dart';
 import 'package:senthil/widgets/feedback_view/optional_feedback_details.dart';
@@ -12,9 +13,7 @@ class OptionalFeedback extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return snap.data.feedbackSubjects.isEmpty
-        ? Center(
-            child: Text('No Data'),
-          )
+        ? NoRecordContent()
         : ListView(
             children: [
               for (var i = 0; i < snap.data.feedbackSubjects.length; i++)

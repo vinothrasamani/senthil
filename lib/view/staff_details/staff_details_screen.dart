@@ -2,6 +2,9 @@ import 'package:expansion_tile_group/expansion_tile_group.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:senthil/widgets/initializer_widget.dart';
+import 'package:senthil/widgets/common_error_widget.dart';
+import 'package:senthil/widgets/no_record_content.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:senthil/controller/app_controller.dart';
 import 'package:senthil/controller/staff_controller.dart';
@@ -26,7 +29,7 @@ class _StaffDetailsScreenState extends ConsumerState<StaffDetailsScreen> {
   final cardKey = GlobalKey<ExpansionTileCoreState>();
   ScrollController scrollController = ScrollController();
   String? selectedSchool, selectedCategory, selectedDepartment;
-  String? staffCode, staffName;
+  String? staffCode, staffName, selectedStatus;
   Object? data;
 
   @override
@@ -43,6 +46,7 @@ class _StaffDetailsScreenState extends ConsumerState<StaffDetailsScreen> {
         "school": selectedSchool,
         "cat": selectedCategory,
         "code": staffCode,
+        "status": selectedStatus,
         "name": staffName,
         "dept": selectedDepartment
       };
@@ -109,6 +113,7 @@ class _StaffDetailsScreenState extends ConsumerState<StaffDetailsScreen> {
           selectedSchool = val;
           selectedCategory = null;
           selectedDepartment = null;
+          selectedStatus = null;
           StaffController.setData(
               ref, 'staff-categories', {'index': widget.index, 'school': val});
         },
@@ -129,6 +134,7 @@ class _StaffDetailsScreenState extends ConsumerState<StaffDetailsScreen> {
         onChanged: (val) {
           selectedCategory = val;
           selectedDepartment = null;
+          selectedStatus = null;
           StaffController.setData(ref, 'staff-dept',
               {'index': widget.index, 'school': selectedSchool, 'cat': val});
         },
@@ -148,6 +154,25 @@ class _StaffDetailsScreenState extends ConsumerState<StaffDetailsScreen> {
             )),
         onChanged: (val) {
           selectedDepartment = val;
+          selectedStatus = null;
+          StaffController.setData(ref, 'staff-status', {});
+        },
+      ),
+      DropdownButtonFormField<String>(
+        value: selectedStatus,
+        items: ref
+            .watch(StaffController.status)
+            .map((e) => DropdownMenuItem<String>(
+                value: e ?? '', child: Text(e ?? 'None')))
+            .toList(),
+        decoration: InputDecoration(
+            labelText: 'Status',
+            prefixIcon: Icon(
+              TablerIcons.status_change,
+              color: Colors.grey,
+            )),
+        onChanged: (val) {
+          selectedStatus = val;
         },
       ),
       TextField(
@@ -244,10 +269,7 @@ class _StaffDetailsScreenState extends ConsumerState<StaffDetailsScreen> {
             SizedBox(height: 20),
             if (ref.watch(StaffController.schools).isNotEmpty)
               listener == null
-                  ? SizedBox(
-                      height: 200,
-                      child: Center(child: Text('Search to get staff List!')),
-                    )
+                  ? InitializerWidget()
                   : listener.when(
                       data: (snap) {
                         return Column(
@@ -271,14 +293,13 @@ class _StaffDetailsScreenState extends ConsumerState<StaffDetailsScreen> {
                                   ],
                                 )
                               else
-                                ...staffList(snap),
+                                ...staffList(snap)
+                            else
+                              NoRecordContent(),
                           ],
                         );
                       },
-                      error: (e, _) => SizedBox(
-                        height: 200,
-                        child: Center(child: Text('Something went wrong! $e')),
-                      ),
+                      error: (e, _) => CommonErrorWidget(),
                       loading: () => StaffScreenShimmer(isDark: isDark),
                     )
           ],

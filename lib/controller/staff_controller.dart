@@ -26,6 +26,9 @@ class StaffController {
         case 'staff-dept':
           ref.read(departments.notifier).state = data['data'];
           break;
+        case 'staff-status':
+          ref.read(status.notifier).state = data['data'];
+          break;
         default:
       }
     }

@@ -10,6 +10,8 @@ import 'package:senthil/shimmer/search_shimmer.dart';
 import 'package:senthil/shimmer/table_shimmer.dart';
 import 'package:senthil/widgets/feedback_view/feedback_details.dart';
 import 'package:senthil/widgets/feedback_view/optional_feedback.dart';
+import 'package:senthil/widgets/common_error_widget.dart';
+import 'package:senthil/widgets/initializer_widget.dart';
 
 class FeedbackScreen extends ConsumerStatefulWidget {
   const FeedbackScreen(
@@ -59,6 +61,7 @@ class _FeedbackScreenState extends ConsumerState<FeedbackScreen> {
       "school": selectedSchool,
       "session": selectedSession,
       "section": selectedsection,
+      'isStaff': ref.read(FeedbackController.isStaff),
       "refGroup": selectedRefGroup
     };
     cardKey.currentState?.collapse();
@@ -74,6 +77,7 @@ class _FeedbackScreenState extends ConsumerState<FeedbackScreen> {
   Widget build(BuildContext context) {
     bool isDark = ref.watch(ThemeController.themeMode) == ThemeMode.dark;
     Size size = MediaQuery.of(context).size;
+    bool isStaff = ref.watch(FeedbackController.isStaff);
 
     final listener =
         data == null ? null : ref.watch(FeedbackController.searchData(data!));
@@ -94,6 +98,11 @@ class _FeedbackScreenState extends ConsumerState<FeedbackScreen> {
             )),
         onChanged: (val) {
           selectedYear = val;
+          selectedSession = null;
+          selectedSchool = null;
+          selectedClass = null;
+          selectedsection = null;
+          selectedRefGroup = null;
         },
       ),
       DropdownButtonFormField<String>(
@@ -110,6 +119,10 @@ class _FeedbackScreenState extends ConsumerState<FeedbackScreen> {
             )),
         onChanged: (val) {
           selectedSession = val;
+          selectedSchool = null;
+          selectedClass = null;
+          selectedsection = null;
+          selectedRefGroup = null;
         },
       ),
       DropdownButtonFormField<String>(
@@ -130,6 +143,8 @@ class _FeedbackScreenState extends ConsumerState<FeedbackScreen> {
           FeedbackController.loadinitials(ref, 'feed-classes', {
             'index': widget.index,
             'school': selectedSchool,
+            'session': selectedSession,
+            'id': widget.userId,
             'year': selectedYear
           });
         },
@@ -147,10 +162,13 @@ class _FeedbackScreenState extends ConsumerState<FeedbackScreen> {
         onChanged: (val) {
           selectedClass = val;
           selectedsection = null;
+          selectedRefGroup = null;
           FeedbackController.loadinitials(ref, 'feed-secs', {
             'index': widget.index,
             'school': selectedSchool,
             'className': selectedClass,
+            'session': selectedSession,
+            'id': widget.userId,
             'year': selectedYear
           });
         },
@@ -167,6 +185,16 @@ class _FeedbackScreenState extends ConsumerState<FeedbackScreen> {
             prefixIcon: Icon(Icons.book, color: Colors.grey)),
         onChanged: (val) {
           selectedsection = val;
+          selectedRefGroup = null;
+          FeedbackController.loadinitials(ref, 'feed-refs', {
+            'index': widget.index,
+            'school': selectedSchool,
+            'className': selectedClass,
+            'session': selectedSession,
+            'sec': selectedsection,
+            'id': widget.userId,
+            'year': selectedYear
+          });
         },
       ),
       DropdownButtonFormField<int>(
@@ -216,6 +244,25 @@ class _FeedbackScreenState extends ConsumerState<FeedbackScreen> {
                     title: AppController.heading(
                         'Search', isDark, TablerIcons.search),
                     children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.yellow.withAlpha(60),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: ListTile(
+                          leading: Icon(Icons.person_4_rounded, size: 25),
+                          title: Text('Search as a Staff!'),
+                          trailing: Switch(
+                            value: isStaff,
+                            onChanged: (val) {
+                              ref
+                                  .read(FeedbackController.isStaff.notifier)
+                                  .state = val;
+                            },
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 15),
                       Wrap(
                         spacing: 5,
                         runSpacing: 10,
@@ -239,10 +286,7 @@ class _FeedbackScreenState extends ConsumerState<FeedbackScreen> {
             if (ref.watch(FeedbackController.years).isNotEmpty ||
                 ref.watch(FeedbackController.feedAvail))
               listener == null
-                  ? SizedBox(
-                      height: 200,
-                      child: Center(child: Text('Search to get Feedback!')),
-                    )
+                  ? InitializerWidget()
                   : listener.when(
                       data: (snap) {
                         return DefaultTabController(
@@ -280,10 +324,7 @@ class _FeedbackScreenState extends ConsumerState<FeedbackScreen> {
                           ),
                         );
                       },
-                      error: (e, _) => SizedBox(
-                        height: 200,
-                        child: Center(child: Text('Something went wrong!')),
-                      ),
+                      error: (e, _) => CommonErrorWidget(),
                       loading: () => TableShimmer(isDark: isDark),
                     ),
           ],

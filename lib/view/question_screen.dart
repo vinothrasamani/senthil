@@ -8,6 +8,8 @@ import 'package:senthil/controller/theme_controller.dart';
 import 'package:senthil/shimmer/search_shimmer.dart';
 import 'package:senthil/shimmer/table_shimmer.dart';
 import 'package:senthil/widgets/question_table.dart';
+import 'package:senthil/widgets/common_error_widget.dart';
+import 'package:senthil/widgets/initializer_widget.dart';
 
 class QuestionScreen extends ConsumerStatefulWidget {
   const QuestionScreen({super.key, required this.index, required this.userId});
@@ -161,10 +163,7 @@ class _QuestionScreenState extends ConsumerState<QuestionScreen> {
             SizedBox(height: 20),
             if (ref.watch(QuestionController.quesYears).isNotEmpty)
               listener == null
-                  ? SizedBox(
-                      height: 200,
-                      child: Center(child: Text('Search to get details!')),
-                    )
+                  ? InitializerWidget()
                   : listener.when(
                       data: (snap) {
                         TextStyle style = TextStyle(
@@ -243,10 +242,7 @@ class _QuestionScreenState extends ConsumerState<QuestionScreen> {
                           ),
                         );
                       },
-                      error: (e, _) => SizedBox(
-                        height: 200,
-                        child: Center(child: Text('Something went wrong!')),
-                      ),
+                      error: (e, _) => CommonErrorWidget(),
                       loading: () => TableShimmer(isDark: isDark),
                     ),
           ],
