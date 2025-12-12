@@ -24,16 +24,19 @@ class ConsistencyTable extends StatelessWidget {
       child: Builder(builder: (context) {
         final school = snap.schools[schoolIndex];
         final schoolShort = school.short;
-        final schoolResults = snap.results[schoolShort];
+        final schoolResults = snap.results?[schoolShort];
         if (schoolResults == null || schoolResults.isEmpty) {
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(TablerIcons.table_off, size: 50, color: Colors.grey),
-                const SizedBox(height: 10),
-                const Text('No records found!')
-              ],
+          return SizedBox(
+            height: size.height * 0.6,
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(TablerIcons.table_off, size: 50, color: Colors.grey),
+                  const SizedBox(height: 10),
+                  const Text('No records found!')
+                ],
+              ),
             ),
           );
         }

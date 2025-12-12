@@ -108,176 +108,200 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
       lastDate = messages.last.createdAt.toIso8601String();
     }
 
+    var pad = size.width > 500
+        ? size.width > 800
+            ? size.width > 1000
+                ? size.width * 0.20
+                : size.width * 0.16
+            : size.width * 0.12
+        : 2.0;
+
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.user.name.trim()),
-      ),
+      appBar: AppBar(title: Text(widget.user.name.trim())),
       body: SafeArea(
-        child: Column(
-          children: [
-            Expanded(
-              child: SingleChildScrollView(
-                padding: EdgeInsets.all(10),
-                reverse: true,
-                child: isLoading
-                    ? ListShimmer(isDark: isDark)
-                    : Column(
-                        children: [
-                          if (messages.isEmpty)
-                            SizedBox(
-                              height: size.height - 200,
-                              child: Center(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(Icons.filter_list_off,
-                                        size: 50, color: Colors.red),
-                                    SizedBox(height: 10),
-                                    Text(
-                                      'No messages found. Send new message!',
-                                      textAlign: TextAlign.center,
-                                    )
-                                  ],
+        child: Container(
+          margin: EdgeInsets.symmetric(horizontal: pad),
+          decoration: BoxDecoration(
+            color: Theme.of(context).scaffoldBackgroundColor,
+            boxShadow: [
+              if (size.width > 500)
+                BoxShadow(
+                  offset: Offset(0, 0.5),
+                  color: Colors.grey.withAlpha(100),
+                  spreadRadius: 1,
+                  blurRadius: 2,
+                ),
+            ],
+          ),
+          child: Column(
+            children: [
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: EdgeInsets.all(10),
+                  reverse: true,
+                  child: isLoading
+                      ? ListShimmer(isDark: isDark)
+                      : Column(
+                          children: [
+                            if (messages.isEmpty)
+                              SizedBox(
+                                height: size.height - 200,
+                                child: Center(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(Icons.filter_list_off,
+                                          size: 50, color: Colors.red),
+                                      SizedBox(height: 10),
+                                      Text(
+                                        'No messages found. Send new message!',
+                                        textAlign: TextAlign.center,
+                                      )
+                                    ],
+                                  ),
                                 ),
                               ),
-                            ),
-                          for (var i = 0; i < messages.length; i++)
-                            Builder(builder: (context) {
-                              final message = messages[i];
-                              if (sender != message.senderId) {
-                                if (message.createdAt.isAfter(DateTime.parse(
-                                  storedDate ??
-                                      DateTime.now().toIso8601String(),
-                                ))) {
-                                  ChatController.updateMessage(message.id);
+                            for (var i = 0; i < messages.length; i++)
+                              Builder(builder: (context) {
+                                final message = messages[i];
+                                if (sender != message.senderId) {
+                                  if (message.createdAt.isAfter(DateTime.parse(
+                                    storedDate ??
+                                        DateTime.now().toIso8601String(),
+                                  ))) {
+                                    ChatController.updateMessage(message.id);
+                                  }
                                 }
-                              }
-                              return MessageBox(
-                                isYou: message.senderId == sender,
-                                isDark: isDark,
-                                file: message.file,
-                                message: message.message,
-                                isReaded: message.isReaded == 1,
-                                date: message.createdAt,
-                              );
-                            }),
-                        ],
-                      ),
-              ),
-            ),
-            Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                if (filePath != null)
-                  Container(
-                    margin: EdgeInsets.all(4),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: Colors.grey.withAlpha(60),
-                    ),
-                    child: ListTile(
-                      dense: true,
-                      contentPadding:
-                          EdgeInsets.symmetric(vertical: 5, horizontal: 5),
-                      leading: Container(
-                        padding: EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(5),
-                            border: Border.all(color: Colors.grey)),
-                        clipBehavior: Clip.hardEdge,
-                        child: Icon(Icons.file_copy),
-                      ),
-                      title: Text(
-                        filePath.split('/').last,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      trailing: IconButton(
-                        onPressed: () {
-                          ref.read(ChatController.filePath.notifier).state =
-                              null;
-                        },
-                        icon: Icon(Icons.close),
-                      ),
-                    ),
-                  ),
-                Container(
-                  margin: EdgeInsets.symmetric(vertical: 4, horizontal: 6),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      IconButton(
-                        onPressed: () async {
-                          final files = await ChatController.picFile();
-                          if (files.isNotEmpty) {
-                            ref.read(ChatController.filePath.notifier).state =
-                                files.first;
-                          }
-                        },
-                        style: IconButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                          backgroundColor: baseColor,
-                          foregroundColor: Colors.white,
+                                return MessageBox(
+                                  isYou: message.senderId == sender,
+                                  isDark: isDark,
+                                  file: message.file,
+                                  message: message.message,
+                                  isReaded: message.isReaded == 1,
+                                  date: message.createdAt,
+                                );
+                              }),
+                          ],
                         ),
-                        icon: Icon(Icons.attach_file, size: 25),
+                ),
+              ),
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (filePath != null)
+                    Container(
+                      margin: EdgeInsets.all(4),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: Colors.grey.withAlpha(60),
                       ),
-                      SizedBox(width: 2),
-                      Expanded(
-                        child: TextField(
-                          maxLines: 4,
-                          minLines: 1,
-                          controller: msg,
-                          style: TextStyle(color: Colors.white),
-                          textAlignVertical: TextAlignVertical.top,
-                          keyboardType: TextInputType.text,
-                          decoration: InputDecoration(
-                            hintText: 'Type your message...',
-                            hintStyle: TextStyle(color: Colors.grey),
-                            border: OutlineInputBorder(
+                      child: ListTile(
+                        dense: true,
+                        contentPadding:
+                            EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+                        leading: Container(
+                          padding: EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(5),
+                              border: Border.all(color: Colors.grey)),
+                          clipBehavior: Clip.hardEdge,
+                          child: Icon(Icons.file_copy),
+                        ),
+                        title: Text(
+                          filePath.split('/').last,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        trailing: IconButton(
+                          onPressed: () {
+                            ref.read(ChatController.filePath.notifier).state =
+                                null;
+                          },
+                          icon: Icon(Icons.close),
+                        ),
+                      ),
+                    ),
+                  Container(
+                    margin: EdgeInsets.symmetric(vertical: 4, horizontal: 6),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        IconButton(
+                          onPressed: () async {
+                            final files = await ChatController.picFile();
+                            if (files.isNotEmpty) {
+                              ref.read(ChatController.filePath.notifier).state =
+                                  files.first;
+                            }
+                          },
+                          style: IconButton.styleFrom(
+                            shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(30),
                             ),
-                            contentPadding: EdgeInsets.only(left: 15, right: 5),
+                            backgroundColor: baseColor,
+                            foregroundColor: Colors.white,
+                          ),
+                          icon: Icon(Icons.attach_file, size: 25),
+                        ),
+                        SizedBox(width: 2),
+                        Expanded(
+                          child: TextField(
+                            maxLines: 4,
+                            minLines: 1,
+                            controller: msg,
+                            style: TextStyle(color: Colors.white),
+                            textAlignVertical: TextAlignVertical.top,
+                            keyboardType: TextInputType.text,
+                            decoration: InputDecoration(
+                              hintText: 'Type your message...',
+                              hintStyle: TextStyle(color: Colors.grey),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                              contentPadding:
+                                  EdgeInsets.only(left: 15, right: 5),
+                            ),
                           ),
                         ),
-                      ),
-                      SizedBox(width: 2),
-                      ref.watch(ChatController.sending) && filePath != null
-                          ? Builder(builder: (context) {
-                              var progress = ref.watch(ChatController.progress);
-                              return Padding(
-                                padding: const EdgeInsets.all(5),
-                                child: Stack(
-                                  alignment: Alignment.center,
-                                  children: [
-                                    CircularProgressIndicator(value: progress),
-                                    Text(
-                                      '${(progress * 100).toInt()}%',
-                                      style: TextStyle(fontSize: 10),
-                                    ),
-                                  ],
+                        SizedBox(width: 2),
+                        ref.watch(ChatController.sending) && filePath != null
+                            ? Builder(builder: (context) {
+                                var progress =
+                                    ref.watch(ChatController.progress);
+                                return Padding(
+                                  padding: const EdgeInsets.all(5),
+                                  child: Stack(
+                                    alignment: Alignment.center,
+                                    children: [
+                                      CircularProgressIndicator(
+                                          value: progress),
+                                      Text(
+                                        '${(progress * 100).toInt()}%',
+                                        style: TextStyle(fontSize: 10),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              })
+                            : IconButton(
+                                onPressed: ref.watch(ChatController.sending)
+                                    ? null
+                                    : addNewMessage,
+                                style: IconButton.styleFrom(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(30),
+                                  ),
+                                  backgroundColor: baseColor,
+                                  foregroundColor: Colors.white,
                                 ),
-                              );
-                            })
-                          : IconButton(
-                              onPressed: ref.watch(ChatController.sending)
-                                  ? null
-                                  : addNewMessage,
-                              style: IconButton.styleFrom(
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(30),
-                                ),
-                                backgroundColor: baseColor,
-                                foregroundColor: Colors.white,
+                                icon: Icon(Icons.send_rounded, size: 25),
                               ),
-                              icon: Icon(Icons.send_rounded, size: 25),
-                            ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-              ],
-            ),
-          ],
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

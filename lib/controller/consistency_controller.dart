@@ -16,7 +16,8 @@ class ConsistencyController {
     final decrypted = jsonDecode(res);
     switch (url) {
       case 'years':
-        ref.read(conYears.notifier).state = decrypted['data'];
+        List y = decrypted['data'];
+        ref.read(conYears.notifier).state = y.isEmpty ? [''] : y;
         break;
       case 'classes':
         ref.read(conClasses.notifier).state = decrypted['data'];

@@ -8,7 +8,7 @@ import 'package:senthil/controller/subject_details_controller.dart';
 import 'package:senthil/controller/theme_controller.dart';
 import 'package:senthil/model/subject_details_model.dart';
 import 'package:senthil/shimmer/list_shimmer.dart';
-import 'package:senthil/widgets/my_chip.dart';
+import 'package:senthil/widgets/common_error_widget.dart';
 
 class SubjectDetailsScreen extends ConsumerWidget {
   const SubjectDetailsScreen({super.key});
@@ -16,6 +16,7 @@ class SubjectDetailsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final listener = ref.watch(subjectDetailsProvider);
+    final size = MediaQuery.of(context).size;
     bool isDark = ref.watch(ThemeController.themeMode) == ThemeMode.dark;
 
     return Scaffold(
@@ -25,14 +26,20 @@ class SubjectDetailsScreen extends ConsumerWidget {
           data: (snap) => ListView(
             padding: EdgeInsets.only(bottom: 80, left: 10, right: 10, top: 10),
             children: [
-              for (var item in snap) myCard(context, item, isDark),
+              Wrap(
+                spacing: 5,
+                runSpacing: 5,
+                children: [
+                  for (var item in snap)
+                    SizedBox(
+                      width: size.width > 850 ? (size.width / 2) - 25 : null,
+                      child: myCard(context, item, isDark),
+                    ),
+                ],
+              ),
             ],
           ),
-          error: (error, _) {
-            return Center(
-              child: Text('Something went wrong!'),
-            );
-          },
+          error: (error, _) => CommonErrorWidget(),
           loading: () => ListShimmer(isDark: isDark),
         ),
       ),
@@ -47,65 +54,165 @@ class SubjectDetailsScreen extends ConsumerWidget {
 
   Widget myCard(BuildContext context, SubjectInfo item, bool isDark) =>
       Container(
-        padding: EdgeInsets.all(6),
-        margin: EdgeInsets.symmetric(vertical: 3),
+        padding: EdgeInsets.symmetric(vertical: 5),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: Colors.grey.withAlpha(100), width: 1),
+          color: isDark ? Colors.grey.shade900 : Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+              color: isDark ? Colors.grey.shade800 : Colors.grey.shade200,
+              width: 1.5),
+          boxShadow: [
+            BoxShadow(
+              color: (isDark ? Colors.black : Colors.grey).withAlpha(15),
+              blurRadius: 8,
+              offset: Offset(0, 2),
+            ),
+          ],
         ),
         child: Column(
-          mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Row(
-              children: [
-                MyCheck(
-                  isDark: isDark,
-                  value: item.show == 1,
-                  id: item.id,
-                ),
-                SizedBox(width: 6),
-                Expanded(
-                  child: Text(
-                    item.fullname,
-                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+              child: Row(
+                children: [
+                  MyCheck(isDark: isDark, value: item.show == 1, id: item.id),
+                  SizedBox(width: 6),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          item.fullname,
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: isDark ? Colors.white : Colors.grey.shade900,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        SizedBox(height: 4),
+                        Text(
+                          item.subgroup?.trim() ?? '',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: isDark
+                                ? Colors.grey.shade400
+                                : Colors.grey.shade600,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                SizedBox(width: 6),
-                MyChip('📗 ${item.shortname}', AppController.lightBlue),
-                SizedBox(width: 4),
-                IconButton(
-                  onPressed: () {
-                    SubjectDetailsController.openEditor(context, item);
-                  },
-                  color: AppController.yellow,
-                  icon: Icon(TablerIcons.edit),
-                ),
-              ],
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                    decoration: BoxDecoration(
+                      color: AppController.lightBlue.withAlpha(20),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(
+                        color: AppController.lightBlue.withAlpha(100),
+                        width: 1,
+                      ),
+                    ),
+                    child: Text(
+                      '📗 ${item.shortname}',
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                        color: AppController.lightBlue,
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 4),
+                  IconButton.filledTonal(
+                    onPressed: () {
+                      SubjectDetailsController.openEditor(context, item);
+                    },
+                    style: IconButton.styleFrom(
+                        backgroundColor: AppController.yellow.withAlpha(50)),
+                    color: AppController.yellow,
+                    icon: Icon(TablerIcons.edit),
+                    iconSize: 18,
+                    constraints: BoxConstraints(minWidth: 30, minHeight: 30),
+                    padding: EdgeInsets.zero,
+                  ),
+                ],
+              ),
             ),
-            Wrap(
-              spacing: 6,
-              runSpacing: 2,
-              children: [
-                Chip(label: myRow('Sub Group', item.subgroup!.trim())),
-                Chip(label: myRow('CBSE Ord', item.ord.toString())),
-                Chip(label: myRow('Matric Ord', item.mOrd.toString())),
-              ],
+            Container(
+              height: 0.5,
+              margin: EdgeInsets.symmetric(horizontal: 10),
+              color: isDark ? Colors.grey.shade800 : Colors.grey.shade200,
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+              child: Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  _buildInfoChip(
+                    label: 'Sub Group',
+                    value: item.subgroup?.trim() ?? 'N/A',
+                    isDark: isDark,
+                  ),
+                  _buildInfoChip(
+                    label: 'CBSE Ord',
+                    value: item.ord.toString(),
+                    isDark: isDark,
+                  ),
+                  _buildInfoChip(
+                    label: 'Matric Ord',
+                    value: item.mOrd.toString(),
+                    isDark: isDark,
+                  ),
+                ],
+              ),
             ),
           ],
         ),
       );
 
-  Widget myRow(String myKey, String value) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text('$myKey : '),
-        SizedBox(width: 4),
-        MyChip(value, AppController.headColor),
-      ],
-    );
-  }
+  Widget _buildInfoChip(
+          {required String label,
+          required String value,
+          required bool isDark}) =>
+      Container(
+        padding: EdgeInsets.symmetric(horizontal: 5, vertical: 3),
+        decoration: BoxDecoration(
+          color: isDark ? Colors.grey.shade800 : Colors.grey.shade100,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(
+              color: isDark ? Colors.grey.shade700 : Colors.grey.shade300,
+              width: 1),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+                color: isDark ? Colors.grey.shade300 : Colors.grey.shade700,
+              ),
+            ),
+            SizedBox(width: 6),
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+              child: Text(
+                value,
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: AppController.headColor,
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
 }
 
 class MyCheck extends ConsumerStatefulWidget {

@@ -15,25 +15,15 @@ class FeedbackEntryController extends StateNotifier<List<FeedbackEntry>> {
   final schoolTypes = StateProvider.autoDispose((ref) => []);
   final searching = StateProvider.autoDispose<bool>((ref) => false);
 
-  void setData(WidgetRef ref, String url, Object object) async {
-    switch (url) {
-      case 'feedback-entry-init':
-        final res = await AppController.fetch(url);
-        final decrypted = jsonDecode(res);
-        if (decrypted['success']) {
-          ref.read(years.notifier).state = decrypted['data']['years'];
-          ref.read(schoolTypes.notifier).state = decrypted['data']['types'];
-          ref.read(sessions.notifier).state = decrypted['data']['sessions'];
-        }
-        break;
-      case 'feedback-entry-schl':
-        final res = await AppController.send(url, object);
-        final decrypted = jsonDecode(res);
-        if (decrypted['success']) {
-          ref.read(schools.notifier).state = decrypted['data'];
-        }
-        break;
-      default:
+  void setData(WidgetRef ref) async {
+    final url = 'feedback-entry-init';
+    final res = await AppController.fetch(url);
+    final decrypted = jsonDecode(res);
+    if (decrypted['success']) {
+      ref.read(years.notifier).state = decrypted['data']['years'];
+      ref.read(schoolTypes.notifier).state = decrypted['data']['types'];
+      ref.read(sessions.notifier).state = decrypted['data']['sessions'];
+      ref.read(schools.notifier).state = decrypted['data']['schools'];
     }
   }
 

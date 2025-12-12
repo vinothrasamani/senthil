@@ -59,15 +59,8 @@ class _EditUserState extends ConsumerState<EditUser> {
     final schools = ref.watch(UserListController.selectedSchools);
     final boards = ref.watch(UserListController.selectedBoards);
     final standards = ref.watch(UserListController.selectedStds);
-    Widget title(String txt) {
-      return Padding(
-        padding: const EdgeInsets.symmetric(vertical: 10),
-        child: Text(
-          txt,
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-        ),
-      );
-    }
+    final Size size = MediaQuery.of(context).size;
+    final isDark = ref.watch(ThemeController.themeMode) == ThemeMode.dark;
 
     Widget leading(IconData icon) {
       return Container(
@@ -82,183 +75,219 @@ class _EditUserState extends ConsumerState<EditUser> {
       );
     }
 
+    var pad = size.width > 500
+        ? size.width > 800
+            ? size.width > 1000
+                ? size.width * 0.20
+                : size.width * 0.16
+            : size.width * 0.12
+        : 2.0;
+
     return Scaffold(
       appBar: AppBar(title: Text('Edit ${widget.user.fullname}')),
       body: SafeArea(
-        child: Form(
-          key: formKey,
-          child: ListView(
-            padding: EdgeInsets.all(15),
-            shrinkWrap: true,
-            children: [
-              title('Basic Info'),
-              TextFormField(
-                initialValue: widget.user.fullname,
-                decoration: InputDecoration(
-                  labelText: 'Full Name',
-                  icon: leading(TablerIcons.user),
+        child: Container(
+          margin: EdgeInsets.symmetric(horizontal: pad),
+          decoration: BoxDecoration(
+            color: Theme.of(context).scaffoldBackgroundColor,
+            boxShadow: [
+              if (size.width > 500)
+                BoxShadow(
+                  offset: Offset(0, 0.5),
+                  color: Colors.grey.withAlpha(160),
+                  spreadRadius: 1,
+                  blurRadius: 2,
                 ),
-                onChanged: (value) => widget.user.fullname = value,
-              ),
-              SizedBox(height: 10),
-              TextFormField(
-                initialValue: widget.user.mobile,
-                decoration: InputDecoration(
-                  labelText: 'Mobile No.',
-                  icon: leading(TablerIcons.phone),
-                ),
-                onChanged: (value) => widget.user.mobile = value,
-              ),
-              SizedBox(height: 10),
-              TextFormField(
-                initialValue: widget.user.name,
-                decoration: InputDecoration(
-                  labelText: 'Username',
-                  icon: leading(TablerIcons.user),
-                ),
-                onChanged: (value) => widget.user.name = value,
-                validator: (value) =>
-                    value == null || value.isEmpty ? 'This is required!' : null,
-              ),
-              SizedBox(height: 10),
-              TextFormField(
-                initialValue: widget.user.refName,
-                decoration: InputDecoration(
-                  labelText: 'Ref Name',
-                  icon: leading(TablerIcons.user_pin),
-                ),
-                onChanged: (value) => widget.user.refName = value,
-              ),
-              SizedBox(height: 10),
-              title('Choose School(s)'),
-              DropdownButtonFormField(
-                items: UserListController.schools
-                    .map((e) => DropdownMenuItem(value: e, child: Text(e)))
-                    .toList(),
-                decoration: InputDecoration(
-                  labelText: 'School',
-                  prefixIcon: Icon(
-                    TablerIcons.school,
-                    color: Colors.grey,
-                  ),
-                ),
-                validator: (value) =>
-                    value == null || value.isEmpty ? 'This is required!' : null,
-                onChanged: (val) {
-                  if (!schools.contains(val)) {
-                    ref
-                        .read(UserListController.selectedSchools.notifier)
-                        .state = [...schools, val!];
-                  }
-                },
-              ),
-              Wrap(
-                  spacing: 5,
-                  children: schools
-                      .map((e) => Chip(
-                            label: Text(e),
-                            deleteIcon:
-                                Icon(Icons.cancel, color: AppController.red),
-                            onDeleted: () {
-                              ref
-                                      .read(UserListController
-                                          .selectedSchools.notifier)
-                                      .state =
-                                  schools.where((i) => i != e).toList();
-                            },
-                          ))
-                      .toList()),
-              SizedBox(height: 10),
-              title('Choose board(s)'),
-              DropdownButtonFormField(
-                items: UserListController.boards
-                    .map((e) => DropdownMenuItem(value: e, child: Text(e)))
-                    .toList(),
-                decoration: InputDecoration(
-                  labelText: 'Board',
-                  prefixIcon: Icon(TablerIcons.category, color: Colors.grey),
-                ),
-                onChanged: (val) {
-                  if (!boards.contains(val)) {
-                    ref.read(UserListController.selectedBoards.notifier).state =
-                        [...boards, val!];
-                  }
-                },
-              ),
-              Wrap(
-                  spacing: 5,
-                  children: boards
-                      .map((e) => Chip(
-                            label: Text(e),
-                            deleteIcon:
-                                Icon(Icons.cancel, color: AppController.red),
-                            onDeleted: () {
-                              ref
-                                  .read(UserListController
-                                      .selectedBoards.notifier)
-                                  .state = boards.where((i) => i != e).toList();
-                            },
-                          ))
-                      .toList()),
-              SizedBox(height: 10),
-              title('Choose Standard(s)'),
-              DropdownButtonFormField(
-                decoration: InputDecoration(
-                  labelText: 'Standard',
-                  prefixIcon: Icon(TablerIcons.chalkboard, color: Colors.grey),
-                ),
-                items: UserListController.standards
-                    .map((e) => DropdownMenuItem(value: e, child: Text(e)))
-                    .toList(),
-                onChanged: (val) {
-                  if (!standards.contains(val)) {
-                    ref.read(UserListController.selectedStds.notifier).state = [
-                      ...standards,
-                      val!
-                    ];
-                  }
-                },
-              ),
-              Wrap(
-                  spacing: 5,
-                  children: standards
-                      .map((e) => Chip(
-                            label: Text(e),
-                            deleteIcon:
-                                Icon(Icons.cancel, color: AppController.red),
-                            onDeleted: () {
-                              ref
-                                      .read(UserListController
-                                          .selectedStds.notifier)
-                                      .state =
-                                  standards.where((i) => i != e).toList();
-                            },
-                          ))
-                      .toList()),
-              SizedBox(height: 10),
-              Row(
-                children: [
-                  Expanded(
-                    child: OutlinedButton(
-                      onPressed: () {
-                        Get.back();
-                      },
-                      child: Text('Cancel'),
-                    ),
-                  ),
-                  SizedBox(width: 6),
-                  Expanded(
-                    child: FilledButton(
-                      onPressed: ref.watch(UserListController.updating)
-                          ? null
-                          : submit,
-                      child: Text('Save'),
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 15),
             ],
+          ),
+          child: Form(
+            key: formKey,
+            child: ListView(
+              padding: EdgeInsets.all(15),
+              shrinkWrap: true,
+              children: [
+                AppController.heading('Basic Info', isDark, Icons.info_outline),
+                SizedBox(height: 6),
+                TextFormField(
+                  initialValue: widget.user.fullname,
+                  decoration: InputDecoration(
+                    labelText: 'Full Name',
+                    icon: leading(TablerIcons.user),
+                  ),
+                  onChanged: (value) => widget.user.fullname = value,
+                ),
+                SizedBox(height: 10),
+                TextFormField(
+                  initialValue: widget.user.mobile,
+                  decoration: InputDecoration(
+                    labelText: 'Mobile No.',
+                    icon: leading(TablerIcons.phone),
+                  ),
+                  onChanged: (value) => widget.user.mobile = value,
+                ),
+                SizedBox(height: 10),
+                TextFormField(
+                  initialValue: widget.user.name,
+                  decoration: InputDecoration(
+                    labelText: 'Username',
+                    icon: leading(TablerIcons.user),
+                  ),
+                  onChanged: (value) => widget.user.name = value,
+                  validator: (value) => value == null || value.isEmpty
+                      ? 'This is required!'
+                      : null,
+                ),
+                SizedBox(height: 10),
+                TextFormField(
+                  initialValue: widget.user.refName,
+                  decoration: InputDecoration(
+                    labelText: 'Ref Name',
+                    icon: leading(TablerIcons.user_pin),
+                  ),
+                  onChanged: (value) => widget.user.refName = value,
+                ),
+                SizedBox(height: 30),
+                AppController.heading('Choose School(s)', isDark, Icons.school),
+                SizedBox(height: 6),
+                DropdownButtonFormField(
+                  items: UserListController.schools
+                      .map((e) => DropdownMenuItem(value: e, child: Text(e)))
+                      .toList(),
+                  decoration: InputDecoration(
+                    labelText: 'School',
+                    prefixIcon: Icon(
+                      TablerIcons.school,
+                      color: Colors.grey,
+                    ),
+                  ),
+                  validator: (value) => value == null || value.isEmpty
+                      ? 'This is required!'
+                      : null,
+                  onChanged: (val) {
+                    if (!schools.contains(val)) {
+                      ref
+                          .read(UserListController.selectedSchools.notifier)
+                          .state = [...schools, val!];
+                    }
+                  },
+                ),
+                SizedBox(height: 5),
+                Wrap(
+                    spacing: 5,
+                    children: schools
+                        .map((e) => Chip(
+                              label: Text(e),
+                              deleteIcon:
+                                  Icon(Icons.cancel, color: AppController.red),
+                              onDeleted: () {
+                                ref
+                                        .read(UserListController
+                                            .selectedSchools.notifier)
+                                        .state =
+                                    schools.where((i) => i != e).toList();
+                              },
+                            ))
+                        .toList()),
+                SizedBox(height: 30),
+                AppController.heading(
+                    'Choose board(s)', isDark, TablerIcons.category),
+                SizedBox(height: 6),
+                DropdownButtonFormField(
+                  items: UserListController.boards
+                      .map((e) => DropdownMenuItem(value: e, child: Text(e)))
+                      .toList(),
+                  decoration: InputDecoration(
+                    labelText: 'Board',
+                    prefixIcon: Icon(TablerIcons.category, color: Colors.grey),
+                  ),
+                  onChanged: (val) {
+                    if (!boards.contains(val)) {
+                      ref
+                          .read(UserListController.selectedBoards.notifier)
+                          .state = [...boards, val!];
+                    }
+                  },
+                ),
+                SizedBox(height: 5),
+                Wrap(
+                    spacing: 5,
+                    children: boards
+                        .map((e) => Chip(
+                              label: Text(e),
+                              deleteIcon:
+                                  Icon(Icons.cancel, color: AppController.red),
+                              onDeleted: () {
+                                ref
+                                        .read(UserListController
+                                            .selectedBoards.notifier)
+                                        .state =
+                                    boards.where((i) => i != e).toList();
+                              },
+                            ))
+                        .toList()),
+                SizedBox(height: 30),
+                AppController.heading(
+                    'Choose Standard(s)', isDark, Icons.class_),
+                SizedBox(height: 6),
+                DropdownButtonFormField(
+                  decoration: InputDecoration(
+                    labelText: 'Standard',
+                    prefixIcon:
+                        Icon(TablerIcons.chalkboard, color: Colors.grey),
+                  ),
+                  items: UserListController.standards
+                      .map((e) => DropdownMenuItem(value: e, child: Text(e)))
+                      .toList(),
+                  onChanged: (val) {
+                    if (!standards.contains(val)) {
+                      ref.read(UserListController.selectedStds.notifier).state =
+                          [...standards, val!];
+                    }
+                  },
+                ),
+                SizedBox(height: 5),
+                Wrap(
+                    spacing: 5,
+                    runSpacing: 5,
+                    children: standards
+                        .map((e) => Chip(
+                              label: Text(e),
+                              deleteIcon:
+                                  Icon(Icons.cancel, color: AppController.red),
+                              onDeleted: () {
+                                ref
+                                        .read(UserListController
+                                            .selectedStds.notifier)
+                                        .state =
+                                    standards.where((i) => i != e).toList();
+                              },
+                            ))
+                        .toList()),
+                SizedBox(height: 30),
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () {
+                          Get.back();
+                        },
+                        child: Text('Cancel'),
+                      ),
+                    ),
+                    SizedBox(width: 6),
+                    Expanded(
+                      child: FilledButton(
+                        onPressed: ref.watch(UserListController.updating)
+                            ? null
+                            : submit,
+                        child: Text('Save'),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 40),
+              ],
+            ),
           ),
         ),
       ),

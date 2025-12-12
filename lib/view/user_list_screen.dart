@@ -9,6 +9,7 @@ import 'package:senthil/model/user_list_model.dart';
 import 'package:senthil/shimmer/list_shimmer.dart';
 import 'package:senthil/view/chat_screen.dart';
 import 'package:senthil/widgets/edit_user.dart';
+import 'package:senthil/widgets/no_record_content.dart';
 
 class UserListScreen extends ConsumerStatefulWidget {
   const UserListScreen({super.key});
@@ -19,10 +20,6 @@ class UserListScreen extends ConsumerStatefulWidget {
 
 class _UserListScreenState extends ConsumerState<UserListScreen> {
   bool initial = true, canLoad = true;
-  Widget leading = Container(
-    padding: EdgeInsets.all(2),
-    decoration: BoxDecoration(borderRadius: BorderRadius.circular(5)),
-  );
 
   Widget userCard(UserList user, bool isDark) => Container(
         padding: EdgeInsets.all(10),
@@ -137,12 +134,14 @@ class _UserListScreenState extends ConsumerState<UserListScreen> {
   Widget build(BuildContext context) {
     bool isDark = ref.watch(ThemeController.themeMode) == ThemeMode.dark;
     final Size size = MediaQuery.of(context).size;
+
     return Scaffold(
       appBar: AppBar(title: Text('User List')),
       body: SafeArea(
         child: ref.watch(UserListController.getUsers).when(
               data: (snap) {
                 List filtered = ref.watch(UserListController.filteredUsers);
+                final can = size.width > 500;
                 if (initial) {
                   WidgetsBinding.instance.addPostFrameCallback((_) {
                     ref.read(UserListController.filteredUsers.notifier).state =
@@ -151,8 +150,9 @@ class _UserListScreenState extends ConsumerState<UserListScreen> {
                   });
                   initial = false;
                 }
-                return Padding(
-                  padding: const EdgeInsets.all(8.0),
+                return Container(
+                  padding: EdgeInsets.symmetric(
+                      vertical: 8, horizontal: can ? size.width * 0.12 : 8),
                   child: Column(
                     children: [
                       TextField(
@@ -171,14 +171,7 @@ class _UserListScreenState extends ConsumerState<UserListScreen> {
                             ? Center(
                                 child: canLoad
                                     ? CircularProgressIndicator()
-                                    : Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Icon(Icons.filter_list_off, size: 30),
-                                          SizedBox(height: 10),
-                                          Text('User List Empty!'),
-                                        ],
-                                      ),
+                                    : NoRecordContent(),
                               )
                             : ListView(
                                 children: [

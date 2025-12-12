@@ -25,7 +25,8 @@ class ComparisonController {
     final decrypted = jsonDecode(res);
     switch (url) {
       case 'years':
-        ref.read(years.notifier).state = decrypted['data'];
+        List y = decrypted['data'];
+        ref.read(years.notifier).state = y.isEmpty ? [''] : y;
         break;
       case 'classes':
         ref.read(classes.notifier).state = decrypted['data'];

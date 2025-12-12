@@ -30,7 +30,8 @@ class TopperListController {
     final decrypted = jsonDecode(res);
     switch (url) {
       case 'years':
-        ref.read(yearsTop.notifier).state = decrypted['data'];
+        List y = decrypted['data'];
+        ref.read(yearsTop.notifier).state = y.isEmpty ? [''] : y;
         break;
       case 'classes':
         ref.read(classesTop.notifier).state = decrypted['data'];

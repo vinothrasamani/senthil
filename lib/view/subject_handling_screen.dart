@@ -8,7 +8,7 @@ import 'package:senthil/controller/theme_controller.dart';
 import 'package:senthil/model/subject_handling_model.dart';
 import 'package:senthil/shimmer/list_shimmer.dart';
 import 'package:senthil/shimmer/search_shimmer.dart';
-import 'package:senthil/widgets/my_chip.dart';
+import 'package:senthil/widgets/no_record_content.dart';
 
 class SubjectHandlingScreen extends ConsumerStatefulWidget {
   const SubjectHandlingScreen({super.key, required this.id});
@@ -80,6 +80,10 @@ class _SubjectHandlingScreenState extends ConsumerState<SubjectHandlingScreen> {
             )),
         onChanged: (val) {
           selectedYear = val;
+          selectedType = null;
+          selectedClass = null;
+          selectedSection = null;
+          selectedSchool = null;
         },
       ),
       DropdownButtonFormField<String>(
@@ -97,7 +101,8 @@ class _SubjectHandlingScreenState extends ConsumerState<SubjectHandlingScreen> {
           selectedClass = null;
           selectedSection = null;
           selectedSchool = null;
-          controller.setData(ref, 'handling-schools', {'type': val});
+          controller.setData(ref, 'handling-schools',
+              {'type': val, 'id': widget.id, 'year': selectedYear});
         },
       ),
       DropdownButtonFormField<String>(
@@ -114,8 +119,12 @@ class _SubjectHandlingScreenState extends ConsumerState<SubjectHandlingScreen> {
           selectedSchool = val;
           selectedClass = null;
           selectedSection = null;
-          controller.setData(
-              ref, 'handling-classes', {'school': val, 'type': selectedType});
+          controller.setData(ref, 'handling-classes', {
+            'school': val,
+            'type': selectedType,
+            'id': widget.id,
+            'year': selectedYear
+          });
         },
       ),
       DropdownButtonFormField<String>(
@@ -131,8 +140,13 @@ class _SubjectHandlingScreenState extends ConsumerState<SubjectHandlingScreen> {
         onChanged: (val) {
           selectedClass = val;
           selectedSection = null;
-          controller.setData(ref, 'handling-sections',
-              {'school': selectedSchool, 'type': selectedType, 'cName': val});
+          controller.setData(ref, 'handling-sections', {
+            'school': selectedSchool,
+            'type': selectedType,
+            'cName': val,
+            'id': widget.id,
+            'year': selectedYear
+          });
         },
       ),
       DropdownButtonFormField<String>(
@@ -221,22 +235,30 @@ class _SubjectHandlingScreenState extends ConsumerState<SubjectHandlingScreen> {
               ref.watch(controller.searching)
                   ? ListShimmer(isDark: isDark)
                   : snap.isEmpty
-                      ? SizedBox(
-                          height: 200,
-                          child: Center(
-                              child:
-                                  Text('Search to Get subject handling list!')),
-                        )
+                      ? NoRecordContent(
+                          msg: 'List is empty. Try new search to get data!')
                       : Column(
                           children: [
                             AppController.heading(
                                 'Subject Handling', isDark, TablerIcons.book_2),
                             SizedBox(height: 10),
-                            for (var item in snap)
-                              Builder(builder: (context) {
-                                final index = snap.indexOf(item) + 1;
-                                return myCard(item, index);
-                              }),
+                            Wrap(
+                              spacing: 5,
+                              children: [
+                                for (var item in snap)
+                                  SizedBox(
+                                    width: size.width > 700
+                                        ? size.width > 1100
+                                            ? (size.width / 3) - 30
+                                            : (size.width / 2) - 30
+                                        : null,
+                                    child: Builder(builder: (context) {
+                                      final index = snap.indexOf(item) + 1;
+                                      return myCard(item, index);
+                                    }),
+                                  ),
+                              ],
+                            ),
                           ],
                         ),
           ],
@@ -247,77 +269,180 @@ class _SubjectHandlingScreenState extends ConsumerState<SubjectHandlingScreen> {
 
   Widget myCard(HandlingSubject item, int index) {
     return Container(
-      padding: EdgeInsets.all(10),
-      margin: EdgeInsets.symmetric(vertical: 3),
+      margin: EdgeInsets.symmetric(vertical: 6, horizontal: 0),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: Colors.grey.withAlpha(100), width: 1),
+        color: isDark ? Color(0xFF1E1E1E) : Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(
+            color:
+                isDark ? Colors.grey.withAlpha(80) : Colors.grey.withAlpha(40),
+            width: 1.2),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withAlpha(isDark ? 40 : 20),
+            blurRadius: 12,
+            offset: Offset(0, 4),
+          ),
+        ],
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Row(
-                      children: [
-                        CircleAvatar(
-                          radius: 6,
-                          backgroundColor: AppController.darkGreen,
-                        ),
-                        SizedBox(width: 4),
-                        Expanded(
-                          child: Text(item.staffName,
-                              style: TextStyle(fontWeight: FontWeight.bold)),
-                        ),
+          Padding(
+            padding: EdgeInsets.all(14),
+            child: Row(
+              children: [
+                Container(
+                  width: 42,
+                  height: 42,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        AppController.darkGreen,
+                        AppController.darkGreen.withAlpha(180)
                       ],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
                     ),
-                    MyChip(item.code, AppController.lightBlue),
-                  ],
-                ),
-              ),
-              IconButton(
-                onPressed: () {
-                  ref.read(subjectHandlingProvider.notifier).onDelete(item.id);
-                },
-                style: ButtonStyle(
-                  backgroundColor: WidgetStatePropertyAll(
-                    AppController.red.withAlpha(20),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Center(
+                    child: Text(
+                      item.staffName.isNotEmpty
+                          ? item.staffName[0].toUpperCase()
+                          : 'S',
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16),
+                    ),
                   ),
                 ),
-                icon: Icon(TablerIcons.trash, color: AppController.red),
-              ),
-            ],
+                SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        item.staffName,
+                        style: TextStyle(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 15,
+                          color: isDark ? Colors.white : Colors.black87,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      SizedBox(height: 2),
+                      Container(
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: AppController.lightBlue.withAlpha(25),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: Text(
+                          item.code,
+                          style: TextStyle(
+                            color: AppController.lightBlue,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  decoration: BoxDecoration(
+                    color: AppController.red.withAlpha(15),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: IconButton(
+                    onPressed: () {
+                      ref
+                          .read(subjectHandlingProvider.notifier)
+                          .onDelete(item.id);
+                    },
+                    constraints: BoxConstraints(
+                      minWidth: 40,
+                      minHeight: 40,
+                    ),
+                    padding: EdgeInsets.zero,
+                    icon: Icon(
+                      TablerIcons.trash,
+                      color: AppController.red,
+                      size: 20,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
-          myRow('Class', '${item.classname},'),
-          myRow('Section', '${item.secname},'),
-          myRow('Department', '${item.department},'),
-          myRow('Subject', item.fullname),
+          Container(
+            height: 0.5,
+            margin: EdgeInsets.symmetric(horizontal: 12),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  Colors.transparent,
+                  Colors.grey.withAlpha(100),
+                  Colors.grey.withAlpha(100),
+                  Colors.transparent,
+                ],
+              ),
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _detailRow('Class', item.classname),
+                SizedBox(height: 5),
+                _detailRow('Section', item.secname),
+                SizedBox(height: 5),
+                _detailRow('Department', item.department),
+                SizedBox(height: 5),
+                _detailRow('Subject', item.fullname),
+              ],
+            ),
+          ),
         ],
       ),
     );
   }
 
-  Widget myRow(String myKey, String val) {
-    return Text.rich(
-      TextSpan(
-        text: '$myKey ',
-        style: TextStyle(color: Colors.grey),
-        children: [
-          TextSpan(
-            text: ': $val',
+  Widget _detailRow(String label, String value) {
+    return Row(
+      children: [
+        SizedBox(
+          width: 90,
+          child: Text(
+            label,
             style: TextStyle(
-              fontWeight: FontWeight.bold,
-              color: isDark ? Colors.white : Colors.black,
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: Colors.grey.withAlpha(200),
+              letterSpacing: 0.3,
             ),
           ),
-        ],
-      ),
+        ),
+        Expanded(
+          child: Text(
+            value,
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w500,
+              color: isDark ? Colors.white70 : Colors.black87,
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+      ],
     );
   }
 }

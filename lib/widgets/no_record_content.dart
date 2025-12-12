@@ -19,8 +19,8 @@ class NoRecordContent extends StatelessWidget {
             boxShadow: [
               BoxShadow(
                 color: Colors.grey,
-                blurRadius: 20,
-                offset: Offset(0, 8),
+                blurRadius: 6,
+                offset: Offset(0, 1),
               ),
             ],
             border: Border.all(color: Colors.grey.withAlpha(50), width: 1.5),

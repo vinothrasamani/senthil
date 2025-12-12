@@ -59,7 +59,7 @@ class SubjectHandlingController extends StateNotifier<List<HandlingSubject>> {
           'Deleting..',
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
         ),
-        content: Text('Make sure do you wanna delete this handling info'),
+        content: Text('Make sure do you wanna delete this handling info?'),
         actions: [
           OutlinedButton(onPressed: () => Get.back(), child: Text('Cancel')),
           FilledButton(

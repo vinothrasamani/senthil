@@ -80,13 +80,10 @@ class SettingsController {
         ),
         content: Text('Make sure do you wanna continue!'),
         actions: [
-          OutlinedButton(
-              onPressed: () {
-                Get.back();
-              },
-              child: Text('No')),
+          OutlinedButton(onPressed: () => Get.back(), child: Text('No')),
           FilledButton(
             onPressed: () async {
+              Get.back();
               final SharedPreferences preferences =
                   await SharedPreferences.getInstance();
               await preferences.remove('user');

@@ -17,8 +17,8 @@ class InitializerWidget extends StatelessWidget {
             boxShadow: [
               BoxShadow(
                 color: Colors.grey,
-                blurRadius: 15,
-                offset: Offset(0, 5),
+                blurRadius: 6,
+                offset: Offset(0, 1),
               ),
             ],
           ),

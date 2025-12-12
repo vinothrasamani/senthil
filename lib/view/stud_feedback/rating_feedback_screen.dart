@@ -39,9 +39,12 @@ class _RatingFeedbackScreenState extends ConsumerState<RatingFeedbackScreen> {
   Widget build(BuildContext context) {
     final feedData = ref.watch(StudentFeedbackController.feedData);
     final isLoading = ref.watch(StudentFeedbackController.fetching);
+    final sub = ref.watch(StudentFeedbackController.subject);
 
     return Scaffold(
       appBar: _buildAppBar(context),
+      bottomNavigationBar:
+          sub == null || sub.isEmpty ? null : _buildExcludedSubject(sub),
       body: isLoading
           ? _buildLoadingState()
           : feedData == null
@@ -51,6 +54,93 @@ class _RatingFeedbackScreenState extends ConsumerState<RatingFeedbackScreen> {
                       ? _buildFeedbackForm(feedData.data)
                       : _buildRatingForm(feedData.data)
                   : _buildErrorState(feedData.message),
+    );
+  }
+
+  Widget _buildExcludedSubject(String sub) {
+    return SafeArea(
+      child: GestureDetector(
+        onTap: () => showClass(sub),
+        child: Container(
+          height: 45,
+          width: double.infinity,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                Colors.purpleAccent,
+                Colors.deepPurple,
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+          child: Text(
+            'Excluded Subject : $sub',
+            style: TextStyle(
+              fontSize: 15,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+      ),
+    );
+  }
+
+  void showClass(String sub) {
+    final isDark = widget.isDark;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        backgroundColor: isDark ? Colors.grey[850] : Colors.white,
+        content: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: Icon(Icons.subject),
+              title: Text(
+                'Excluded Subjects',
+                style:
+                    TextStyle(color: isDark ? Colors.white : Colors.grey[850]),
+              ),
+              trailing: IconButton.filledTonal(
+                onPressed: () {
+                  ScaffoldMessenger.of(context).removeCurrentSnackBar();
+                },
+                icon: Icon(Icons.close),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.all(10),
+              child: Wrap(
+                spacing: 5,
+                runSpacing: 5,
+                children: [
+                  for (var s in sub.split(','))
+                    Container(
+                      padding:
+                          EdgeInsets.symmetric(vertical: 2, horizontal: 10),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                        color: AppController.headColor,
+                      ),
+                      child: Text(
+                        s,
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -219,13 +309,15 @@ class _RatingFeedbackScreenState extends ConsumerState<RatingFeedbackScreen> {
   PreferredSizeWidget _buildAppBar(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final isSmallScreen = screenWidth < 600;
+    final classIs = widget.info['classname'];
+    final sec = widget.info['section'];
 
     return AppBar(
       elevation: 0,
       backgroundColor: Colors.deepPurple,
       foregroundColor: Colors.white,
       title: Text(
-        'Student Feedback',
+        'Student Feedback - Class : $classIs / $sec',
         style: TextStyle(
             fontSize: isSmallScreen ? 18 : 22, fontWeight: FontWeight.w600),
       ),

@@ -112,33 +112,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                               : null,
                         ),
                       );
-                      return Container(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: 10,
-                            vertical: size.width >= 500 ? 8 : 10),
-                        margin: EdgeInsets.symmetric(
-                            horizontal: 10,
-                            vertical: size.width >= 500 ? 8 : 5),
-                        width: size.width >= 500 ? null : double.infinity,
-                        child: size.width >= 450
-                            ? Row(
-                                children: [
-                                  Flexible(flex: 5, child: column),
-                                  SizedBox(width: 10),
-                                  Flexible(flex: 3, child: center),
-                                ],
-                              )
-                            : Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  column,
-                                  SizedBox(height: 15),
-                                  center,
-                                  SizedBox(height: 15)
-                                ],
-                              ),
-                      );
+                      return content(center, column, size);
                     }),
                     error: (e, _) => CommonErrorWidget(),
                     loading: () => HomeShimmer(isDark: isDark, id: 1),
@@ -190,114 +164,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         if (snap.hasError) {
                           return SizedBox.shrink();
                         }
-                        return Container(
-                          margin:
-                              EdgeInsets.symmetric(vertical: 2, horizontal: 5),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              title(
-                                  const Color.fromARGB(255, 216, 194, 0),
-                                  TablerIcons.file_text,
-                                  'Exam Results',
-                                  isDark,
-                                  snap.data?[0].year ?? 'Year'),
-                              SizedBox(height: 5),
-                              CarouselSlider.builder(
-                                itemCount: snap.data!.length,
-                                itemBuilder: (ctx, index, child) {
-                                  return Container(
-                                    margin: EdgeInsets.symmetric(horizontal: 5),
-                                    width: double.infinity,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10),
-                                      border: Border.all(color: Colors.grey),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          offset: Offset(0, 1),
-                                          blurRadius: 0.5,
-                                          spreadRadius: 1,
-                                        ),
-                                      ],
-                                    ),
-                                    clipBehavior: Clip.hardEdge,
-                                    child: Column(
-                                      children: [
-                                        Container(
-                                          decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.only(
-                                              topLeft: Radius.circular(10),
-                                              topRight: Radius.circular(10),
-                                            ),
-                                            color: Theme.of(context)
-                                                .appBarTheme
-                                                .backgroundColor,
-                                          ),
-                                          width: double.infinity,
-                                          alignment: Alignment.center,
-                                          padding: EdgeInsets.all(10),
-                                          child: Text(
-                                            snap.data![index].title,
-                                            style: TextStyle(
-                                                fontSize: 16,
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                        ),
-                                        Expanded(
-                                          child: Builder(builder: (context) {
-                                            final url =
-                                                '${AppController.baseResultImageUrl}/${snap.data![index].image}';
-                                            return GestureDetector(
-                                              onTap: () => Get.to(
-                                                  () => ImageViewerScreen(
-                                                      url: url,
-                                                      name: snap
-                                                          .data![index].title,
-                                                      from: 'network'),
-                                                  transition: Transition
-                                                      .rightToLeftWithFade),
-                                              child: Image.network(
-                                                url,
-                                                fit: BoxFit.fill,
-                                                width: double.infinity,
-                                                errorBuilder: (context, error,
-                                                    stackTrace) {
-                                                  return Container(
-                                                    padding: EdgeInsets.all(20),
-                                                    child: Icon(
-                                                      Icons.broken_image,
-                                                      size: 40,
-                                                      color: Colors.red[400],
-                                                    ),
-                                                  );
-                                                },
-                                              ),
-                                            );
-                                          }),
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                },
-                                options: CarouselOptions(
-                                  autoPlay: true,
-                                  height: kIsWeb
-                                      ? size.height * 0.80
-                                      : size.height < size.width
-                                          ? size.width * 0.75
-                                          : size.height * 0.75,
-                                  clipBehavior: Clip.hardEdge,
-                                  viewportFraction: kIsWeb && size.width > 500
-                                      ? kIsWeb && size.width > 1000
-                                          ? 0.3
-                                          : 0.6
-                                      : 1.0,
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
+                        return banners(size, isDark, snap);
                       },
                     ),
                   SizedBox(height: 15),
@@ -308,6 +175,162 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         ],
       ),
       drawer: size.width > 900 ? null : AppDrawer(),
+    );
+  }
+
+  Widget banners(Size size, bool isDark, AsyncSnapshot<List<ExamResult>> snap) {
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: 2, horizontal: 5),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          title(const Color.fromARGB(255, 216, 194, 0), TablerIcons.file_text,
+              'Exam Results', isDark, snap.data?[0].year ?? 'Year'),
+          SizedBox(height: 5),
+          CarouselSlider.builder(
+            itemCount: snap.data!.length,
+            itemBuilder: (ctx, index, child) {
+              return Container(
+                margin: EdgeInsets.symmetric(horizontal: 5),
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: Colors.grey),
+                  boxShadow: [
+                    BoxShadow(
+                        offset: Offset(0, 1), blurRadius: 0.5, spreadRadius: 1),
+                  ],
+                ),
+                clipBehavior: Clip.hardEdge,
+                child: Column(
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(10),
+                          topRight: Radius.circular(10),
+                        ),
+                        color: Theme.of(context).appBarTheme.backgroundColor,
+                      ),
+                      width: double.infinity,
+                      alignment: Alignment.center,
+                      padding: EdgeInsets.all(10),
+                      child: Text(
+                        snap.data![index].title,
+                        style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    Expanded(
+                      child: Builder(builder: (context) {
+                        final url =
+                            '${AppController.baseResultImageUrl}/${snap.data![index].image}';
+                        return GestureDetector(
+                          onTap: () => Get.to(
+                              () => ImageViewerScreen(
+                                  url: url,
+                                  name: snap.data![index].title,
+                                  from: 'network'),
+                              transition: Transition.rightToLeftWithFade),
+                          child: Image.network(
+                            url,
+                            fit: BoxFit.fill,
+                            width: double.infinity,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Container(
+                                padding: EdgeInsets.all(20),
+                                child: Icon(
+                                  Icons.broken_image,
+                                  size: 40,
+                                  color: Colors.red[400],
+                                ),
+                              );
+                            },
+                          ),
+                        );
+                      }),
+                    ),
+                  ],
+                ),
+              );
+            },
+            options: CarouselOptions(
+              autoPlay: true,
+              height: kIsWeb
+                  ? size.height * 0.80
+                  : size.height < size.width
+                      ? size.width * 0.75
+                      : size.height * 0.75,
+              clipBehavior: Clip.hardEdge,
+              viewportFraction: kIsWeb && size.width > 500
+                  ? kIsWeb && size.width > 1000
+                      ? 0.3
+                      : 0.6
+                  : 1.0,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget content(Widget center, Widget column, Size size) {
+    return Container(
+      padding: EdgeInsets.symmetric(
+          horizontal: 10, vertical: size.width >= 500 ? 8 : 10),
+      margin: EdgeInsets.symmetric(
+          horizontal: 10, vertical: size.width >= 500 ? 8 : 5),
+      width: size.width >= 500 ? null : double.infinity,
+      child: size.width >= 450
+          ? size.width >= 600 &&
+                  !ref.watch(SettingsController.canShowCollection) &&
+                  !ref.watch(SettingsController.canShowResult)
+              ? Center(
+                  child: Container(
+                    padding: EdgeInsets.all(15),
+                    margin: EdgeInsets.symmetric(horizontal: size.width * 0.1),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).scaffoldBackgroundColor,
+                      boxShadow: [
+                        BoxShadow(
+                          offset: Offset(0, 1),
+                          color: Colors.grey,
+                          spreadRadius: 1,
+                          blurRadius: 2,
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        column,
+                        SizedBox(height: 15),
+                        center,
+                        SizedBox(height: 15)
+                      ],
+                    ),
+                  ),
+                )
+              : Row(
+                  children: [
+                    Flexible(flex: 5, child: column),
+                    SizedBox(width: 10),
+                    Flexible(flex: 3, child: center),
+                  ],
+                )
+          : Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                column,
+                SizedBox(height: 15),
+                center,
+                SizedBox(height: 15)
+              ],
+            ),
     );
   }
 

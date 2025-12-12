@@ -13,6 +13,7 @@ import 'package:senthil/shimmer/list_shimmer.dart';
 import 'package:senthil/shimmer/search_shimmer.dart';
 import 'package:senthil/view/feedback_screen.dart';
 import 'package:senthil/widgets/my_chip.dart';
+import 'package:senthil/widgets/no_record_content.dart';
 
 class FeedbackEntryScreen extends ConsumerStatefulWidget {
   const FeedbackEntryScreen({super.key});
@@ -32,7 +33,7 @@ class _FeebackEntryScreenState extends ConsumerState<FeedbackEntryScreen> {
 
   @override
   void initState() {
-    controller.setData(ref, 'feedback-entry-init', {});
+    controller.setData(ref);
     super.initState();
   }
 
@@ -60,7 +61,6 @@ class _FeebackEntryScreenState extends ConsumerState<FeedbackEntryScreen> {
   Widget build(BuildContext context) {
     isDark = ref.watch(ThemeController.themeMode) == ThemeMode.dark;
     Size size = MediaQuery.of(context).size;
-
     final snap = ref.watch(feedbackEntryProvider);
 
     List<Widget> dropdownList = [
@@ -79,6 +79,9 @@ class _FeebackEntryScreenState extends ConsumerState<FeedbackEntryScreen> {
             )),
         onChanged: (val) {
           selectedYear = val;
+          selectedType = null;
+          selectedSchool = null;
+          selectedSession = null;
         },
       ),
       DropdownButtonFormField<String>(
@@ -93,11 +96,8 @@ class _FeebackEntryScreenState extends ConsumerState<FeedbackEntryScreen> {
             prefixIcon: Icon(TablerIcons.category, color: Colors.grey)),
         onChanged: (val) {
           selectedType = val;
-          controller.setData(
-            ref,
-            'feedback-entry-schl',
-            {'year': selectedYear, 'type': val},
-          );
+          selectedSchool = null;
+          selectedSession = null;
         },
       ),
       DropdownButtonFormField<String>(
@@ -112,6 +112,7 @@ class _FeebackEntryScreenState extends ConsumerState<FeedbackEntryScreen> {
             prefixIcon: Icon(TablerIcons.school, color: Colors.grey)),
         onChanged: (val) {
           selectedSchool = val;
+          selectedSession = null;
         },
       ),
       DropdownButtonFormField<String>(
@@ -192,22 +193,27 @@ class _FeebackEntryScreenState extends ConsumerState<FeedbackEntryScreen> {
               ref.watch(controller.searching)
                   ? ListShimmer(isDark: isDark)
                   : snap.isEmpty
-                      ? SizedBox(
-                          height: 200,
-                          child: Center(
-                              child:
-                                  Text('Search to Get feedback entry list!')),
-                        )
+                      ? NoRecordContent(msg: 'No records found!')
                       : Column(
                           children: [
                             AppController.heading('Feedback Entry List', isDark,
                                 TablerIcons.message_2_check),
                             SizedBox(height: 10),
-                            for (var item in snap)
-                              Builder(builder: (context) {
-                                final index = snap.indexOf(item) + 1;
-                                return myCard(item, index);
-                              }),
+                            Wrap(
+                              spacing: 5,
+                              children: [
+                                for (var item in snap)
+                                  SizedBox(
+                                    width: size.width > 800
+                                        ? (size.width / 2) - 30
+                                        : null,
+                                    child: Builder(builder: (context) {
+                                      final index = snap.indexOf(item) + 1;
+                                      return myCard(item, index);
+                                    }),
+                                  ),
+                              ],
+                            ),
                           ],
                         ),
           ],
@@ -229,7 +235,6 @@ class _FeebackEntryScreenState extends ConsumerState<FeedbackEntryScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               CircleAvatar(
                 radius: 15,
@@ -243,8 +248,10 @@ class _FeebackEntryScreenState extends ConsumerState<FeedbackEntryScreen> {
                   ),
                 ),
               ),
+              SizedBox(width: 6),
               MyChip(item.entryDate.toIso8601String().split('T')[0],
                   AppController.darkGreen),
+              Spacer(),
               Chip(
                 avatar: Icon(TablerIcons.id),
                 label: Text('${item.id}'),

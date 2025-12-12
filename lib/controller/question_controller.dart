@@ -16,7 +16,8 @@ class QuestionController {
   static void setQuesData(WidgetRef ref, String url, Object object) async {
     final res = await AppController.send(url, object);
     final decrypted = jsonDecode(res);
-    ref.read(quesYears.notifier).state = decrypted['data']['years'];
+    List y = decrypted['data']['years'];
+    ref.read(quesYears.notifier).state = y.isEmpty ? [''] : y;
     ref.read(quesClasses.notifier).state = decrypted['data']['classes'];
     ref.read(quesExams.notifier).state = decrypted['data']['exams'];
   }

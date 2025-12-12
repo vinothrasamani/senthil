@@ -18,8 +18,8 @@ class CommonErrorWidget extends StatelessWidget {
               BoxShadow(
                 color: Colors.grey,
                 blurRadius: 12,
-                spreadRadius: 2,
-                offset: Offset(0, 6),
+                spreadRadius: 6,
+                offset: Offset(0, 1),
               ),
             ],
           ),

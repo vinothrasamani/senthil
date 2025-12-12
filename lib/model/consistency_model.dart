@@ -1,6 +1,6 @@
 class ConsistencyModel {
   final List<ExamName> examNames;
-  final Map<String, Map<String, List<dynamic>>> results;
+  final Map<String, Map<String, List<dynamic>>>? results;
   final List<School> schools;
 
   ConsistencyModel({
@@ -16,7 +16,9 @@ class ConsistencyModel {
         [];
 
     final resultsMap = <String, Map<String, List<dynamic>>>{};
-    final resultsJson = json['results'] as Map<String, dynamic>?;
+    final resultsJson = json['results'] == null
+        ? null
+        : json['results'] as Map<String, dynamic>?;
     if (resultsJson != null) {
       resultsJson.forEach((schoolKey, schoolData) {
         final schoolExams = <String, List<dynamic>>{};
@@ -46,7 +48,7 @@ class ConsistencyModel {
   Map<String, dynamic> toJson() {
     return {
       'examNames': examNames.map((e) => e.toJson()).toList(),
-      'results': results.map((key, value) {
+      'results': results?.map((key, value) {
         final examMap = <String, dynamic>{};
         value.forEach((examKey, examData) {
           examMap[examKey] = examData;

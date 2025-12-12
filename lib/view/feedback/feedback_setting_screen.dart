@@ -116,6 +116,7 @@ class _FeedbackSettingState extends ConsumerState<FeedbackSettingScreen> {
   @override
   Widget build(BuildContext context) {
     bool isLoading = ref.watch(FeedbackListController.feedLoading);
+    final size = MediaQuery.of(context).size;
     bool isDark = ref.watch(ThemeController.themeMode) == ThemeMode.dark;
     final years = ref.watch(FeedbackListController.years);
     final sessions = ref.watch(FeedbackListController.sessions);
@@ -123,128 +124,151 @@ class _FeedbackSettingState extends ConsumerState<FeedbackSettingScreen> {
     final fa = ref.watch(FeedbackListController.fAnim);
     final fs = ref.watch(FeedbackListController.fStaff);
 
+    var pad = size.width > 500
+        ? size.width > 800
+            ? size.width > 1000
+                ? size.width * 0.20
+                : size.width * 0.16
+            : size.width * 0.12
+        : 2.0;
+
     return Scaffold(
       appBar: AppBar(title: Text('Feedback Settings')),
       body: SafeArea(
-        child: isLoading
-            ? FeedbackSettingsShimmer(isDark: isDark)
-            : ListView(
-                padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-                shrinkWrap: true,
-                children: [
-                  title('Person Name', TablerIcons.user),
-                  TextField(
-                    controller: name,
-                    decoration: InputDecoration(hintText: 'Name'),
-                  ),
-                  title('Title Message', TablerIcons.message),
-                  TextField(
-                    controller: titleMsg,
-                    decoration: InputDecoration(hintText: 'Title'),
-                    minLines: 1,
-                    maxLines: 2,
-                  ),
-                  title('Message', TablerIcons.message_2),
-                  TextField(
-                    controller: message,
-                    decoration: InputDecoration(hintText: 'Message'),
-                    minLines: 3,
-                    maxLines: 6,
-                  ),
-                  title('Session', TablerIcons.timeline),
-                  DropdownButtonFormField<String>(
-                    value: selectedSession,
-                    isDense: true,
-                    padding: EdgeInsets.symmetric(horizontal: 0),
-                    items: sessions
-                        .map<DropdownMenuItem<String>>(
-                            (e) => DropdownMenuItem(value: e, child: Text(e)))
-                        .toList(),
-                    hint: Text('Session'),
-                    onChanged: (s) {
-                      selectedSession = s;
-                    },
-                  ),
-                  SizedBox(height: 10),
-                  Row(
-                    children: [
-                      title('Year', TablerIcons.calendar),
-                      SizedBox(width: 15),
-                      Spacer(),
-                      SizedBox(
-                        width: 180,
-                        child: DropdownButtonFormField<String>(
-                          value: selectedYear,
-                          isDense: true,
-                          padding: EdgeInsets.symmetric(horizontal: 0),
-                          items: years
-                              .map<DropdownMenuItem<String>>((e) =>
-                                  DropdownMenuItem(value: e, child: Text(e)))
-                              .toList(),
-                          hint: Text('Year'),
-                          onChanged: (year) {
-                            selectedYear = year;
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                  SwitchListTile(
-                    value: fs,
-                    dense: true,
-                    contentPadding: EdgeInsets.symmetric(horizontal: 0),
-                    onChanged: (value) {
-                      ref.read(FeedbackListController.fStaff.notifier).state =
-                          value;
-                    },
-                    title: title('Staff Feedback', Icons.feedback_outlined),
-                  ),
-                  SwitchListTile(
-                    value: fa,
-                    dense: true,
-                    contentPadding: EdgeInsets.symmetric(horizontal: 0),
-                    onChanged: (value) {
-                      ref.read(FeedbackListController.fAnim.notifier).state =
-                          value;
-                    },
-                    title: title('Feedback Admin', Icons.feedback_outlined),
-                  ),
-                  title('SLM-CBSC Staff Code', TablerIcons.user_code),
-                  TextField(
-                    controller: slmcsc,
-                    decoration: InputDecoration(hintText: 'Staff code'),
-                  ),
-                  title('DPI-CBSC Staff Code', TablerIcons.user_code),
-                  TextField(
-                    controller: dpicsc,
-                    decoration: InputDecoration(hintText: 'Staff code'),
-                  ),
-                  title('DPI-Metric Staff Code', TablerIcons.user_code),
-                  TextField(
-                    controller: dpimsc,
-                    decoration: InputDecoration(hintText: 'Staff code'),
-                  ),
-                  title('KGI-CBSC Staff Code', TablerIcons.user_code),
-                  TextField(
-                    controller: kgicsc,
-                    decoration: InputDecoration(hintText: 'Staff code'),
-                  ),
-                  title('KGI-Metric Staff Code', TablerIcons.user_code),
-                  TextField(
-                    controller: kgimsc,
-                    decoration: InputDecoration(hintText: 'Staff code'),
-                  ),
-                  SizedBox(height: 10),
-                  SizedBox(
-                    width: double.infinity,
-                    child: FilledButton(
-                      onPressed: updating ? null : update,
-                      child: Text('Update Notice'),
+        child: Container(
+          margin: EdgeInsets.symmetric(horizontal: pad),
+          decoration: BoxDecoration(
+            color: Theme.of(context).scaffoldBackgroundColor,
+            boxShadow: [
+              if (size.width > 500)
+                BoxShadow(
+                  offset: Offset(0, 0.5),
+                  color: Colors.grey.withAlpha(100),
+                  spreadRadius: 1,
+                  blurRadius: 2,
+                ),
+            ],
+          ),
+          child: isLoading
+              ? FeedbackSettingsShimmer(isDark: isDark)
+              : ListView(
+                  padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                  shrinkWrap: true,
+                  children: [
+                    title('Person Name', TablerIcons.user),
+                    TextField(
+                      controller: name,
+                      decoration: InputDecoration(hintText: 'Name'),
                     ),
-                  ),
-                  SizedBox(height: 20),
-                ],
-              ),
+                    title('Title Message', TablerIcons.message),
+                    TextField(
+                      controller: titleMsg,
+                      decoration: InputDecoration(hintText: 'Title'),
+                      minLines: 1,
+                      maxLines: 2,
+                    ),
+                    title('Message', TablerIcons.message_2),
+                    TextField(
+                      controller: message,
+                      decoration: InputDecoration(hintText: 'Message'),
+                      minLines: 3,
+                      maxLines: 6,
+                    ),
+                    title('Session', TablerIcons.timeline),
+                    DropdownButtonFormField<String>(
+                      value: selectedSession,
+                      isDense: true,
+                      padding: EdgeInsets.symmetric(horizontal: 0),
+                      items: sessions
+                          .map<DropdownMenuItem<String>>(
+                              (e) => DropdownMenuItem(value: e, child: Text(e)))
+                          .toList(),
+                      hint: Text('Session'),
+                      onChanged: (s) {
+                        selectedSession = s;
+                      },
+                    ),
+                    SizedBox(height: 10),
+                    Row(
+                      children: [
+                        title('Year', TablerIcons.calendar),
+                        SizedBox(width: 15),
+                        Spacer(),
+                        SizedBox(
+                          width: 180,
+                          child: DropdownButtonFormField<String>(
+                            value: selectedYear,
+                            isDense: true,
+                            padding: EdgeInsets.symmetric(horizontal: 0),
+                            items: years
+                                .map<DropdownMenuItem<String>>((e) =>
+                                    DropdownMenuItem(value: e, child: Text(e)))
+                                .toList(),
+                            hint: Text('Year'),
+                            onChanged: (year) {
+                              selectedYear = year;
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                    SwitchListTile(
+                      value: fs,
+                      dense: true,
+                      contentPadding: EdgeInsets.symmetric(horizontal: 0),
+                      onChanged: (value) {
+                        ref.read(FeedbackListController.fStaff.notifier).state =
+                            value;
+                      },
+                      title: title('Staff Feedback', Icons.feedback_outlined),
+                    ),
+                    SwitchListTile(
+                      value: fa,
+                      dense: true,
+                      contentPadding: EdgeInsets.symmetric(horizontal: 0),
+                      onChanged: (value) {
+                        ref.read(FeedbackListController.fAnim.notifier).state =
+                            value;
+                      },
+                      title: title('Feedback Admin', Icons.feedback_outlined),
+                    ),
+                    title('SLM-CBSC Staff Code', TablerIcons.user_code),
+                    TextField(
+                      controller: slmcsc,
+                      decoration: InputDecoration(hintText: 'Staff code'),
+                    ),
+                    title('DPI-CBSC Staff Code', TablerIcons.user_code),
+                    TextField(
+                      controller: dpicsc,
+                      decoration: InputDecoration(hintText: 'Staff code'),
+                    ),
+                    title('DPI-Metric Staff Code', TablerIcons.user_code),
+                    TextField(
+                      controller: dpimsc,
+                      decoration: InputDecoration(hintText: 'Staff code'),
+                    ),
+                    title('KGI-CBSC Staff Code', TablerIcons.user_code),
+                    TextField(
+                      controller: kgicsc,
+                      decoration: InputDecoration(hintText: 'Staff code'),
+                    ),
+                    title('KGI-Metric Staff Code', TablerIcons.user_code),
+                    TextField(
+                      controller: kgimsc,
+                      decoration: InputDecoration(hintText: 'Staff code'),
+                    ),
+                    SizedBox(height: 10),
+                    SizedBox(
+                      width: double.infinity,
+                      child: FilledButton(
+                        onPressed: updating ? null : update,
+                        child: Text('Update Notice'),
+                      ),
+                    ),
+                    SizedBox(height: 20),
+                  ],
+                ),
+        ),
       ),
     );
   }
