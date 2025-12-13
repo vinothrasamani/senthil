@@ -46,6 +46,43 @@ class ThemeController {
     ),
   );
 
+  static InputDecorationTheme decorate(bool isDark) {
+    final Color borderColor =
+        isDark ? Colors.grey.shade700 : Colors.grey.shade400;
+    final Color focusedColor = isDark ? Colors.blue.shade300 : Colors.blue;
+    final Color fillColor =
+        isDark ? const Color(0xFF1E1E1E) : Colors.grey.shade100;
+
+    return InputDecorationTheme(
+      filled: true,
+      fillColor: fillColor,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      hintStyle: TextStyle(
+          color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
+          fontSize: 14),
+      labelStyle: TextStyle(
+          color: isDark ? Colors.grey.shade300 : Colors.grey.shade700,
+          fontSize: 14),
+      errorStyle: const TextStyle(fontSize: 12, height: 1.2),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: borderColor, width: 1),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: focusedColor, width: 1.5),
+      ),
+      errorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: const BorderSide(color: Colors.red, width: 1),
+      ),
+      focusedErrorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: const BorderSide(color: Colors.red, width: 1.5),
+      ),
+    );
+  }
+
   static ThemeData lightTheme = ThemeData(
     colorScheme: ColorScheme.fromSeed(
         seedColor: baseColor, brightness: Brightness.light),
@@ -55,7 +92,7 @@ class ThemeController {
     filledButtonTheme: filledButtonThemeData,
     appBarTheme: appBarTheme,
     outlinedButtonTheme: outlinedButtonThemeData,
-    inputDecorationTheme: InputDecorationTheme(border: OutlineInputBorder()),
+    inputDecorationTheme: decorate(false),
     iconButtonTheme: iconButtonThemeData,
     floatingActionButtonTheme: floatingActionButtonThemeData,
   );
@@ -69,7 +106,7 @@ class ThemeController {
     filledButtonTheme: filledButtonThemeData,
     appBarTheme: appBarTheme,
     outlinedButtonTheme: outlinedButtonThemeData,
-    inputDecorationTheme: InputDecorationTheme(border: OutlineInputBorder()),
+    inputDecorationTheme: decorate(true),
     iconButtonTheme: iconButtonThemeData,
     floatingActionButtonTheme: floatingActionButtonThemeData,
   );

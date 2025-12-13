@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:get/get.dart';
+import 'package:senthil/controller/app_controller.dart';
 import 'package:senthil/controller/login_controller.dart';
 import 'package:senthil/controller/theme_controller.dart';
 import 'package:senthil/view/terms_screen.dart';
@@ -49,7 +50,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     bool canShow = ref.watch(LoginController.canShowPassword);
     bool isLoading = ref.watch(LoginController.isLoading);
     bool isChecked = ref.watch(LoginController.isChecked);
+    bool isDark = ref.watch(ThemeController.themeMode) == ThemeMode.dark;
     Size size = MediaQuery.of(context).size;
+
     double flexWidth = size.width > 500
         ? size.width > 800
             ? size.width > 1000
@@ -62,149 +65,164 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       body: Container(
         alignment: Alignment.center,
         decoration: BoxDecoration(
-            gradient: SweepGradient(colors: [
-          baseColor,
-          const Color.fromARGB(255, 189, 0, 157),
-          const Color.fromARGB(255, 137, 0, 179),
-          baseColor
-        ])),
+          image: DecorationImage(
+              opacity: 0.3,
+              image: AssetImage('assets/images/school.png'),
+              fit: BoxFit.cover),
+          gradient: LinearGradient(
+            colors: [
+              AppController.headColor.withAlpha(50),
+              baseColor.withAlpha(50),
+              AppController.lightBlue.withAlpha(50),
+              baseColor.withAlpha(50),
+              AppController.headColor.withAlpha(50),
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
         child: SafeArea(
           child: SingleChildScrollView(
-            child: Card(
+            child: Container(
               margin: EdgeInsets.symmetric(vertical: 10, horizontal: flexWidth),
-              child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                child: Form(
-                  key: formKey,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      if (isLoading) LinearProgressIndicator(),
-                      SizedBox(height: 15),
-                      Image.asset('assets/images/logo.png',
-                          height: 120, width: 120, fit: BoxFit.cover),
-                      SizedBox(height: 15),
-                      Text(
-                        'Welcome Back!',
-                        style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold),
-                      ),
-                      SizedBox(height: 10),
-                      Text('Please login to continue..'),
-                      SizedBox(height: 10),
-                      TextFormField(
-                        decoration: InputDecoration(
-                            border: OutlineInputBorder(),
-                            labelText: 'Username',
-                            prefixIcon: Icon(
-                              TablerIcons.user,
-                              color: Colors.grey,
-                            )),
-                        onChanged: (value) => username = value,
-                        validator: (value) => value == null || value.isEmpty
-                            ? 'Please enter username!'
-                            : null,
-                        onSaved: (newValue) => username = newValue,
-                      ),
-                      SizedBox(height: 10),
-                      TextFormField(
-                        decoration: InputDecoration(
-                            border: OutlineInputBorder(),
-                            labelText: 'Password',
-                            prefixIcon:
-                                Icon(TablerIcons.lock, color: Colors.grey),
-                            suffixIcon: GestureDetector(
-                              onTap: () {
-                                ref
-                                    .read(LoginController
-                                        .canShowPassword.notifier)
-                                    .state = !canShow;
-                              },
-                              child: Icon(
-                                  canShow
-                                      ? Icons.visibility
-                                      : Icons.visibility_off,
-                                  color: Colors.grey),
-                            )),
-                        obscureText: !canShow,
-                        validator: (value) => value == null || value.isEmpty
-                            ? 'Please enter password!'
-                            : null,
-                        onChanged: (value) => password = value,
-                        onSaved: (newValue) => password = newValue,
-                      ),
-                      SizedBox(height: 10),
-                      Row(
-                        children: [
-                          Checkbox(
-                            value: isChecked,
-                            onChanged: (val) {
-                              ref
-                                  .read(LoginController.isChecked.notifier)
-                                  .state = val ?? false;
-                            },
-                          ),
-                          SizedBox(width: 6),
-                          Expanded(
-                            child: Text.rich(
-                              TextSpan(text: 'I agreed to the ', children: [
-                                TextSpan(
-                                  text: 'Privacy Policy ',
-                                  recognizer: TapGestureRecognizer()
-                                    ..onTap = () async {
-                                      final url =
-                                          'https://senthil.ijessi.com/api/privacy-policy';
-                                      if (kIsWeb) {
-                                        if (await canLaunchUrlString(url)) {
-                                          await launchUrlString(url);
-                                        }
-                                      } else {
-                                        Get.to(() => WebViewScreen(
-                                              title: 'Privacy Policy',
-                                              link: url,
-                                            ));
-                                      }
-                                    },
-                                  style: TextStyle(color: Colors.blue),
-                                ),
-                                TextSpan(text: 'and '),
-                                TextSpan(
-                                  text: 'Terms & Conditions.',
-                                  recognizer: TapGestureRecognizer()
-                                    ..onTap = () {
-                                      Get.to(() => TermsScreen());
-                                    },
-                                  style: TextStyle(color: Colors.blue),
-                                ),
-                              ]),
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 10),
-                      SizedBox(
-                        width: double.infinity,
-                        child: FilledButton(
-                          onPressed: isLoading || !isChecked ? null : login,
-                          child: Text(
-                            'Login',
-                            style: TextStyle(
-                                color: isLoading || !isChecked
-                                    ? Colors.black54
-                                    : null),
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 15),
-                    ],
-                  ),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                gradient: LinearGradient(
+                  colors: [
+                    AppController.headColor,
+                    AppController.lightBlue,
+                    baseColor,
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+              ),
+              child: Card(
+                color: isDark ? Colors.black : Colors.white,
+                child: Padding(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                  child: myForm(isLoading, canShow, isChecked),
                 ),
               ),
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget myForm(bool isLoading, bool canShow, bool isChecked) {
+    return Form(
+      key: formKey,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (isLoading) LinearProgressIndicator(),
+          SizedBox(height: 15),
+          Image.asset('assets/images/logo.png',
+              height: 120, width: 120, fit: BoxFit.cover),
+          SizedBox(height: 15),
+          Text(
+            'Welcome Back!',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          SizedBox(height: 10),
+          Text('Please login to continue..'),
+          SizedBox(height: 10),
+          TextFormField(
+            decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'Username',
+                prefixIcon: Icon(TablerIcons.user, color: Colors.grey)),
+            onChanged: (value) => username = value,
+            validator: (value) => value == null || value.isEmpty
+                ? 'Please enter username!'
+                : null,
+            onSaved: (newValue) => username = newValue,
+          ),
+          SizedBox(height: 10),
+          TextFormField(
+            decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'Password',
+                prefixIcon: Icon(TablerIcons.lock, color: Colors.grey),
+                suffixIcon: GestureDetector(
+                  onTap: () {
+                    ref.read(LoginController.canShowPassword.notifier).state =
+                        !canShow;
+                  },
+                  child: Icon(canShow ? Icons.visibility : Icons.visibility_off,
+                      color: Colors.grey),
+                )),
+            obscureText: !canShow,
+            validator: (value) => value == null || value.isEmpty
+                ? 'Please enter password!'
+                : null,
+            onChanged: (value) => password = value,
+            onSaved: (newValue) => password = newValue,
+          ),
+          SizedBox(height: 10),
+          Row(
+            children: [
+              Checkbox(
+                value: isChecked,
+                activeColor: Colors.green,
+                onChanged: (val) {
+                  ref.read(LoginController.isChecked.notifier).state =
+                      val ?? false;
+                },
+              ),
+              SizedBox(width: 6),
+              Expanded(
+                child: Text.rich(
+                  TextSpan(text: 'I agreed to the ', children: [
+                    TextSpan(
+                      text: 'Privacy Policy ',
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = () async {
+                          final url =
+                              'https://senthil.ijessi.com/api/privacy-policy';
+                          if (kIsWeb) {
+                            if (await canLaunchUrlString(url)) {
+                              await launchUrlString(url);
+                            }
+                          } else {
+                            Get.to(() => WebViewScreen(
+                                title: 'Privacy Policy', link: url));
+                          }
+                        },
+                      style: TextStyle(color: Colors.blue),
+                    ),
+                    TextSpan(text: 'and '),
+                    TextSpan(
+                      text: 'Terms & Conditions.',
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = () {
+                          Get.to(() => TermsScreen());
+                        },
+                      style: TextStyle(color: Colors.blue),
+                    ),
+                  ]),
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 10),
+          SizedBox(
+            width: double.infinity,
+            child: FilledButton(
+              onPressed: isLoading || !isChecked ? null : login,
+              child: Text(
+                'Login',
+                style: TextStyle(
+                    color: isLoading || !isChecked ? Colors.black54 : null),
+              ),
+            ),
+          ),
+          SizedBox(height: 15),
+        ],
       ),
     );
   }

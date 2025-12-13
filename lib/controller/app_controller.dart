@@ -7,11 +7,12 @@ import 'package:intl/intl.dart';
 import 'package:senthil/controller/theme_controller.dart';
 import 'package:zo_animated_border/zo_animated_border.dart';
 
-enum Purpose { success, fail }
+enum Purpose { success, fail, unReachable }
 
 final Map<Purpose, Color> messagePurpose = {
   Purpose.success: const Color.fromARGB(255, 0, 131, 4),
-  Purpose.fail: const Color.fromARGB(255, 163, 11, 0)
+  Purpose.fail: const Color.fromARGB(255, 163, 11, 0),
+  Purpose.unReachable: const Color.fromARGB(255, 255, 0, 0)
 };
 
 class AppController {
@@ -37,26 +38,44 @@ class AppController {
   static final String baseStaffImageUrl = '$baseUrl/public/uploads/staff';
 
   static Future<dynamic> fetch(String endPoint) async {
-    final url = Uri.parse('$baseApiUrl/$endPoint');
-    final res = await http.get(url);
-    if (res.statusCode == 200) {
-      return res.body;
-    } else {
-      return null;
+    try {
+      final url = Uri.parse('$baseApiUrl/$endPoint');
+      final res = await http.get(url);
+      if (res.statusCode == 200) {
+        return res.body;
+      }
+    } catch (e) {
+      if (e.toString().contains('Failed to fetch')) {
+        reachError();
+      }
     }
   }
 
   static Future<dynamic> send(String endPoint, Object object) async {
-    final url = Uri.parse('$baseApiUrl/$endPoint');
-    final res = await http.post(url,
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode(object));
-    print(res.body);
-    if (res.statusCode == 200) {
-      return res.body;
-    } else {
-      return null;
+    try {
+      final url = Uri.parse('$baseApiUrl/$endPoint');
+      final res = await http.post(url,
+          headers: {'Content-Type': 'application/json'},
+          body: jsonEncode(object));
+      if (res.statusCode == 200) {
+        return res.body;
+      }
+    } catch (e) {
+      if (e.toString().contains('Failed to fetch')) {
+        reachError();
+      }
     }
+  }
+
+  static void reachError() async {
+    await Future.delayed(Duration(milliseconds: 200), () {
+      Get.closeAllSnackbars();
+      toastMessage(
+        'Failed to fetch!',
+        'Unable to reach the server, Please contact admin!',
+        purpose: Purpose.unReachable,
+      );
+    });
   }
 
   //---------------------- Additionals --------------------------
@@ -68,18 +87,26 @@ class AppController {
       backgroundColor: Colors.white,
       colorText: Colors.black,
       borderRadius: 5,
-      duration: Duration(seconds: 3),
+      duration: Duration(seconds: purpose == Purpose.unReachable ? 60 : 3),
       icon: Icon(
-        purpose == Purpose.success ? Icons.check_circle : Icons.cancel_outlined,
+        purpose == Purpose.unReachable
+            ? Icons.error
+            : purpose == Purpose.success
+                ? Icons.check_circle
+                : Icons.cancel_outlined,
         color: messagePurpose[purpose],
       ),
       borderColor: messagePurpose[purpose],
       borderWidth: 1.0,
-      mainButton: TextButton(
-          onPressed: () {
-            Get.closeCurrentSnackbar();
-          },
-          child: Icon(Icons.close)),
+      isDismissible: purpose == Purpose.unReachable,
+      mainButton: purpose == Purpose.unReachable
+          ? null
+          : TextButton(
+              onPressed: () {
+                Get.closeCurrentSnackbar();
+              },
+              child: Icon(Icons.close),
+            ),
       margin: EdgeInsets.all(10),
       leftBarIndicatorColor: messagePurpose[purpose],
     );

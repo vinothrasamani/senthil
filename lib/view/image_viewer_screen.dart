@@ -13,7 +13,14 @@ class ImageViewerScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text(name)),
-      body: SafeArea(child: Center(child: image())),
+      body: SafeArea(
+        child: InteractiveViewer(
+          minScale: 1,
+          maxScale: 6,
+          boundaryMargin: const EdgeInsets.all(20),
+          child: Center(child: image()),
+        ),
+      ),
     );
   }
 

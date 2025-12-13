@@ -32,11 +32,6 @@ class LoginController {
         if (result.data!.role == 6 || result.data!.role == 7) {
           screen = FeedbackHomeScreen();
         }
-        // else {
-        //   AppController.toastMessage('Failed', 'Invalid User!.',
-        //       purpose: Purpose.fail);
-        //   return;
-        // }
         await preferences.setString('user', res);
         Get.offAll(() => screen, transition: Transition.zoom);
         AppController.toastMessage(

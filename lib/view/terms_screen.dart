@@ -5,6 +5,16 @@ class TermsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+
+    var pad = size.width > 500
+        ? size.width > 800
+            ? size.width > 1000
+                ? size.width * 0.20
+                : size.width * 0.16
+            : size.width * 0.12
+        : 2.0;
+
     List<String> headers = [
       '1. Introduction',
       '2. Use of the App',
@@ -52,54 +62,69 @@ class TermsScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('Terms and Conditions')),
       body: SafeArea(
-        child: ListView(
-          padding: const EdgeInsets.all(10),
-          shrinkWrap: true,
-          children: [
-            SizedBox(height: 10),
-            Text(
-              'Last Updated : 28/08/2025',
-              textAlign: TextAlign.right,
-              style: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.bold,
-                color: Colors.grey,
+        child: Container(
+          margin: EdgeInsets.symmetric(horizontal: pad),
+          decoration: BoxDecoration(
+            color: Theme.of(context).scaffoldBackgroundColor,
+            boxShadow: [
+              if (size.width > 500)
+                BoxShadow(
+                  offset: Offset(0, 0.5),
+                  color: Colors.grey.withAlpha(100),
+                  spreadRadius: 1,
+                  blurRadius: 2,
+                ),
+            ],
+          ),
+          child: ListView(
+            padding: const EdgeInsets.all(10),
+            shrinkWrap: true,
+            children: [
+              SizedBox(height: 10),
+              Text(
+                'Last Updated : 28/08/2025',
+                textAlign: TextAlign.right,
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.grey,
+                ),
               ),
-            ),
-            SizedBox(height: 10),
-            for (var i = 0; i < headers.length; i++)
-              Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(height: i == 4 ? 0 : 20),
-                  Text(
-                    headers[i],
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
+              SizedBox(height: 10),
+              for (var i = 0; i < headers.length; i++)
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(height: i == 4 ? 0 : 20),
+                    Text(
+                      headers[i],
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
-                  SizedBox(height: i == 4 ? 0 : 5),
-                  for (var c in content[i])
-                    content[i].length > 1
-                        ? Column(
-                            children: [
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text('➡️'),
-                                  SizedBox(width: 10),
-                                  Expanded(child: Text(c)),
-                                ],
-                              ),
-                              SizedBox(height: 10),
-                            ],
-                          )
-                        : Text(c),
-                ],
-              )
-          ],
+                    SizedBox(height: i == 4 ? 0 : 5),
+                    for (var c in content[i])
+                      content[i].length > 1
+                          ? Column(
+                              children: [
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text('➡️'),
+                                    SizedBox(width: 10),
+                                    Expanded(child: Text(c)),
+                                  ],
+                                ),
+                                SizedBox(height: 10),
+                              ],
+                            )
+                          : Text(c),
+                  ],
+                )
+            ],
+          ),
         ),
       ),
       bottomNavigationBar: Container(
