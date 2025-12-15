@@ -23,45 +23,98 @@ class ClassTopperCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+    bool isLargeScreen = size.width > 1000;
 
     return Builder(builder: (context) {
-      int len = snap.data.schools.length;
-      return DefaultTabController(
-        length: len,
-        child: Card(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-            side: BorderSide(color: Colors.grey),
+      if (isLargeScreen) {
+        return Padding(
+          padding: const EdgeInsets.all(5.0),
+          child: ListView(
+            shrinkWrap: true,
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  for (var school in snap.data.schools)
+                    Container(
+                      padding: EdgeInsets.all(5),
+                      width: (size.width / 3) - 20,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(12.0),
+                            width: double.infinity,
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                                color: Colors.grey.withAlpha(40),
+                                borderRadius: BorderRadius.circular(4)),
+                            child: Text(
+                              school,
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: AppController.headColor,
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: 4),
+                          Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(
+                                color: Colors.grey.withAlpha(80),
+                              ),
+                            ),
+                            child: _buildSchoolToppers(school, context),
+                          ),
+                        ],
+                      ),
+                    ),
+                ],
+              ),
+            ],
           ),
-          child: Padding(
-            padding: const EdgeInsets.all(5.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TabBar(
-                  isScrollable: len > 4 ? true : false,
-                  tabAlignment: len > 4 ? TabAlignment.start : null,
-                  labelStyle:
-                      TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  labelColor: AppController.headColor,
-                  indicatorColor: AppController.darkGreen,
-                  dividerColor: Colors.grey.withAlpha(40),
-                  tabs: [
-                    for (var school in snap.data.schools) Tab(text: school)
-                  ],
-                ),
-                SizedBox(
-                  height: size.height * 0.65,
-                  child: TabBarView(children: [
-                    for (var school in snap.data.schools)
-                      _buildSchoolToppers(school, context),
-                  ]),
-                )
-              ],
+        );
+      } else {
+        int len = snap.data.schools.length;
+        return DefaultTabController(
+          length: len,
+          child: Card(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+              side: BorderSide(color: Colors.grey),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(5.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TabBar(
+                    isScrollable: len > 4 ? true : false,
+                    tabAlignment: len > 4 ? TabAlignment.start : null,
+                    labelStyle:
+                        TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    labelColor: AppController.headColor,
+                    indicatorColor: AppController.darkGreen,
+                    dividerColor: Colors.grey.withAlpha(40),
+                    tabs: [
+                      for (var school in snap.data.schools) Tab(text: school)
+                    ],
+                  ),
+                  SizedBox(
+                    height: size.height * 0.65,
+                    child: TabBarView(children: [
+                      for (var school in snap.data.schools)
+                        _buildSchoolToppers(school, context),
+                    ]),
+                  )
+                ],
+              ),
             ),
           ),
-        ),
-      );
+        );
+      }
     });
   }
 
@@ -95,16 +148,14 @@ class ClassTopperCard extends StatelessWidget {
                   width: 20,
                   height: 20,
                   alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                      color: AppController.darkGreen,
-                      borderRadius: BorderRadius.circular(5)),
                   child: Text(
-                    (index + 1).toString(),
-                    style: TextStyle(color: Colors.white),
+                    '${index + 1}.',
+                    style: style1.copyWith(fontWeight: FontWeight.bold),
                   ),
                 ),
                 SizedBox(width: 8),
-                Text(item.subject, style: style1),
+                Text('${item.subject} ${link.isEmpty ? '' : '📁'}',
+                    style: style1),
                 SizedBox(width: 8),
                 Spacer(),
                 Text(item.mark.toString(), style: style1)
@@ -119,13 +170,32 @@ class ClassTopperCard extends StatelessWidget {
     final schoolToppers = snap.data.classToppers[school] ?? [];
     Map<int, List<ClassTopperStudent>> rankedStudents = {};
 
+    final none = Center(
+      child: Text(
+        'No toppers found',
+        style: TextStyle(color: Colors.grey, fontSize: 16),
+      ),
+    );
+
     if (schoolToppers.isEmpty) {
-      return Center(
-        child: Text(
-          'No toppers found',
-          style: TextStyle(color: Colors.grey, fontSize: 16),
-        ),
-      );
+      if (size.width > 1000) {
+        return Column(
+          children: [
+            for (var c = 0; c < 3; c++)
+              Column(
+                children: [
+                  _rankBuilder(c + 1),
+                  ConstrainedBox(
+                    constraints: BoxConstraints(minHeight: 52),
+                    child: none,
+                  ),
+                ],
+              ),
+          ],
+        );
+      } else {
+        return none;
+      }
     }
     for (int i = 0; i < schoolToppers.length && i < 3; i++) {
       int rank = i + 1;
@@ -142,24 +212,13 @@ class ClassTopperCard extends StatelessWidget {
             List<ClassTopperStudent> students = entry.value;
 
             return SizedBox(
-              width: size.width > 900 ? (size.width / 3) - 20 : null,
+              width: size.width > 900 && size.width < 1000
+                  ? (size.width / 3) - 20
+                  : null,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Container(
-                    width: double.infinity,
-                    padding: EdgeInsets.all(8),
-                    margin: EdgeInsets.all(5),
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(6),
-                        color: baseColor.withAlpha(50)),
-                    child: Text(
-                      'Rank $rank',
-                      textAlign: TextAlign.center,
-                      style: GoogleFonts.poppins(
-                          fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
-                  ),
+                  _rankBuilder(rank),
                   for (var student in students)
                     _buildStudentCard(student, context,
                         student == students[0] && size.width > 500),
@@ -169,6 +228,22 @@ class ClassTopperCard extends StatelessWidget {
           }).toList(),
         )
       ],
+    );
+  }
+
+  Widget _rankBuilder(int rank) {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.all(8),
+      margin: EdgeInsets.all(5),
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(6),
+          color: baseColor.withAlpha(50)),
+      child: Text(
+        'Rank $rank',
+        textAlign: TextAlign.center,
+        style: GoogleFonts.poppins(fontSize: 18, fontWeight: FontWeight.bold),
+      ),
     );
   }
 

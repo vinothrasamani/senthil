@@ -27,7 +27,7 @@ class SubjectTopperTable extends StatelessWidget {
     return SizedBox(
       height: size.height * 0.7,
       child: DataTable2(
-        border: TableBorder.all(color: Colors.grey),
+        border: TableBorder.all(color: Colors.grey.withAlpha(150)),
         columnSpacing: 12,
         horizontalMargin: 12,
         headingRowColor: WidgetStatePropertyAll(AppController.tableColor),
@@ -77,19 +77,21 @@ class SubjectTopperTable extends StatelessWidget {
         data.students.any((student) => student.file?.isNotEmpty ?? false);
 
     return DataCell(
-      Center(
-        child: InkWell(
-          onTap: () => _showStudentList(subject, school, data),
-          child: Text(
-            '${data.topMark} (${data.count})',
-            style: TextStyle(
-              color: hasFiles
-                  ? isDark
-                      ? AppController.lightBlue
-                      : baseColor
-                  : null,
-              decoration:
-                  hasFiles ? TextDecoration.underline : TextDecoration.none,
+      InkWell(
+        onTap: () => _showStudentList(subject, school, data),
+        child: SizedBox(
+          width: double.infinity,
+          height: double.infinity,
+          child: Center(
+            child: Text(
+              '${data.topMark} (${data.count})',
+              style: TextStyle(
+                color: hasFiles
+                    ? isDark
+                        ? AppController.lightBlue
+                        : baseColor
+                    : null,
+              ),
             ),
           ),
         ),
@@ -163,9 +165,17 @@ class SubjectTopperTable extends StatelessWidget {
                               size: 35, color: baseColor),
                       title: Text(
                         '${index + 1}. ${student.name ?? "Unknown"}',
-                        style: TextStyle(fontWeight: FontWeight.w500),
+                        style: TextStyle(
+                            fontWeight: FontWeight.w600, fontSize: 15),
                       ),
-                      subtitle: Text('Mark: ${student.mark}'),
+                      subtitle: Text(
+                        'Mark: ${student.mark}',
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
                       trailing: student.file?.isNotEmpty ?? false
                           ? IconButton(
                               icon:

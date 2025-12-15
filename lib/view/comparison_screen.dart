@@ -27,7 +27,7 @@ class _ComparisonScreen extends ConsumerState<ComparisonScreen> {
   final formkey = GlobalKey<FormState>();
   String? selectedClass, selectedYear, selectedCourse, selectedCrGroup;
   String? selectedStmGroup, selectedRefGroup;
-  int? selectedExam;
+  Map<String, dynamic>? selectedExam;
   Object? data;
   final cardKey = GlobalKey<ExpansionTileCoreState>();
 
@@ -44,7 +44,7 @@ class _ComparisonScreen extends ConsumerState<ComparisonScreen> {
     selectedCrGroup ??= "All";
     data = {
       "academic_year": selectedYear,
-      "exam_name": selectedExam,
+      "exam_name": selectedExam?['id'],
       "class_name": selectedClass,
       "coursegroup": selectedCrGroup,
       "streamgroup": selectedStmGroup,
@@ -129,12 +129,12 @@ class _ComparisonScreen extends ConsumerState<ComparisonScreen> {
           }
         },
       ),
-      DropdownButtonFormField<int>(
+      DropdownButtonFormField<Map<String, dynamic>>(
         value: selectedExam,
         items: ref
             .watch(ComparisonController.exams)
-            .map((e) => DropdownMenuItem<int>(
-                value: e['id'] ?? '',
+            .map((e) => DropdownMenuItem<Map<String, dynamic>>(
+                value: e,
                 child: ConstrainedBox(
                   constraints: BoxConstraints(maxWidth: 220),
                   child: Text(
@@ -155,7 +155,7 @@ class _ComparisonScreen extends ConsumerState<ComparisonScreen> {
           ComparisonController.setData(ref, 'course-group', {
             'index': widget.index,
             'className': selectedClass,
-            'exam': selectedExam,
+            'exam': selectedExam?['id'],
             'year': selectedYear,
             'userId': widget.userId
           });
@@ -180,7 +180,7 @@ class _ComparisonScreen extends ConsumerState<ComparisonScreen> {
             'index': widget.index,
             'className': selectedClass,
             'year': selectedYear,
-            'exam': selectedExam,
+            'exam': selectedExam?['id'],
             'cGrp': val,
             'userId': widget.userId
           });
@@ -204,7 +204,7 @@ class _ComparisonScreen extends ConsumerState<ComparisonScreen> {
             'index': widget.index,
             'className': selectedClass,
             'year': selectedYear,
-            'exam': selectedExam,
+            'exam': selectedExam?['id'],
             'course': val,
             'cGrp': selectedCrGroup,
             'userId': widget.userId
@@ -229,7 +229,7 @@ class _ComparisonScreen extends ConsumerState<ComparisonScreen> {
               'index': widget.index,
               'className': selectedClass,
               'year': selectedYear,
-              'exam': selectedExam,
+              'exam': selectedExam?['id'],
               'course': selectedCourse,
               'cGrp': selectedCrGroup,
               'stream': val,
@@ -337,7 +337,9 @@ class _ComparisonScreen extends ConsumerState<ComparisonScreen> {
                                       '$selectedClass / All / $selectedStmGroup / $selectedStmGroup ',
                                   style: style),
                               TextSpan(text: 'for '),
-                              TextSpan(text: '$selectedExam ', style: style),
+                              TextSpan(
+                                  text: '${selectedExam?['ExamName']} ',
+                                  style: style),
                               TextSpan(text: '/ Exams for '),
                               TextSpan(text: selectedYear, style: style)
                             ],

@@ -31,7 +31,7 @@ class _TopperListScreenState extends ConsumerState<TopperListScreen> {
   final formKey = GlobalKey<FormState>();
   String? selectedClass, selectedYear, selectedCourse, selectedRefGroup;
   String? selectedStmGroup, selectedCrGroup;
-  int? selectedExam;
+  Map<String, dynamic>? selectedExam;
   Object? data;
   final ScrollController scrollController = ScrollController();
   final cardKey = GlobalKey<ExpansionTileCoreState>();
@@ -51,7 +51,7 @@ class _TopperListScreenState extends ConsumerState<TopperListScreen> {
       "index": widget.index,
       "year": selectedYear,
       "className": selectedClass,
-      "exam": selectedExam,
+      "exam": selectedExam?['id'],
       "courseGroup": selectedCrGroup,
       "stream": selectedStmGroup,
       "ref": selectedRefGroup,
@@ -136,12 +136,12 @@ class _TopperListScreenState extends ConsumerState<TopperListScreen> {
           }
         },
       ),
-      DropdownButtonFormField<int>(
+      DropdownButtonFormField<Map<String, dynamic>>(
         value: selectedExam,
         items: ref
             .watch(TopperListController.examsTop)
-            .map((e) => DropdownMenuItem<int>(
-                value: e['id'] ?? '',
+            .map((e) => DropdownMenuItem<Map<String, dynamic>>(
+                value: e,
                 child: ConstrainedBox(
                     constraints: BoxConstraints(maxWidth: 220),
                     child: Text(e['ExamName'] ?? 'None'))))
@@ -159,7 +159,7 @@ class _TopperListScreenState extends ConsumerState<TopperListScreen> {
             'index': widget.index,
             'className': selectedClass,
             'year': selectedYear,
-            'exam': selectedExam,
+            'exam': selectedExam?['id'],
             'userId': widget.userId
           });
         },
@@ -183,7 +183,7 @@ class _TopperListScreenState extends ConsumerState<TopperListScreen> {
             'index': widget.index,
             'className': selectedClass,
             'year': selectedYear,
-            'exam': selectedExam,
+            'exam': selectedExam?['id'],
             'cGrp': val,
             'userId': widget.userId
           });
@@ -207,7 +207,7 @@ class _TopperListScreenState extends ConsumerState<TopperListScreen> {
             'index': widget.index,
             'className': selectedClass,
             'year': selectedYear,
-            'exam': selectedExam,
+            'exam': selectedExam?['id'],
             'cGrp': selectedCrGroup,
             'course': val,
             'userId': widget.userId
@@ -232,7 +232,7 @@ class _TopperListScreenState extends ConsumerState<TopperListScreen> {
               'index': widget.index,
               'className': selectedClass,
               'year': selectedYear,
-              'exam': selectedExam,
+              'exam': selectedExam?['id'],
               'cGrp': selectedCrGroup,
               'course': selectedCourse,
               'stream': val,
@@ -344,7 +344,9 @@ class _TopperListScreenState extends ConsumerState<TopperListScreen> {
                               TextSpan(
                                   text: '$selectedCourse (All) / ',
                                   style: style),
-                              TextSpan(text: '$selectedExam / ', style: style),
+                              TextSpan(
+                                  text: '${selectedExam?['ExamName']} / ',
+                                  style: style),
                               TextSpan(
                                   text: '$selectedStmGroup ', style: style),
                               TextSpan(text: 'for '),

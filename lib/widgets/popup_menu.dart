@@ -20,10 +20,7 @@ class PopupMenu extends ConsumerWidget {
             leading: CircleAvatar(
               radius: 15,
               backgroundColor: Colors.grey,
-              child: Icon(
-                Icons.person,
-                color: Colors.white,
-              ),
+              backgroundImage: AssetImage('assets/images/placeholder.jpeg'),
             ),
             title: Text(
               user.data?.name ?? 'Username',
@@ -49,10 +46,7 @@ class PopupMenu extends ConsumerWidget {
       ],
       child: CircleAvatar(
         backgroundColor: Colors.white30,
-        child: Icon(
-          Icons.person,
-          color: Colors.white,
-        ),
+        backgroundImage: AssetImage('assets/images/placeholder.jpeg'),
       ),
     );
   }
