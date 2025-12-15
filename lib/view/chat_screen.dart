@@ -248,7 +248,6 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                             maxLines: 4,
                             minLines: 1,
                             controller: msg,
-                            style: TextStyle(color: Colors.white),
                             textAlignVertical: TextAlignVertical.top,
                             keyboardType: TextInputType.text,
                             decoration: InputDecoration(
