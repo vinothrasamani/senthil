@@ -178,8 +178,12 @@ class SubjectTopperTable extends StatelessWidget {
                       ),
                       trailing: student.file?.isNotEmpty ?? false
                           ? IconButton(
-                              icon:
-                                  Icon(Icons.picture_as_pdf, color: baseColor),
+                              icon: Icon(
+                                Icons.picture_as_pdf,
+                                color: isDark
+                                    ? AppController.lightBlue.withAlpha(200)
+                                    : baseColor,
+                              ),
                               onPressed: () async {
                                 if (kIsWeb) {
                                   final url =

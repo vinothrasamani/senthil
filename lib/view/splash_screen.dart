@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
-import 'package:senthil/controller/internet_connection_controller.dart';
 import 'package:senthil/controller/login_controller.dart';
 import 'package:senthil/model/login_model.dart';
 import 'package:senthil/view/home_screen.dart';
@@ -46,16 +45,12 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
       } else {
         Get.offAll(() => LoginScreen(), transition: Transition.zoom);
       }
-      if (mounted) {
-        InternetConnectionController.listenInternet(context);
-      }
     });
   }
 
   @override
   void dispose() {
     _controller.dispose();
-    InternetConnectionController.dispose();
     super.dispose();
   }
 

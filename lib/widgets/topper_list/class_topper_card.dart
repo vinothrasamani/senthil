@@ -237,8 +237,11 @@ class ClassTopperCard extends StatelessWidget {
       padding: EdgeInsets.all(8),
       margin: EdgeInsets.all(5),
       decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(6),
-          color: baseColor.withAlpha(50)),
+        borderRadius: BorderRadius.circular(6),
+        color: isDark
+            ? AppController.lightBlue.withAlpha(50)
+            : baseColor.withAlpha(50),
+      ),
       child: Text(
         'Rank $rank',
         textAlign: TextAlign.center,

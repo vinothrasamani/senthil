@@ -112,39 +112,6 @@ class AppController {
     );
   }
 
-  static void showSnackBar(BuildContext context, String msg, bool isSuccess) {
-    ScaffoldMessenger.of(context).clearSnackBars();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Row(
-          children: [
-            Icon(isSuccess ? Icons.check_circle_outline : Icons.error_outline,
-                color: Colors.white, size: 20),
-            SizedBox(width: 10),
-            Text(
-              msg,
-              style: TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
-          ],
-        ),
-        margin: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
-        behavior: SnackBarBehavior.floating,
-        backgroundColor: isSuccess
-            ? messagePurpose[Purpose.success]
-            : messagePurpose[Purpose.fail],
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(5),
-        ),
-        duration: Duration(seconds: 5, days: !isSuccess ? 1 : 0),
-        dismissDirection: DismissDirection.horizontal,
-      ),
-    );
-  }
-
   static String convertToCurrency(String amount) {
     final amt = num.parse(amount);
     final formatter = NumberFormat.currency(

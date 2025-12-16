@@ -1,30 +1,30 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
-import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
-import 'package:senthil/controller/app_controller.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 
 class InternetConnectionController {
-  static StreamSubscription<InternetStatus>? subscription;
+  final Connectivity _connectivity = Connectivity();
+  StreamSubscription<List<ConnectivityResult>>? _connectivitySubscription;
 
-  static void listenInternet(BuildContext context) async {
-    subscription = InternetConnection().onStatusChange.listen(
-      (InternetStatus status) {
-        bool isConnected = status == InternetStatus.connected;
-        if (context.mounted) {
-          AppController.showSnackBar(
-            context,
-            isConnected
-                ? 'Has an Active Internet Connection!'
-                : 'No Internet Connectivity!',
-            isConnected,
-          );
-        }
-      },
-    );
+  void listenConnectivity(void Function(bool) onChanged) {
+    _connectivitySubscription = _connectivity.onConnectivityChanged
+        .listen((List<ConnectivityResult> result) async {
+      bool hasInternet = await cenckConnection(result);
+      onChanged(hasInternet);
+    });
   }
 
-  static void dispose() async {
-    await subscription?.cancel();
+  Future<bool> cenckConnection(List<ConnectivityResult> result) async {
+    final connected = [
+      ConnectivityResult.ethernet,
+      ConnectivityResult.mobile,
+      ConnectivityResult.vpn,
+      ConnectivityResult.wifi,
+    ];
+    return result.any((e) => connected.contains(e));
+  }
+
+  void dispose() {
+    _connectivitySubscription?.cancel();
   }
 }

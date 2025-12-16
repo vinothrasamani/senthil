@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_windowmanager_plus/flutter_windowmanager_plus.dart';
 import 'package:get/get.dart';
+import 'package:senthil/controller/app_controller.dart';
+import 'package:senthil/controller/internet_connection_controller.dart';
 import 'package:senthil/controller/notification_controller.dart';
 import 'package:senthil/controller/web_safe/protect_web.dart';
 import 'package:senthil/controller/theme_controller.dart';
@@ -60,10 +62,50 @@ class MyApp extends ConsumerStatefulWidget {
 }
 
 class _MyAppState extends ConsumerState<MyApp> {
+  ScaffoldMessengerState? _scaffoldMessenger;
+  final InternetConnectionController _connectivityController =
+      InternetConnectionController();
+
+  void loadData() async {
+    _connectivityController.listenConnectivity((status) {
+      if (!status) {
+        _showSnackBar();
+      } else {
+        _scaffoldMessenger?.hideCurrentSnackBar();
+      }
+    });
+  }
+
+  void _showSnackBar() {
+    if (_scaffoldMessenger != null) {
+      _scaffoldMessenger!.showSnackBar(
+        SnackBar(
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: AppController.red,
+          content: Row(
+            children: [
+              Icon(Icons.wifi_off_rounded, color: Colors.white),
+              SizedBox(width: 8),
+              Text(
+                'No internet connectivity!',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          duration: Duration(days: 1),
+        ),
+      );
+    }
+  }
+
   @override
   void initState() {
     getTheme();
     initNotification();
+    loadData();
     super.initState();
   }
 
@@ -81,6 +123,12 @@ class _MyAppState extends ConsumerState<MyApp> {
   }
 
   @override
+  void dispose() {
+    _connectivityController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final themeMode = ref.watch(ThemeController.themeMode);
     return GetMaterialApp(
@@ -89,7 +137,10 @@ class _MyAppState extends ConsumerState<MyApp> {
       theme: ThemeController.lightTheme,
       darkTheme: ThemeController.darkTheme,
       themeMode: themeMode,
-      home: SplashScreen(),
+      home: Builder(builder: (context) {
+        _scaffoldMessenger = ScaffoldMessenger.of(context);
+        return SplashScreen();
+      }),
     );
   }
 }
