@@ -39,7 +39,7 @@ class PopupMenu extends ConsumerWidget {
               TablerIcons.logout,
               color: AppController.red,
             ),
-            onTap: () => SettingsController.logout(ref),
+            onTap: () => SettingsController.logout(),
             title: Text('Logout'),
           ),
         ),

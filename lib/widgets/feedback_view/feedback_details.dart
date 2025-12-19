@@ -39,7 +39,8 @@ class FeedbackDetails extends StatelessWidget {
               columnSpacing: 12,
               headingRowHeight: 80,
               horizontalMargin: 12,
-              minWidth: size.width * (snap.data.feedbackSubjects.length + 2),
+              minWidth:
+                  (100 * snap.data.feedbackSubjects.length) + size.width * 0.5,
               headingRowColor: WidgetStatePropertyAll(AppController.tableColor),
               fixedColumnsColor: AppController.tableColor,
               dataRowHeight: 60,
@@ -92,8 +93,6 @@ class FeedbackDetails extends StatelessWidget {
                           ],
                         ),
                       ),
-                      fixedWidth:
-                          size.width > 450 ? 200 : size.width - (sideWidth * 3),
                       headingRowAlignment: MainAxisAlignment.center),
               ],
               dataTextStyle: TextStyle(

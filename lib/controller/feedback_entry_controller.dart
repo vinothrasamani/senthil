@@ -29,6 +29,7 @@ class FeedbackEntryController extends StateNotifier<List<FeedbackEntry>> {
 
   Future<void> fetchData(Object data) async {
     final res = await AppController.send('feedback-entry-search', data);
+    print(res);
     final result = feedbackEntryModelFromJson(res);
     if (result.success) {
       state = result.data;

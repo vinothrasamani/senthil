@@ -23,9 +23,10 @@ class RatingFeedbackScreen extends ConsumerStatefulWidget {
 }
 
 class _RatingFeedbackScreenState extends ConsumerState<RatingFeedbackScreen> {
-  Map<String, double> starRatings = {};
+  Map<String, double> allFeedbackRatings = {};
   final int maxLength = 255;
   Map<String, String> textFeedback = {};
+  int currentQuestionIndex = 0;
 
   @override
   void initState() {
@@ -34,6 +35,21 @@ class _RatingFeedbackScreenState extends ConsumerState<RatingFeedbackScreen> {
     });
     super.initState();
   }
+
+  ButtonStyle btnStyle(bool allRated, bool isSmallScreen) =>
+      ElevatedButton.styleFrom(
+        backgroundColor: allRated ? Colors.green : Colors.green.shade300,
+        foregroundColor: Colors.white,
+        elevation: allRated ? 6 : 2,
+        disabledBackgroundColor: Colors.green.shade300,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(30),
+        ),
+        padding: EdgeInsets.symmetric(
+          horizontal: isSmallScreen ? 24 : 32,
+          vertical: isSmallScreen ? 14 : 18,
+        ),
+      );
 
   @override
   Widget build(BuildContext context) {
@@ -50,11 +66,300 @@ class _RatingFeedbackScreenState extends ConsumerState<RatingFeedbackScreen> {
           : feedData == null
               ? _buildErrorState('Unable to fetch feedback questions!')
               : feedData.success
-                  ? feedData.data.questType == 'Subject'
-                      ? _buildFeedbackForm(feedData.data)
-                      : _buildRatingForm(feedData.data)
+                  ? _buildAllQuestions(feedData.data)
                   : _buildErrorState(feedData.message),
     );
+  }
+
+  Widget _buildAllQuestions(FeedbackFormData data) {
+    if (data.feedQues.isEmpty) {
+      return _buildErrorState('No feedback questions available!');
+    }
+
+    final currentQues = data.feedQues[currentQuestionIndex];
+    final isTextType = ref.watch(StudentFeedbackController.isSubject);
+
+    return isTextType
+        ? _buildTextFeedbackForm(data, currentQues)
+        : _buildRatingForm(data, currentQues);
+  }
+
+  Widget _buildTextFeedbackForm(FeedbackFormData data, FeedQues question) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isSmallScreen = screenWidth < 600;
+    double size;
+
+    if (isSmallScreen) {
+      size = double.infinity;
+    } else if (screenWidth < 800) {
+      size = screenWidth * 0.8;
+    } else if (screenWidth < 1000) {
+      size = screenWidth * 0.7;
+    } else {
+      size = screenWidth * 0.6;
+    }
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(16),
+          color: Colors.grey.withAlpha(50),
+          child: Text(
+            'Share your feedback about each teacher\n($maxLength characters allowed per subject)',
+            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+            textAlign: TextAlign.center,
+          ),
+        ),
+        Expanded(
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                SizedBox(height: 15),
+                for (var subject in data.subject)
+                  Container(
+                    width: size,
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    child: Card(
+                      margin: const EdgeInsets.only(bottom: 16),
+                      elevation: 2,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                CircleAvatar(
+                                  backgroundColor: Colors.blue.shade100,
+                                  child: Text(
+                                    '${data.subject.indexOf(subject) + 1}',
+                                    style: TextStyle(
+                                      color: Colors.blue.shade900,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        subject.fullname,
+                                        style: const TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      if (subject.staffName != null)
+                                        Text(
+                                          '(${subject.staffName})',
+                                          style: TextStyle(
+                                              fontSize: 14, color: Colors.grey),
+                                        ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 12),
+                            TextField(
+                              maxLength: maxLength,
+                              maxLines: 2,
+                              decoration: InputDecoration(
+                                hintText:
+                                    'What do you like or dislike about this teacher?',
+                                hintStyle: TextStyle(
+                                    fontSize: 13, color: Colors.grey.shade400),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                  borderSide: BorderSide(
+                                      color: const Color.fromARGB(
+                                          144, 224, 224, 224)),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                  borderSide: const BorderSide(
+                                      color: Colors.blue, width: 2),
+                                ),
+                                filled: true,
+                                fillColor:
+                                    Theme.of(context).scaffoldBackgroundColor,
+                                counterText: '',
+                              ),
+                              onChanged: (value) {
+                                final key = '${subject.id}';
+                                textFeedback[key] = value;
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                SizedBox(height: 15),
+                Container(
+                  margin: EdgeInsets.symmetric(horizontal: 8),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      _submitAllFeedback(data);
+                    },
+                    style: btnStyle(true, isSmallScreen),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          'Submit',
+                          style: TextStyle(
+                            fontSize: isSmallScreen ? 14 : 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                SizedBox(height: 25),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildRatingForm(FeedbackFormData data, FeedQues question) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isSmallScreen = screenWidth < 600;
+    final isMediumScreen = screenWidth >= 600 && screenWidth < 900;
+    final isLargeScreen = screenWidth >= 900;
+    final isOverLargeScreen = screenWidth >= 1100;
+
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          _buildLegendCard(isSmallScreen, screenWidth),
+          _buildQuestionHeader(question, screenWidth),
+          SizedBox(height: 10),
+          _buildSubjectsWrap(data, question, screenWidth, isSmallScreen,
+              isMediumScreen, isLargeScreen, isOverLargeScreen),
+          SizedBox(height: 24),
+          _buildNavigationButtons(data, question, isSmallScreen),
+          SizedBox(height: 24),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildNavigationButtons(
+      FeedbackFormData data, FeedQues question, bool isSmallScreen) {
+    final isLastQuestion = currentQuestionIndex == data.feedQues.length - 1;
+    final isFirstQuestion = currentQuestionIndex == 0;
+    final allRated = _isCurrentQuestionRated(data, question);
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        if (!isFirstQuestion)
+          Container(
+            margin: EdgeInsets.symmetric(horizontal: 8),
+            child: ElevatedButton(
+              onPressed: () {
+                setState(() {
+                  currentQuestionIndex--;
+                });
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.grey,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30),
+                ),
+                padding: EdgeInsets.symmetric(
+                  horizontal: isSmallScreen ? 24 : 32,
+                  vertical: isSmallScreen ? 14 : 18,
+                ),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.arrow_back, size: isSmallScreen ? 18 : 22),
+                  SizedBox(width: 8),
+                  Text(
+                    'Previous',
+                    style: TextStyle(
+                      fontSize: isSmallScreen ? 14 : 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        Container(
+          margin: EdgeInsets.symmetric(horizontal: 8),
+          child: ElevatedButton(
+            onPressed: allRated
+                ? () {
+                    if (isLastQuestion) {
+                      ref
+                          .read(StudentFeedbackController.isSubject.notifier)
+                          .state = true;
+                    } else {
+                      setState(() {
+                        currentQuestionIndex++;
+                      });
+                    }
+                  }
+                : null,
+            style: btnStyle(allRated, isSmallScreen),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  isLastQuestion ? 'Save' : 'Next',
+                  style: TextStyle(
+                    fontSize: isSmallScreen ? 14 : 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                if (!isLastQuestion) SizedBox(width: 8),
+                if (!isLastQuestion)
+                  Icon(Icons.arrow_forward, size: isSmallScreen ? 18 : 22),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  bool _isCurrentQuestionRated(FeedbackFormData data, FeedQues question) {
+    final isTextType = ref.watch(StudentFeedbackController.isSubject);
+    if (isTextType) {
+      for (var subject in data.subject) {
+        final key = subject.id.toString();
+        if (!textFeedback.containsKey(key)) {
+          return false;
+        }
+      }
+      return true;
+    } else {
+      for (var subject in data.subject) {
+        final key = '${question.id}_${subject.id}';
+        if (!allFeedbackRatings.containsKey(key) ||
+            allFeedbackRatings[key]! == 0) {
+          return false;
+        }
+      }
+      return true;
+    }
   }
 
   Widget _buildExcludedSubject(String sub) {
@@ -140,219 +445,6 @@ class _RatingFeedbackScreenState extends ConsumerState<RatingFeedbackScreen> {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildFeedbackForm(FeedbackFormData info) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final isSmallScreen = screenWidth < 600;
-    double size;
-
-    if (isSmallScreen) {
-      size = double.infinity;
-    } else if (screenWidth < 800) {
-      size = screenWidth * 0.8;
-    } else if (screenWidth < 1000) {
-      size = screenWidth * 0.7;
-    } else {
-      size = screenWidth * 0.6;
-    }
-
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(16),
-          color: Colors.grey.withAlpha(50),
-          child: Text(
-            'Share your feedback about each teacher\n($maxLength characters allowed per subject)',
-            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-            textAlign: TextAlign.center,
-          ),
-        ),
-        Expanded(
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                SizedBox(height: 15),
-                for (var subject in info.subject)
-                  Container(
-                    width: size,
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    child: Card(
-                      margin: const EdgeInsets.only(bottom: 16),
-                      elevation: 2,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                CircleAvatar(
-                                  backgroundColor: Colors.blue.shade100,
-                                  child: Text(
-                                    '${info.subject.indexOf(subject) + 1}',
-                                    style: TextStyle(
-                                      color: Colors.blue.shade900,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(width: 12),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        subject.fullname,
-                                        style: const TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      if (subject.staffName != null)
-                                        Text(
-                                          '(${subject.staffName})',
-                                          style: TextStyle(
-                                              fontSize: 14, color: Colors.grey),
-                                        ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 12),
-                            TextField(
-                              maxLength: maxLength,
-                              maxLines: 2,
-                              decoration: InputDecoration(
-                                hintText:
-                                    'What do you like or dislike about this teacher?',
-                                hintStyle: TextStyle(
-                                    fontSize: 13, color: Colors.grey.shade400),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                  borderSide: BorderSide(
-                                      color: const Color.fromARGB(
-                                          144, 224, 224, 224)),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                  borderSide: const BorderSide(
-                                      color: Colors.blue, width: 2),
-                                ),
-                                filled: true,
-                                fillColor:
-                                    Theme.of(context).scaffoldBackgroundColor,
-                                counterText: '',
-                              ),
-                              onChanged: (value) {
-                                textFeedback['${subject.id}'] = value;
-                              },
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                SizedBox(height: 15),
-                Container(
-                  margin: EdgeInsets.symmetric(horizontal: 16),
-                  width: isSmallScreen ? double.infinity : screenWidth * 0.5,
-                  child: ElevatedButton(
-                    onPressed: () => submitFeedback(info),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green,
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      padding: EdgeInsets.symmetric(
-                        horizontal: isSmallScreen ? 32 : 48,
-                        vertical: isSmallScreen ? 16 : 20,
-                      ),
-                    ),
-                    child: Text(
-                      'Submit Feedback',
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                ),
-                SizedBox(height: 25),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  void submitFeedback(FeedbackFormData feed) {
-    Map<String, dynamic> body = {
-      ...widget.info,
-      'StudOid': feed.studOid,
-      'questype': feed.questType,
-      'Quesid': feed.feedQues?.id,
-      'sub': textFeedback
-    };
-    StudentFeedbackController.submitFeedback(ref, body);
-  }
-
-  PreferredSizeWidget _buildAppBar(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final isSmallScreen = screenWidth < 600;
-    final classIs = widget.info['classname'];
-    final sec = widget.info['section'];
-
-    return AppBar(
-      elevation: 0,
-      backgroundColor: Colors.deepPurple,
-      foregroundColor: Colors.white,
-      title: Text(
-        'Student Feedback - Class : $classIs / $sec',
-        style: TextStyle(
-            fontSize: isSmallScreen ? 18 : 22, fontWeight: FontWeight.w600),
-      ),
-      centerTitle: true,
-      flexibleSpace: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Colors.deepPurple, Colors.purpleAccent],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildRatingForm(FeedbackFormData feedData) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final isSmallScreen = screenWidth < 600;
-    final isMediumScreen = screenWidth >= 600 && screenWidth < 900;
-    final isLargeScreen = screenWidth >= 900;
-    final isOverLargeScreen = screenWidth >= 1100;
-
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          _buildLegendCard(isSmallScreen, screenWidth),
-          _buildQuestionHeader(feedData, screenWidth),
-          SizedBox(height: 10),
-          _buildSubjectsWrap(feedData, screenWidth, isSmallScreen,
-              isMediumScreen, isLargeScreen, isOverLargeScreen),
-          SizedBox(height: 24),
-          _buildSubmitButton(feedData, screenWidth, isSmallScreen),
-          SizedBox(height: 24),
-        ],
       ),
     );
   }
@@ -467,20 +559,20 @@ class _RatingFeedbackScreenState extends ConsumerState<RatingFeedbackScreen> {
     );
   }
 
-  Widget _buildQuestionHeader(FeedbackFormData feedData, double screenWidth) {
+  Widget _buildQuestionHeader(FeedQues question, double screenWidth) {
     final isSmallScreen = screenWidth < 600;
     return ListTile(
       leading: CircleAvatar(
         backgroundColor: Colors.deepPurple,
         radius: 20,
         child: Text(
-          '${feedData.feedQues?.ord ?? '?'}',
+          '${question.ord}',
           style: TextStyle(
               fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white),
         ),
       ),
       title: Text(
-        feedData.feedQues?.subject ?? 'Unknown',
+        question.subject,
         style: TextStyle(
           fontSize: isSmallScreen ? 16 : 20,
           color: widget.isDark
@@ -494,7 +586,8 @@ class _RatingFeedbackScreenState extends ConsumerState<RatingFeedbackScreen> {
   }
 
   Widget _buildSubjectsWrap(
-      FeedbackFormData feedData,
+      FeedbackFormData data,
+      FeedQues question,
       double screenWidth,
       bool isSmallScreen,
       bool isMediumScreen,
@@ -532,108 +625,61 @@ class _RatingFeedbackScreenState extends ConsumerState<RatingFeedbackScreen> {
         spacing: spacing,
         runSpacing: spacing,
         alignment: WrapAlignment.start,
-        children: feedData.subject.map((subject) {
+        children: data.subject.map((subject) {
           return SizedBox(
             width: cardWidth,
-            child: _buildSubjectRatingCard(subject, isSmallScreen),
+            child: _buildSubjectRatingCard(subject, question, isSmallScreen),
           );
         }).toList(),
       ),
     );
   }
 
-  Widget _buildSubjectRatingCard(FeedFormSubject subject, bool isSmallScreen) {
-    final currentRating = starRatings['${subject.id}'] ?? 0;
+  Widget _buildSubjectRatingCard(
+      FeedFormSubject subject, FeedQues question, bool isSmallScreen) {
+    final key = '${question.id}_${subject.id}';
+    final currentRating = allFeedbackRatings[key] ?? 0;
     final hasRating = currentRating > 0;
     final type = widget.info['schooltype'];
+
     return SubjectRatingCard(
-        hasRating: hasRating,
-        isSmallScreen: isSmallScreen,
-        subject: subject,
-        type: type,
-        isDark: widget.isDark,
-        onRate: (val) {
-          starRatings['${subject.id}'] = val;
-          setState(() {});
-        },
-        currentRating: currentRating);
-  }
-
-  Widget _buildSubmitButton(
-    FeedbackFormData feed,
-    double screenWidth,
-    bool isSmallScreen,
-  ) {
-    final allRated = feed.subject.every(
-      (subject) =>
-          starRatings.containsKey('${subject.id}') &&
-          starRatings['${subject.id}']! > 0,
-    );
-
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 16),
-      width: isSmallScreen ? double.infinity : screenWidth * 0.5,
-      child: ElevatedButton(
-        onPressed: () => _submitStarRatings(feed),
-        style: ElevatedButton.styleFrom(
-          backgroundColor: allRated ? Colors.green : Colors.green.shade300,
-          foregroundColor: Colors.white,
-          elevation: allRated ? 6 : 2,
-          padding: EdgeInsets.symmetric(
-            horizontal: isSmallScreen ? 32 : 48,
-            vertical: isSmallScreen ? 16 : 20,
-          ),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(30),
-          ),
-          shadowColor:
-              allRated ? Colors.green.withAlpha(110) : Colors.transparent,
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (allRated)
-              Icon(Icons.check_circle_outline, size: isSmallScreen ? 20 : 24),
-            if (allRated) SizedBox(width: 8),
-            Text(
-              'Next Feedback',
-              style: TextStyle(
-                fontSize: isSmallScreen ? 16 : 18,
-                fontWeight: FontWeight.bold,
-                letterSpacing: 0.5,
-              ),
-            ),
-            SizedBox(width: 8),
-            Icon(Icons.arrow_forward, size: isSmallScreen ? 20 : 24),
-          ],
-        ),
-      ),
+      hasRating: hasRating,
+      isSmallScreen: isSmallScreen,
+      subject: subject,
+      type: type,
+      isDark: widget.isDark,
+      onRate: (val) {
+        allFeedbackRatings[key] = val;
+        setState(() {});
+      },
+      currentRating: currentRating,
     );
   }
 
-  void _submitStarRatings(FeedbackFormData feed) {
-    for (var subject in feed.subject) {
-      if (!starRatings.containsKey('${subject.id}') ||
-          starRatings['${subject.id}'] == 0) {
-        AppController.toastMessage(
-          'Rating Required!',
-          'Please rate ${subject.fullname} before proceeding',
-          purpose: Purpose.fail,
-        );
-        return;
-      }
-    }
-    Map<String, dynamic> body = {
-      ...widget.info,
-      'StudOid': feed.studOid,
-      'questype': feed.questType,
-      'Quesid': feed.feedQues?.id,
-      'sub': starRatings
-    };
-    StudentFeedbackController.nextFeedback(ref, widget.userId, body, () {
-      starRatings.clear();
+  void _submitAllFeedback(FeedbackFormData data) {
+    Map<String, Map<String, dynamic>> subData = {};
+    allFeedbackRatings.forEach((key, value) {
+      final parts = key.split('_');
+      if (parts.length != 2) return;
+      final questionId = parts[0];
+      final subjectId = parts[1];
+      subData.putIfAbsent(questionId, () => {});
+      subData[questionId]![subjectId] = value;
     });
+    Map<String, dynamic> body = {
+      'schtype': widget.info['schooltype'],
+      'school': widget.info['school'],
+      'feedyear': widget.info['academic_year'],
+      'feedsession': widget.info['session'],
+      'classname': widget.info['classname'],
+      'section': widget.info['section'],
+      'refgroup': widget.info['refgroup'],
+      'subjectname': widget.info['subject'],
+      'StudOid': data.studOid,
+      'subRate': subData,
+      'subFeed': textFeedback,
+    };
+    StudentFeedbackController.submitFeedback(ref, body, widget.userId);
   }
 
   Widget _buildErrorState(String msg) {
@@ -641,7 +687,38 @@ class _RatingFeedbackScreenState extends ConsumerState<RatingFeedbackScreen> {
     final isSmallScreen = screenWidth < 600;
 
     return ErrorMessage(
-        msg: msg, info: widget.info, isSmallScreen: isSmallScreen);
+      msg: msg,
+      info: widget.info,
+      isSmallScreen: isSmallScreen,
+    );
+  }
+
+  PreferredSizeWidget _buildAppBar(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isSmallScreen = screenWidth < 600;
+    final classIs = widget.info['classname'];
+    final sec = widget.info['section'];
+
+    return AppBar(
+      elevation: 0,
+      backgroundColor: Colors.deepPurple,
+      foregroundColor: Colors.white,
+      title: Text(
+        'Student Feedback - Class : $classIs / $sec',
+        style: TextStyle(
+            fontSize: isSmallScreen ? 18 : 22, fontWeight: FontWeight.w600),
+      ),
+      centerTitle: true,
+      flexibleSpace: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.deepPurple, Colors.purpleAccent],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+      ),
+    );
   }
 
   Widget _buildLoadingState() {

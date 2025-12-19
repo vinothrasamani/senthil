@@ -65,7 +65,7 @@ class QuestionTable extends StatelessWidget {
             DataColumn2(
               label: Text('Subject'),
               size: ColumnSize.M,
-              fixedWidth: sideWidth,
+              fixedWidth: island ? sideWidth * 1.5 : sideWidth,
               headingRowAlignment: MainAxisAlignment.center,
             ),
             DataColumn2(

@@ -100,8 +100,8 @@ class _ExamUploadDetailsScreenState
                     columnSpacing: 12,
                     horizontalMargin: 12,
                     minWidth: size.width > 600
-                        ? size.width
-                        : size.width * (snap.data.resSch.length + 2),
+                        ? size.width * 0.3 + (snap.data.resSch.length * 60)
+                        : size.width * (snap.data.resSch.length),
                     headingRowColor:
                         WidgetStatePropertyAll(AppController.tableColor),
                     fixedColumnsColor: AppController.tableColor,

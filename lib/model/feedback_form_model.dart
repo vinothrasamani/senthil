@@ -33,54 +33,34 @@ class FeedbackFormModel {
 
 class FeedbackFormData {
   String title;
-  String questType;
-  int subgroup;
-  int anim;
   String studOid;
-  dynamic prevQusId;
-  FeedQues? feedQues;
+  List<FeedQues> feedQues;
   List<FeedFormSubject> subject;
-  List<SubjectList> subjectList;
 
   FeedbackFormData({
     required this.title,
-    required this.questType,
-    required this.subgroup,
-    required this.anim,
     required this.studOid,
-    required this.prevQusId,
     required this.feedQues,
     required this.subject,
-    required this.subjectList,
   });
 
   factory FeedbackFormData.fromJson(Map<String, dynamic> json) =>
       FeedbackFormData(
         title: json["title"],
-        questType: json["questType"],
-        prevQusId: json['prevQusId'],
-        subgroup: int.parse(json["subgroup"].toString()),
-        anim: int.parse(json["anim"].toString()),
         studOid: json["studOid"],
-        feedQues: json["feedQues"] == null
-            ? null
-            : FeedQues.fromJson(json["feedQues"]),
+        feedQues: List<FeedQues>.from(
+          json["feedQues"].map((x) => FeedQues.fromJson(x)),
+        ),
         subject: List<FeedFormSubject>.from(
-            json["subject"].map((x) => FeedFormSubject.fromJson(x))),
-        subjectList: List<SubjectList>.from(
-            json["subjectList"].map((x) => SubjectList.fromJson(x))),
+          json["subject"].map((x) => FeedFormSubject.fromJson(x)),
+        ),
       );
 
   Map<String, dynamic> toJson() => {
         "title": title,
-        "questType": questType,
-        "subgroup": subgroup,
-        "anim": anim,
-        "prevQusId": prevQusId,
         "studOid": studOid,
-        "feedQues": feedQues?.toJson(),
-        "subject": List<dynamic>.from(subject.map((x) => x.toJson())),
-        "subjectList": List<dynamic>.from(subjectList.map((x) => x.toJson())),
+        "feedQues": feedQues.map((x) => x.toJson()).toList(),
+        "subject": subject.map((x) => x.toJson()).toList(),
       };
 }
 
@@ -154,25 +134,5 @@ class FeedFormSubject {
         "fullname": fullname,
         "StaffName": staffName,
         "department": department,
-      };
-}
-
-class SubjectList {
-  int id;
-  String fullname;
-
-  SubjectList({
-    required this.id,
-    required this.fullname,
-  });
-
-  factory SubjectList.fromJson(Map<String, dynamic> json) => SubjectList(
-        id: json["id"],
-        fullname: json["fullname"],
-      );
-
-  Map<String, dynamic> toJson() => {
-        "id": id,
-        "fullname": fullname,
       };
 }

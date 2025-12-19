@@ -220,7 +220,7 @@ class AppSettings extends ConsumerWidget {
       padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 10),
       constraints: BoxConstraints(maxWidth: 300),
       child: TextButton.icon(
-        onPressed: () => SettingsController.logout(ref),
+        onPressed: () => SettingsController.logout(),
         style: TextButton.styleFrom(
           backgroundColor: AppController.red.withAlpha(50),
           shape: RoundedRectangleBorder(

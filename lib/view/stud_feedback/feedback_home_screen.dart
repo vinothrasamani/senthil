@@ -293,6 +293,7 @@ class FeedbackHomeScreen extends ConsumerWidget {
   Widget _buildFormFields(BuildContext context, WidgetRef ref,
       FeedbackHome data, Data user, Size size) {
     final clsName = ref.watch(StudentFeedbackController.className);
+    final refList = data.refgrouplist.map((e) => e.name).toList();
 
     final fields = [
       _buildReadOnlyField('Year', data.notice.feedyear, TablerIcons.calendar),
@@ -384,10 +385,11 @@ class FeedbackHomeScreen extends ConsumerWidget {
         _buildDropdownField(
           'RefGroup',
           ref.watch(StudentFeedbackController.refGrp),
-          data.refgrouplist,
+          refList,
           TablerIcons.users_group,
-          (val) =>
-              ref.read(StudentFeedbackController.refGrp.notifier).state = val,
+          (val) {
+            ref.read(StudentFeedbackController.refGrp.notifier).state = val;
+          },
         ),
       Builder(builder: (context) {
         final c = ref.watch(StudentFeedbackController.subjectList).length;
@@ -538,7 +540,10 @@ class FeedbackHomeScreen extends ConsumerWidget {
                 final className = ref.read(StudentFeedbackController.className);
                 final section = ref.read(StudentFeedbackController.section);
                 final subject = ref.read(StudentFeedbackController.subject);
-                final refGrp = ref.read(StudentFeedbackController.refGrp);
+                final refGrp = data.refgrouplist
+                    .where((e) =>
+                        e.name == ref.read(StudentFeedbackController.refGrp))
+                    .firstOrNull;
                 var addRef = className == "XI" || className == "XII";
 
                 if (board != null &&
@@ -555,7 +560,7 @@ class FeedbackHomeScreen extends ConsumerWidget {
                     'section': section,
                     'subject':
                         subject == null || subject.isEmpty ? '-' : subject,
-                    'refgroup': refGrp ?? "None",
+                    'refgroup': refGrp != null ? refGrp.id.toString() : '1',
                   };
                   StudentFeedbackController.chackSubjectAvailability(ref, info);
                 } else {

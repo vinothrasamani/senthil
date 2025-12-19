@@ -36,7 +36,7 @@ class _FeedbackStartScreenState extends ConsumerState<FeedbackStartScreen> {
         fit: StackFit.expand,
         children: [
           Container(
-            color: Colors.black,
+            color: Colors.grey.withAlpha(100),
             width: double.infinity,
             height: double.infinity,
             child: Image.network(

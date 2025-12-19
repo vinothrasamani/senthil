@@ -19,6 +19,7 @@ class StudentFeedbackController {
   static final refGrp = StateProvider.autoDispose<String?>((ref) => null);
   static final loading = StateProvider.autoDispose<bool>((ref) => false);
   static final fetching = StateProvider.autoDispose<bool>((ref) => false);
+  static final isSubject = StateProvider.autoDispose<bool>((ref) => false);
   static final feedData =
       StateProvider.autoDispose<FeedbackFormModel?>((ref) => null);
   static final schoolList =
@@ -48,28 +49,18 @@ class StudentFeedbackController {
     }
   }
 
-  static void nextFeedback(
-      WidgetRef ref, int id, Object object, VoidCallback onSuccess) async {
+  static void submitFeedback(WidgetRef ref, Object object, int id) async {
     try {
       ref.read(fetching.notifier).state = true;
-      final res = await AppController.send('store-feedback/$id', object);
-      if (res == null) return;
-      final data = feedbackFormModelFromJson(res);
-      ref.read(feedData.notifier).state = data;
-      onSuccess();
-      ref.read(fetching.notifier).state = false;
-    } catch (e) {
-      ref.read(fetching.notifier).state = false;
-    }
-  }
-
-  static void submitFeedback(WidgetRef ref, Object object) async {
-    try {
-      ref.read(fetching.notifier).state = true;
-      final res = await AppController.send('store-feedback-data', object);
+      final res = await AppController.send('store-feedback-data/$id', object);
       if (res == null) return null;
       final data = jsonDecode(res);
       if (data['success']) {
+        ref.read(school.notifier).state = null;
+        ref.read(className.notifier).state = null;
+        ref.read(section.notifier).state = null;
+        ref.read(refGrp.notifier).state = null;
+        ref.read(subject.notifier).state = null;
         ref.read(fetching.notifier).state = false;
         Get.off(() => ThankYouScreen(),
             transition: Transition.rightToLeftWithFade);

@@ -34,20 +34,20 @@ class FeedbackEntryModel {
 
 class FeedbackEntry {
   int id;
-  String school;
-  String schooltype;
+  String? school;
+  String? schooltype;
   dynamic admno;
-  String feedbacksession;
-  String feedbackyear;
-  String classname;
-  String section;
+  String? feedbacksession;
+  String? feedbackyear;
+  String? classname;
+  String? section;
   dynamic coursegroup;
   dynamic streamgroup;
   int refgroup;
-  String sub;
+  String? sub;
   DateTime createdAt;
   DateTime updatedAt;
-  String feedbackType;
+  String? feedbackType;
   dynamic staffOid;
   dynamic notedesc;
   DateTime entryDate;

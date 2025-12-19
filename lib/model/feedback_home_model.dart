@@ -36,7 +36,7 @@ class FeedbackHome {
   FeedbackNotice notice;
   List<String> schooltype;
   String staff;
-  List<String> refgrouplist;
+  List<RefGroup> refgrouplist;
 
   FeedbackHome({
     required this.title,
@@ -51,7 +51,9 @@ class FeedbackHome {
         notice: FeedbackNotice.fromJson(json["notice"]),
         schooltype: List<String>.from(json["Schooltype"].map((x) => x)),
         staff: json["Staff"],
-        refgrouplist: List<String>.from(json["refgrouplist"].map((x) => x)),
+        refgrouplist: (json["refgrouplist"] as List)
+            .map((x) => RefGroup.fromJson(x as Map<String, dynamic>))
+            .toList(),
       );
 
   Map<String, dynamic> toJson() => {
@@ -61,6 +63,18 @@ class FeedbackHome {
         "Staff": staff,
         "refgrouplist": List<dynamic>.from(refgrouplist.map((x) => x)),
       };
+}
+
+class RefGroup {
+  final int id;
+  final String name;
+
+  RefGroup({required this.id, required this.name});
+
+  factory RefGroup.fromJson(Map<String, dynamic> json) => RefGroup(
+        id: json["id"],
+        name: json["refgroup_name"],
+      );
 }
 
 class FeedbackNotice {
